@@ -1,26 +1,46 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Heart, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Heart, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+
+function validate(form) {
+  const errors = {};
+  if (!form.email) errors.email = 'Email is required';
+  else if (!/^\S+@\S+\.\S+$/.test(form.email)) errors.email = 'Enter a valid email address';
+  if (!form.password) errors.password = 'Password is required';
+  return errors;
+}
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [touched, setTouched] = useState({});
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  const errors = useMemo(() => validate(form), [form]);
+
+  const handleChange = e => {
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+    setTouched(t => ({ ...t, [e.target.name]: true }));
+  };
+
+  const handleBlur = e => setTouched(t => ({ ...t, [e.target.name]: true }));
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setTouched({ email: true, password: true });
+    if (Object.keys(errors).length > 0) return;
     setLoading(true);
     const result = await login(form.email, form.password);
     setLoading(false);
     if (result.success) navigate(result.redirectTo);
   };
+
+  const fieldError = (name) => touched[name] && errors[name];
 
   return (
     <div className="min-h-screen flex">
@@ -70,37 +90,53 @@ export default function Login() {
               <p className="text-sm text-[#6B6B65]">Welcome back! Please enter your details.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <Input
-                label="Email address"
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                icon={Mail}
-                required
-              />
+            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+              {/* Email */}
+              <div>
+                <Input
+                  label="Email address"
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="you@example.com"
+                  icon={Mail}
+                />
+                {fieldError('email') && (
+                  <p className="text-xs text-[#DC2626] mt-1 flex items-center gap-1">
+                    <AlertCircle size={11} /> {errors.email}
+                  </p>
+                )}
+              </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="password" className="text-sm font-medium text-[#1A1A18]">Password</label>
-                <div className="relative">
-                  <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B65]" />
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPass ? 'text' : 'password'}
-                    value={form.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    required
-                    className="input-base pl-9 pr-10"
-                  />
-                  <button type="button" onClick={() => setShowPass(s => !s)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B6B65] hover:text-[#1A1A18]">
-                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
+              {/* Password */}
+              <div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="password" className="text-sm font-medium text-[#1A1A18]">Password</label>
+                  <div className="relative">
+                    <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B65]" />
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPass ? 'text' : 'password'}
+                      value={form.password}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="••••••••"
+                      className={`input-base pl-9 pr-10 ${fieldError('password') ? 'border-[#DC2626]' : ''}`}
+                    />
+                    <button type="button" onClick={() => setShowPass(s => !s)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B6B65] hover:text-[#1A1A18]">
+                      {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
+                {fieldError('password') && (
+                  <p className="text-xs text-[#DC2626] mt-1 flex items-center gap-1">
+                    <AlertCircle size={11} /> {errors.password}
+                  </p>
+                )}
               </div>
 
               <Button type="submit" loading={loading} fullWidth size="lg" className="mt-2">
