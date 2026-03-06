@@ -1,0 +1,96 @@
+import { useState } from 'react';
+import { User, Mail, Phone, Lock, Save } from 'lucide-react';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../context/AuthContext';
+import { authAPI } from '../../services/api';
+import PageHeader from '../../components/ui/PageHeader';
+import Card from '../../components/ui/Card';
+import Input from '../../components/ui/Input';
+import Button from '../../components/ui/Button';
+
+export default function ClientProfile() {
+  const { user, updateUser } = useAuth();
+  const [profile, setProfile] = useState({ full_name: user?.full_name || '', phone: user?.phone || '' });
+  const [passwords, setPasswords] = useState({ current_password: '', new_password: '', confirm_password: '' });
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [passLoading, setPassLoading] = useState(false);
+
+  const handleProfileSubmit = async e => {
+    e.preventDefault();
+    setProfileLoading(true);
+    try {
+      const res = await authAPI.updateProfile(profile);
+      updateUser(res.data.user);
+      toast.success('Profile updated!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Update failed');
+    }
+    setProfileLoading(false);
+  };
+
+  const handlePassSubmit = async e => {
+    e.preventDefault();
+    if (passwords.new_password !== passwords.confirm_password) { toast.error('Passwords do not match'); return; }
+    setPassLoading(true);
+    try {
+      await authAPI.updatePassword({ current_password: passwords.current_password, new_password: passwords.new_password });
+      toast.success('Password changed!');
+      setPasswords({ current_password: '', new_password: '', confirm_password: '' });
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to change password');
+    }
+    setPassLoading(false);
+  };
+
+  return (
+    <div>
+      <PageHeader title="My Profile" subtitle="Manage your account details" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Profile */}
+        <Card>
+          <h2 className="font-semibold text-[#1A1A18] mb-5" style={{ fontFamily: 'Playfair Display, serif' }}>Personal Information</h2>
+          {/* Avatar */}
+          <div className="flex items-center gap-4 mb-6 p-4 bg-[#FAFAF8] rounded-xl">
+            <div className="w-16 h-16 rounded-full bg-linear-to-br from-[#BE185D] to-[#9D174D] flex items-center justify-center text-white text-2xl font-bold">
+              {user?.full_name?.charAt(0)?.toUpperCase()}
+            </div>
+            <div>
+              <div className="font-semibold text-[#1A1A18]">{user?.full_name}</div>
+              <div className="text-sm text-[#6B6B65]">{user?.email}</div>
+              <div className="text-xs bg-[#DBEAFE] text-[#1E40AF] px-2 py-0.5 rounded-full inline-block mt-1 capitalize">{user?.role}</div>
+            </div>
+          </div>
+          <form onSubmit={handleProfileSubmit} className="space-y-4">
+            <Input label="Full Name" name="full_name" value={profile.full_name}
+              onChange={e => setProfile(p => ({ ...p, full_name: e.target.value }))} icon={User} required />
+            <Input label="Email" name="email" value={user?.email || ''} icon={Mail} disabled hint="Email cannot be changed" />
+            <Input label="Phone" name="phone" value={profile.phone}
+              onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))} icon={Phone} />
+            <Button type="submit" loading={profileLoading} className="mt-2">
+              <Save size={16} /> Save Changes
+            </Button>
+          </form>
+        </Card>
+
+        {/* Password */}
+        <Card>
+          <h2 className="font-semibold text-[#1A1A18] mb-5" style={{ fontFamily: 'Playfair Display, serif' }}>Change Password</h2>
+          <form onSubmit={handlePassSubmit} className="space-y-4">
+            <Input label="Current Password" name="current_password" type="password"
+              value={passwords.current_password} onChange={e => setPasswords(p => ({ ...p, current_password: e.target.value }))}
+              icon={Lock} required />
+            <Input label="New Password" name="new_password" type="password"
+              value={passwords.new_password} onChange={e => setPasswords(p => ({ ...p, new_password: e.target.value }))}
+              icon={Lock} required hint="Minimum 6 characters" />
+            <Input label="Confirm New Password" name="confirm_password" type="password"
+              value={passwords.confirm_password} onChange={e => setPasswords(p => ({ ...p, confirm_password: e.target.value }))}
+              icon={Lock} required />
+            <Button type="submit" loading={passLoading} variant="secondary">
+              <Lock size={16} /> Update Password
+            </Button>
+          </form>
+        </Card>
+      </div>
+    </div>
+  );
+}
