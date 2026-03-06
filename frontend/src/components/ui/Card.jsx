@@ -1,8 +1,12 @@
-export default function Card({ children, className = '', padding = true, hover = false }) {
+export default function Card({ children, className = '', padding = true, hover = false, glass = false }) {
+  const base = glass
+    ? 'glass-panel rounded-2xl'
+    : 'card';
+
+  const hoverCls = hover ? 'card-hover cursor-pointer' : '';
+
   return (
-    <div
-      className={`card ${padding ? 'p-6' : ''} ${hover ? 'hover:shadow-[0_10px_30px_rgba(0,0,0,0.10)] hover:-translate-y-0.5 transition-all duration-200 cursor-pointer' : ''} ${className}`}
-    >
+    <div className={`${base} ${hoverCls} ${padding ? 'p-6' : ''} ${className}`}>
       {children}
     </div>
   );

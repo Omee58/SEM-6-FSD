@@ -6,14 +6,14 @@ export default function Input({
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
       {label && (
-        <label htmlFor={name} className="text-sm font-medium text-[#1A1A18]">
+        <label htmlFor={name} className="label-caps">
           {label} {required && <span className="text-[#DC2626]">*</span>}
         </label>
       )}
       <div className="relative">
         {Icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B65] pointer-events-none">
-            <Icon size={16} />
+          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#A8A29E' }}>
+            <Icon size={15} />
           </div>
         )}
         <input
@@ -25,12 +25,12 @@ export default function Input({
           placeholder={placeholder}
           disabled={disabled}
           required={required}
-          className={`input-base ${Icon ? 'pl-9' : ''} ${error ? 'error' : ''} ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+          className={`input-base ${Icon ? 'pl-10' : ''} ${error ? 'error' : ''} ${disabled ? 'opacity-55 cursor-not-allowed' : ''}`}
           {...rest}
         />
       </div>
-      {hint && !error && <p className="text-xs text-[#6B6B65]">{hint}</p>}
-      {error && <p className="text-xs text-[#DC2626]">{error}</p>}
+      {hint && !error && <p className="text-[12px]" style={{ color: '#A8A29E' }}>{hint}</p>}
+      {error && <p className="text-[12px] text-danger">{error}</p>}
     </div>
   );
 }
@@ -39,7 +39,7 @@ export function Textarea({ label, name, value, onChange, placeholder, error, req
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
       {label && (
-        <label htmlFor={name} className="text-sm font-medium text-[#1A1A18]">
+        <label htmlFor={name} className="label-caps">
           {label} {required && <span className="text-[#DC2626]">*</span>}
         </label>
       )}
@@ -53,7 +53,7 @@ export function Textarea({ label, name, value, onChange, placeholder, error, req
         required={required}
         className={`input-base resize-none ${error ? 'error' : ''}`}
       />
-      {error && <p className="text-xs text-[#DC2626]">{error}</p>}
+      {error && <p className="text-[12px] text-danger">{error}</p>}
     </div>
   );
 }
