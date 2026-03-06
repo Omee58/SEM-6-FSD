@@ -1,3 +1,5 @@
+const BASE_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+
 const BASE_STYLE = `
   font-family: 'Inter', Arial, sans-serif;
   max-width: 600px; margin: 0 auto; background: #FAFAF8;
@@ -40,7 +42,7 @@ module.exports = {
       ${row('Amount', amount)}
     </table>
     <p style="color:#6B6B65;font-size:13px;margin-top:20px;">Please log in to your dashboard to confirm or reject this request.</p>
-    ${btn('View Booking', 'http://localhost:5173/vendor/bookings')}
+    ${btn('View Booking', `${BASE_URL}/vendor/bookings`)}
   `),
 
   bookingConfirmedEmail: (clientName, serviceName, vendorName, date) => wrap(`
@@ -53,7 +55,7 @@ module.exports = {
       ${row('Status', '<span style="color:#16A34A;font-weight:700;">Confirmed ✓</span>')}
     </table>
     <p style="color:#6B6B65;font-size:13px;margin-top:20px;">Your wedding day is getting closer! View your booking details in your dashboard.</p>
-    ${btn('View My Bookings', 'http://localhost:5173/bookings')}
+    ${btn('View My Bookings', `${BASE_URL}/bookings`)}
   `),
 
   bookingRejectedEmail: (clientName, serviceName, vendorName) => wrap(`
@@ -65,7 +67,7 @@ module.exports = {
       ${row('Status', '<span style="color:#DC2626;font-weight:700;">Not Available</span>')}
     </table>
     <p style="color:#6B6B65;font-size:13px;margin-top:20px;">Don't worry — there are many other great vendors available. Browse alternatives below.</p>
-    ${btn('Browse Services', 'http://localhost:5173/services')}
+    ${btn('Browse Services', `${BASE_URL}/services`)}
   `),
 
   vendorApprovedEmail: (vendorName) => wrap(`
@@ -77,7 +79,7 @@ module.exports = {
       <li>Manage bookings from your dashboard</li>
       <li>Track your earnings with detailed analytics</li>
     </ul>
-    ${btn('Go to Dashboard', 'http://localhost:5173/vendor/dashboard')}
+    ${btn('Go to Dashboard', `${BASE_URL}/vendor/dashboard`)}
   `),
 
   vendorRejectedEmail: (vendorName, reason) => wrap(`
@@ -94,6 +96,6 @@ module.exports = {
     <h2 style="color:#D97706;font-size:20px;margin:0 0 8px;">How was your experience? ⭐</h2>
     <p style="color:#6B6B65;margin:0 0 20px;">Hi <strong>${clientName}</strong>, your <strong>${serviceName}</strong> service has been completed!</p>
     <p style="color:#1A1A18;font-size:14px;margin:0 0 16px;">Your review helps other couples make better decisions and rewards great vendors. It only takes 30 seconds!</p>
-    ${btn('Write a Review', 'http://localhost:5173/bookings')}
+    ${btn('Write a Review', `${BASE_URL}/bookings`)}
   `),
 };

@@ -8,7 +8,7 @@ const emailTemplates = require('../utils/emailTemplates.js');
 
 const getAllServices = async (req, res) => {
   try {
-    const { category, location, search, minPrice, maxPrice, sort } = req.query;
+    const { category, location, search, minPrice, maxPrice, sort, page = 1, limit = 12 } = req.query;
 
     // Build base filter — only active services
     const serviceFilter = { status: 'active' };
@@ -48,15 +48,30 @@ const getAllServices = async (req, res) => {
       : sort === 'rating' ? { avg_rating: -1 }
       : { createdAt: -1 };
 
-    const services = await Service.find(serviceFilter)
-      .populate('vendor', 'full_name email phone')
-      .sort(sortOrder);
+    const pageNum = Math.max(1, parseInt(page, 10));
+    const limitNum = Math.min(48, Math.max(1, parseInt(limit, 10)));
+    const skip = (pageNum - 1) * limitNum;
+
+    const [services, total] = await Promise.all([
+      Service.find(serviceFilter)
+        .populate('vendor', 'full_name email phone')
+        .sort(sortOrder)
+        .skip(skip)
+        .limit(limitNum),
+      Service.countDocuments(serviceFilter),
+    ]);
 
     return res.status(200).json({
       success: true,
       message: 'Services retrieved successfully.',
       data: {
         services,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          pages: Math.ceil(total / limitNum),
+        },
       },
     });
   } catch (err) {

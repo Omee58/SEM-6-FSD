@@ -109,6 +109,7 @@ const rejectVendorRequest = async (req, res) => {
       emailTemplates.vendorRejectedEmail(vendor.full_name, reason || null)
     );
 
+    await Service.deleteMany({ vendor: vendorId });
     await User.findByIdAndDelete(vendorId);
 
     return res.status(200).json({
