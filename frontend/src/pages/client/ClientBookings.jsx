@@ -1,107 +1,211 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Calendar, X, Star, Search, CheckCircle2, Clock, XCircle, Sparkles, Layers, CircleCheck, Camera, Utensils, Building2, Flower2, Paintbrush, Music, Car, Gem } from 'lucide-react';
+import {
+  Calendar, X, Star, Search, CheckCircle2, Clock, XCircle,
+  Sparkles, CircleCheck, Camera, Utensils, Building2, Flower2,
+  Paintbrush, Music, Car, Gem, User, IndianRupee, Layers,
+  AlertTriangle, MessageSquare, ArrowRight, ChevronRight,
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { clientAPI, reviewAPI } from '../../services/api';
-import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
-import EmptyState from '../../components/ui/EmptyState';
 import { PageSpinner } from '../../components/ui/Spinner';
 import { Textarea } from '../../components/ui/Input';
 
-const TABS = ['all', 'pending', 'confirmed', 'completed', 'cancelled'];
+/* ─── Status meta ────────────────────────────────────── */
+const STATUS_META = {
+  pending:   { color: '#B8912A', bg: 'rgba(184,145,42,0.12)',  label: 'Pending',   icon: Clock,        shadow: 'rgba(184,145,42,0.18)',  glow: 'rgba(184,145,42,0.35)' },
+  confirmed: { color: '#059669', bg: 'rgba(5,150,105,0.12)',   label: 'Confirmed', icon: CheckCircle2, shadow: 'rgba(5,150,105,0.18)',   glow: 'rgba(5,150,105,0.35)'  },
+  completed: { color: '#7C3AED', bg: 'rgba(124,58,237,0.12)',  label: 'Completed', icon: CircleCheck,  shadow: 'rgba(124,58,237,0.18)',  glow: 'rgba(124,58,237,0.35)' },
+  cancelled: { color: '#DC2626', bg: 'rgba(220,38,38,0.12)',   label: 'Cancelled', icon: XCircle,      shadow: 'rgba(220,38,38,0.15)',   glow: 'rgba(220,38,38,0.30)'  },
+};
 
-const STATUS_STEPS = [
-  { key: 'pending',   label: 'Requested', icon: Clock },
+/* ─── Category meta ──────────────────────────────────── */
+const CATEGORY_ICON = {
+  photography: { icon: Camera,     color: '#BE185D', bg: 'linear-gradient(145deg,rgba(190,24,93,0.18),rgba(190,24,93,0.04))',   name: 'Photography' },
+  catering:    { icon: Utensils,   color: '#059669', bg: 'linear-gradient(145deg,rgba(5,150,105,0.18),rgba(5,150,105,0.04))',   name: 'Catering'    },
+  venue:       { icon: Building2,  color: '#2563EB', bg: 'linear-gradient(145deg,rgba(37,99,235,0.18),rgba(37,99,235,0.04))',   name: 'Venue'       },
+  decoration:  { icon: Flower2,    color: '#B8912A', bg: 'linear-gradient(145deg,rgba(184,145,42,0.18),rgba(184,145,42,0.04))', name: 'Decoration'  },
+  mehendi:     { icon: Paintbrush, color: '#7C3AED', bg: 'linear-gradient(145deg,rgba(124,58,237,0.18),rgba(124,58,237,0.04))', name: 'Mehendi'     },
+  music:       { icon: Music,      color: '#0891B2', bg: 'linear-gradient(145deg,rgba(8,145,178,0.18),rgba(8,145,178,0.04))',   name: 'Music'       },
+  makeup:      { icon: Sparkles,   color: '#DB2777', bg: 'linear-gradient(145deg,rgba(219,39,119,0.18),rgba(219,39,119,0.04))', name: 'Makeup'      },
+  transport:   { icon: Car,        color: '#D97706', bg: 'linear-gradient(145deg,rgba(217,119,6,0.18),rgba(217,119,6,0.04))',   name: 'Transport'   },
+  other:       { icon: Gem,        color: '#6D28D9', bg: 'linear-gradient(145deg,rgba(109,40,217,0.18),rgba(109,40,217,0.04))', name: 'Other'       },
+};
+
+/* ─── Timeline steps ─────────────────────────────────── */
+const TIMELINE = [
+  { key: 'pending',   label: 'Requested', icon: Clock        },
   { key: 'confirmed', label: 'Confirmed',  icon: CheckCircle2 },
-  { key: 'completed', label: 'Completed',  icon: Star },
+  { key: 'completed', label: 'Completed',  icon: Star         },
 ];
 
-const STATUS_BAR = {
-  pending:   '#B8912A',
-  confirmed: '#059669',
-  completed: '#7C3AED',
-  cancelled: '#DC2626',
-};
+/* ─── AnimatedNumber ─────────────────────────────────── */
+function AnimatedNumber({ target }) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (!target) { setVal(0); return; }
+    let start = null;
+    const step = ts => {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / 1000, 1);
+      setVal(Math.round(p * target));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [target]);
+  return <>{val}</>;
+}
 
-const STATUS_META = {
-  pending:   { color: '#B8912A', bg: 'rgba(184,145,42,0.1)',  label: 'Pending',   icon: Clock },
-  confirmed: { color: '#059669', bg: 'rgba(5,150,105,0.1)',   label: 'Confirmed', icon: CheckCircle2 },
-  completed: { color: '#7C3AED', bg: 'rgba(124,58,237,0.1)', label: 'Completed', icon: CircleCheck },
-  cancelled: { color: '#DC2626', bg: 'rgba(220,38,38,0.1)',   label: 'Cancelled', icon: XCircle },
-};
-
-const CATEGORY_ICON = {
-  photography: { icon: Camera,     color: '#BE185D', bg: 'rgba(190,24,93,0.1)'  },
-  catering:    { icon: Utensils,   color: '#059669', bg: 'rgba(5,150,105,0.1)'  },
-  venue:       { icon: Building2,  color: '#2563EB', bg: 'rgba(37,99,235,0.1)'  },
-  decoration:  { icon: Flower2,    color: '#B8912A', bg: 'rgba(184,145,42,0.1)' },
-  mehendi:     { icon: Paintbrush, color: '#7C3AED', bg: 'rgba(124,58,237,0.1)' },
-  music:       { icon: Music,      color: '#0891B2', bg: 'rgba(8,145,178,0.1)'  },
-  makeup:      { icon: Sparkles,   color: '#DB2777', bg: 'rgba(219,39,119,0.1)' },
-  transport:   { icon: Car,        color: '#D97706', bg: 'rgba(217,119,6,0.1)'  },
-  other:       { icon: Gem,        color: '#6D28D9', bg: 'rgba(109,40,217,0.1)' },
-};
-
-function CategoryIcon({ category, size = 28 }) {
-  const meta = CATEGORY_ICON[category] || CATEGORY_ICON.other;
-  const Icon = meta.icon;
+/* ─── Floating Orb ───────────────────────────────────── */
+function Orb({ size, color, style }) {
   return (
-    <div
-      className="w-full h-full flex items-center justify-center"
-      style={{ background: meta.bg }}
-    >
-      <Icon size={size} style={{ color: meta.color }} />
+    <div className="absolute rounded-full pointer-events-none"
+      style={{ width: size, height: size, background: color, filter: 'blur(60px)', animation: 'floatSlow 8s ease-in-out infinite', ...style }} />
+  );
+}
+
+/* ─── Left image panel ───────────────────────────────── */
+function ImagePanel({ category, imageUrl, status }) {
+  const cat = CATEGORY_ICON[category?.toLowerCase()] || CATEGORY_ICON.other;
+  const Icon = cat.icon;
+  const isCancelled = status === 'cancelled';
+
+  return (
+    <div className="relative w-full h-full overflow-hidden" style={{ background: cat.bg }}>
+      {/* Watermark category name */}
+      <div className="absolute bottom-2 right-2 pointer-events-none select-none"
+        style={{
+          fontFamily: 'Playfair Display, serif',
+          fontSize: '3.5rem', fontWeight: 700, lineHeight: 1,
+          color: cat.color, opacity: 0.07, whiteSpace: 'nowrap',
+          letterSpacing: '-0.03em',
+        }}>
+        {cat.name}
+      </div>
+
+      {/* Glow orb */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div style={{ width: 80, height: 80, borderRadius: '50%', background: cat.color, filter: 'blur(40px)', opacity: 0.25 }} />
+      </div>
+
+      {/* Actual image (if available) */}
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+          style={{
+            filter: isCancelled ? 'grayscale(100%) brightness(0.7)' : 'none',
+            transition: 'transform 0.6s cubic-bezier(0.4,0,0.2,1)',
+          }}
+        />
+      )}
+
+      {/* Category icon (shown when no image, or as overlay) */}
+      {!imageUrl && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div
+            className="flex items-center justify-center rounded-2xl"
+            style={{
+              width: 64, height: 64,
+              background: `${cat.color}20`,
+              border: `1.5px solid ${cat.color}30`,
+              backdropFilter: 'blur(8px)',
+              boxShadow: `0 8px 32px ${cat.color}30`,
+            }}
+          >
+            <Icon size={30} style={{ color: cat.color }} />
+          </div>
+        </div>
+      )}
+
+      {/* Right-fade overlay (for images) */}
+      {imageUrl && (
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(to right, rgba(0,0,0,0) 40%, rgba(0,0,0,0.08) 100%)' }} />
+      )}
+
+      {/* Cancelled tint */}
+      {isCancelled && (
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'rgba(220,38,38,0.12)' }} />
+      )}
     </div>
   );
 }
 
+/* ─── Booking timeline (track style) ────────────────── */
 function BookingTimeline({ status }) {
+  const [filled, setFilled] = useState(false);
+  useEffect(() => { setTimeout(() => setFilled(true), 300); }, []);
+
   if (status === 'cancelled') {
     return (
-      <div className="flex items-center gap-1.5 mt-3 text-[12px] font-semibold" style={{ color: '#DC2626' }}>
+      <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-[12px] font-semibold"
+        style={{ background: 'rgba(220,38,38,0.08)', color: '#DC2626', border: '1px solid rgba(220,38,38,0.15)' }}>
         <XCircle size={13} /> This booking was cancelled
       </div>
     );
   }
-  const activeIdx = STATUS_STEPS.findIndex(s => s.key === status);
+
+  const activeIdx = TIMELINE.findIndex(s => s.key === status);
+
   return (
-    <div className="flex items-center gap-0 mt-4">
-      {STATUS_STEPS.map((step, i) => {
-        const Icon = step.icon;
+    <div className="flex items-start gap-0">
+      {TIMELINE.map((step, i) => {
+        const Icon     = step.icon;
         const isDone   = i <= activeIdx;
         const isActive = i === activeIdx;
+        const fillPct  = i < activeIdx ? 100 : 0;
+
         return (
-          <div key={step.key} className="flex items-center flex-1 min-w-0">
-            <div className={`flex flex-col items-center gap-1 ${i < STATUS_STEPS.length - 1 ? 'flex-1' : ''}`}>
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300"
-                style={isActive ? {
-                  background: 'linear-gradient(135deg,#BE185D,#9D174D)',
-                  boxShadow: '0 3px 10px rgba(190,24,93,0.3)',
-                  color: '#fff',
-                } : isDone ? {
-                  background: 'linear-gradient(135deg,#059669,#047857)',
-                  color: '#fff',
-                } : {
-                  background: '#F5EDE4',
-                  color: '#A8A29E',
-                }}
-              >
-                <Icon size={13} />
+          <div key={step.key} className="flex items-start flex-1 min-w-0">
+            <div className="flex flex-col items-center gap-1.5 shrink-0">
+              {/* Node */}
+              <div className="relative">
+                {isActive && (
+                  <div className="absolute inset-0 rounded-full pointer-events-none"
+                    style={{ margin: -5, border: '2px solid rgba(190,24,93,0.25)', animation: 'glowPulse 2s ease-in-out infinite' }} />
+                )}
+                <div
+                  className="w-7 h-7 rounded-full flex items-center justify-center relative z-10"
+                  style={isActive ? {
+                    background: 'linear-gradient(135deg,#BE185D,#9D174D)',
+                    boxShadow: '0 3px 12px rgba(190,24,93,0.4)',
+                    color: '#fff',
+                  } : isDone ? {
+                    background: 'linear-gradient(135deg,#059669,#047857)',
+                    boxShadow: '0 2px 6px rgba(5,150,105,0.3)',
+                    color: '#fff',
+                  } : {
+                    background: '#F0EBE5',
+                    color: '#C4B5A5',
+                  }}
+                >
+                  <Icon size={12} />
+                </div>
               </div>
-              <span
-                className="text-[10px] font-bold whitespace-nowrap uppercase tracking-wide"
-                style={{ color: isActive ? '#BE185D' : isDone ? '#059669' : '#A8A29E' }}
-              >
+              {/* Label */}
+              <span className="text-[9px] font-bold uppercase tracking-wide whitespace-nowrap"
+                style={{ color: isActive ? '#BE185D' : isDone ? '#059669' : '#A8A29E' }}>
                 {step.label}
               </span>
             </div>
-            {i < STATUS_STEPS.length - 1 && (
-              <div
-                className="h-0.5 flex-1 mx-1.5 rounded-full"
-                style={{ background: i < activeIdx ? 'linear-gradient(90deg,#059669,#6EE7B7)' : '#E8E1D9' }}
-              />
+
+            {/* Track segment */}
+            {i < TIMELINE.length - 1 && (
+              <div className="flex-1 relative mx-1.5" style={{ height: 3, marginTop: 12, borderRadius: 99, background: '#F0EBE5', overflow: 'hidden' }}>
+                <div style={{
+                  position: 'absolute', left: 0, top: 0, bottom: 0,
+                  borderRadius: 99,
+                  background: 'linear-gradient(90deg,#059669,#34D399)',
+                  width: filled ? `${fillPct}%` : '0%',
+                  transition: 'width 0.9s cubic-bezier(0.4,0,0.2,1)',
+                }} />
+              </div>
             )}
           </div>
         );
@@ -110,11 +214,12 @@ function BookingTimeline({ status }) {
   );
 }
 
+/* ══════════════════════════════════════════════════════ */
 export default function ClientBookings() {
   const [bookings, setBookings]           = useState([]);
   const [loading, setLoading]             = useState(true);
   const [mounted, setMounted]             = useState(false);
-  const [tab, setTab]                     = useState('all');
+  const [activeStatus, setActiveStatus]   = useState('all');
   const [searchQuery, setSearchQuery]     = useState('');
   const [cancelId, setCancelId]           = useState(null);
   const [cancelBooking, setCancelBooking] = useState(null);
@@ -122,6 +227,7 @@ export default function ClientBookings() {
   const [review, setReview]               = useState({ rating: 5, comment: '' });
   const [submitting, setSubmitting]       = useState(false);
   const [reviewableIds, setReviewableIds] = useState(new Set());
+  const [hoveredCard, setHoveredCard]     = useState(null);
 
   const fetchBookings = async () => {
     try {
@@ -139,21 +245,34 @@ export default function ClientBookings() {
 
   useEffect(() => {
     fetchBookings();
-    setTimeout(() => setMounted(true), 60);
+    setTimeout(() => setMounted(true), 80);
   }, []);
 
-  const tabFiltered = tab === 'all' ? bookings : bookings.filter(b => b.status === tab);
-  const filtered = useMemo(() => {
-    if (!searchQuery.trim()) return tabFiltered;
-    const q = searchQuery.toLowerCase();
-    return tabFiltered.filter(b =>
-      b.service?.title?.toLowerCase().includes(q) ||
-      b.vendor?.full_name?.toLowerCase().includes(q) ||
-      b.service?.category?.toLowerCase().includes(q)
-    );
-  }, [tabFiltered, searchQuery]);
+  /* ── Derived ── */
+  const counts = {
+    all: bookings.length,
+    pending:   bookings.filter(b => b.status === 'pending').length,
+    confirmed: bookings.filter(b => b.status === 'confirmed').length,
+    completed: bookings.filter(b => b.status === 'completed').length,
+    cancelled: bookings.filter(b => b.status === 'cancelled').length,
+  };
+  const totalSpent = bookings.reduce((s, b) => s + (b.total_amount || 0), 0);
 
-  const handleCancelClick = (b) => { setCancelId(b._id); setCancelBooking(b); };
+  const filtered = useMemo(() => {
+    let list = activeStatus === 'all' ? bookings : bookings.filter(b => b.status === activeStatus);
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(b =>
+        b.service?.title?.toLowerCase().includes(q) ||
+        b.vendor?.full_name?.toLowerCase().includes(q) ||
+        b.service?.category?.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [bookings, activeStatus, searchQuery]);
+
+  /* ── Actions ── */
+  const handleCancelClick = b => { setCancelId(b._id); setCancelBooking(b); };
   const handleCancel = async () => {
     setSubmitting(true);
     try {
@@ -164,7 +283,6 @@ export default function ClientBookings() {
     } catch (err) { toast.error(err.response?.data?.message || 'Failed to cancel'); }
     setSubmitting(false);
   };
-
   const handleReview = async () => {
     setSubmitting(true);
     try {
@@ -178,263 +296,373 @@ export default function ClientBookings() {
 
   if (loading) return <PageSpinner />;
 
-  const statusCounts = Object.fromEntries(
-    ['pending','confirmed','completed','cancelled'].map(s => [s, bookings.filter(b => b.status === s).length])
-  );
+  /* ── Hero pill definitions ── */
+  const PILLS = [
+    { key: 'all',       label: 'All Bookings', icon: Layers,       color: '#BE185D', grad: 'linear-gradient(135deg,#BE185D,#9D174D)' },
+    { key: 'pending',   label: 'Pending',      icon: Clock,        color: '#B8912A', grad: 'linear-gradient(135deg,#B8912A,#9A7520)' },
+    { key: 'confirmed', label: 'Confirmed',    icon: CheckCircle2, color: '#059669', grad: 'linear-gradient(135deg,#059669,#047857)' },
+    { key: 'completed', label: 'Completed',    icon: CircleCheck,  color: '#7C3AED', grad: 'linear-gradient(135deg,#7C3AED,#6D28D9)' },
+    { key: 'cancelled', label: 'Cancelled',    icon: XCircle,      color: '#DC2626', grad: 'linear-gradient(135deg,#DC2626,#B91C1C)' },
+  ];
 
+  /* ════════════════════════ RENDER ════════════════════════ */
   return (
-    <div>
+    <div className="space-y-6">
 
-      {/* ── Hero Banner ── */}
+      {/* ══ HERO ══════════════════════════════════════════════ */}
       <div
-        className="relative rounded-3xl overflow-hidden mb-8"
+        className="relative rounded-3xl overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg,#0D0509 0%,#1E0A14 50%,#3D1020 100%)',
-          minHeight: 180,
+          background: 'linear-gradient(135deg,#0D0509 0%,#1E0A14 30%,#3D1020 60%,#BE185D 100%)',
+          backgroundSize: '300% 300%',
+          animation: 'gradientShift 9s ease infinite',
         }}
       >
-        <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-        }} />
+        {/* Dot mesh */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ backgroundImage: 'radial-gradient(circle,rgba(255,255,255,0.06) 1px,transparent 1px)', backgroundSize: '26px 26px' }} />
 
-        {/* Decorative orbs */}
-        <div className="absolute rounded-full pointer-events-none"
-          style={{ width: 200, height: 200, background: 'rgba(190,24,93,0.18)', filter: 'blur(60px)', top: -60, right: 80, animation: 'floatSlow 7s ease-in-out infinite' }} />
-        <div className="absolute rounded-full pointer-events-none"
-          style={{ width: 140, height: 140, background: 'rgba(184,145,42,0.14)', filter: 'blur(50px)', bottom: -30, right: 300, animation: 'floatSlow 9s ease-in-out infinite', animationDelay: '2s' }} />
+        {/* Orbs */}
+        <Orb size={260} color="rgba(190,24,93,0.25)"  style={{ top: -80,  right: -20,  animationDelay: '0s'   }} />
+        <Orb size={180} color="rgba(184,145,42,0.18)" style={{ bottom: -60, right: 200, animationDelay: '3s'  }} />
+        <Orb size={120} color="rgba(124,58,237,0.14)" style={{ top: 40, left: '45%',   animationDelay: '1.5s' }} />
 
-        <div className="relative p-8">
+        {/* Decorative rings (desktop) */}
+        <div className="absolute hidden lg:block pointer-events-none"
+          style={{ width: 320, height: 320, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.06)', top: -80, right: -40 }} />
+        <div className="absolute hidden lg:block pointer-events-none"
+          style={{ width: 220, height: 220, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)', top: -30, right: 10 }} />
+        <div className="absolute hidden lg:block pointer-events-none"
+          style={{ width: 130, height: 130, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.07)', top: 20, right: 60 }} />
+
+        <div className="relative p-8 pb-10">
+          {/* Label */}
           <div
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-3 text-[11px] font-bold uppercase tracking-widest"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5 text-[11px] font-bold uppercase tracking-widest"
             style={{
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid rgba(255,255,255,0.15)',
-              color: 'rgba(255,255,255,0.7)',
-              opacity: mounted ? 1 : 0,
-              transition: 'opacity 0.5s 0.1s',
+              background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.7)',
+              opacity: mounted ? 1 : 0, transition: 'opacity 0.5s 0.1s',
             }}
           >
-            <Layers size={11} style={{ color: '#B8912A' }} /> Your Bookings
+            <Layers size={11} style={{ color: '#E8C86E' }} /> Your Bookings
           </div>
-          <h1
-            className="text-white font-bold mb-1"
-            style={{
-              fontFamily: 'Playfair Display, serif',
-              fontSize: 'clamp(1.5rem,3vw,2rem)',
-              letterSpacing: '-0.01em',
-              opacity: mounted ? 1 : 0,
-              transform: mounted ? 'translateY(0)' : 'translateY(14px)',
-              transition: 'all 0.55s cubic-bezier(0.4,0,0.2,1) 0.15s',
-            }}
-          >
-            Manage Your Celebrations
-          </h1>
-          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '13px', opacity: mounted ? 1 : 0, transition: 'opacity 0.5s 0.25s' }}>
-            Track, review, and manage all your wedding service bookings
-          </p>
 
-          {/* Status stat pills */}
-          <div className="flex flex-wrap gap-3 mt-5">
-            {[
-              { key: 'pending',   label: 'Pending',   color: '#B8912A' },
-              { key: 'confirmed', label: 'Confirmed', color: '#059669' },
-              { key: 'completed', label: 'Completed', color: '#7C3AED' },
-              { key: 'cancelled', label: 'Cancelled', color: '#DC2626' },
-            ].map((s, i) => (
-              <button
-                key={s.key}
-                onClick={() => setTab(s.key)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200"
+          {/* Title + search: two columns */}
+          <div className="flex flex-col lg:flex-row lg:items-end gap-6 mb-8">
+            <div className="flex-1">
+              <h1
+                className="text-white font-bold mb-2 leading-tight"
                 style={{
-                  background: tab === s.key ? s.color : 'rgba(255,255,255,0.1)',
-                  border: `1px solid ${tab === s.key ? s.color : 'rgba(255,255,255,0.15)'}`,
-                  color: '#fff',
+                  fontFamily: 'Playfair Display, serif',
+                  fontSize: 'clamp(1.7rem,4vw,2.4rem)',
+                  letterSpacing: '-0.02em',
                   opacity: mounted ? 1 : 0,
-                  transform: mounted ? 'translateY(0)' : 'translateY(8px)',
-                  transition: `all 0.4s cubic-bezier(0.4,0,0.2,1) ${0.3 + i * 0.07}s`,
-                  boxShadow: tab === s.key ? `0 4px 14px ${s.color}55` : 'none',
+                  transform: mounted ? 'translateY(0)' : 'translateY(16px)',
+                  transition: 'all 0.6s cubic-bezier(0.4,0,0.2,1) 0.15s',
                 }}
-                onMouseEnter={e => { if (tab !== s.key) e.currentTarget.style.background = 'rgba(255,255,255,0.18)'; }}
-                onMouseLeave={e => { if (tab !== s.key) e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
               >
-                <span className="text-[18px] font-bold" style={{ fontFamily: 'Playfair Display, serif', lineHeight: 1 }}>
-                  {statusCounts[s.key]}
+                Manage Your<br />
+                <span style={{ background: 'linear-gradient(90deg,#E8C86E,#F9D4A0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  Celebrations
                 </span>
-                <span className="text-[12px] font-semibold opacity-80">{s.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+              </h1>
+              <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, opacity: mounted ? 1 : 0, transition: 'opacity 0.5s 0.3s' }}>
+                Track, review and manage all your wedding service bookings
+              </p>
+            </div>
 
-      {/* ── Tabs + Search ── */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="flex gap-2 overflow-x-auto pb-1 flex-1">
-          {TABS.map(t => {
-            const count  = t === 'all' ? bookings.length : bookings.filter(b => b.status === t).length;
-            const active = tab === t;
-            return (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className="px-4 py-2 rounded-full text-[13px] font-semibold capitalize whitespace-nowrap transition-all duration-200"
-                style={active ? {
-                  background: 'linear-gradient(135deg,#BE185D,#9D174D)',
-                  color: '#fff',
-                  boxShadow: '0 4px 12px rgba(190,24,93,0.3)',
-                } : {
-                  background: '#fff',
-                  color: '#78716C',
-                  border: '1.5px solid #E8E1D9',
-                }}
-                onMouseEnter={e => { if (!active) { e.currentTarget.style.borderColor = '#BE185D'; e.currentTarget.style.color = '#BE185D'; } }}
-                onMouseLeave={e => { if (!active) { e.currentTarget.style.borderColor = '#E8E1D9'; e.currentTarget.style.color = '#78716C'; } }}
-              >
-                {t} <span className="opacity-60">({count})</span>
-              </button>
-            );
-          })}
-        </div>
-        <div className="relative sm:w-60 shrink-0">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#A8A29E' }} />
-          <input
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search bookings…"
-            className="input-base pl-9 text-sm"
-          />
-        </div>
-      </div>
-
-      {/* ── Booking Cards ── */}
-      {filtered.length === 0 ? (
-        <div
-          className="flex flex-col items-center justify-center py-16 rounded-3xl"
-          style={{ background: 'linear-gradient(135deg,#FDF6EE,#fff)', border: '1px solid #E8E1D9' }}
-        >
-          <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-            style={{ background: 'linear-gradient(135deg,#FBF0D9,#FEF3C7)', boxShadow: '0 6px 20px rgba(184,145,42,0.15)' }}
-          >
-            <Calendar size={28} style={{ color: '#B8912A' }} />
-          </div>
-          <h3 className="font-bold mb-1" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.15rem', color: '#1C1917' }}>
-            {searchQuery ? 'No matching bookings' : 'No bookings yet'}
-          </h3>
-          <p className="text-[13px]" style={{ color: '#78716C' }}>
-            {searchQuery ? 'Try different keywords.' : 'Your bookings will appear here once you make one.'}
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {filtered.map((b, idx) => (
+            {/* Glass search */}
             <div
-              key={b._id}
-              className="rounded-2xl overflow-hidden"
-              style={{
-                background: '#fff',
-                boxShadow: '0 2px 14px rgba(28,9,16,0.07)',
-                borderLeft: `4px solid ${STATUS_BAR[b.status] || '#E8E1D9'}`,
-                opacity: mounted ? 1 : 0,
-                transform: mounted ? 'translateX(0)' : 'translateX(-16px)',
-                transition: `opacity 0.5s cubic-bezier(0.4,0,0.2,1) ${idx * 0.07}s, transform 0.5s cubic-bezier(0.4,0,0.2,1) ${idx * 0.07}s, box-shadow 0.25s ease`,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 32px rgba(28,9,16,0.12)'; }}
-              onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 14px rgba(28,9,16,0.07)'; }}
+              className="relative lg:w-80"
+              style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'translateY(0)' : 'translateY(10px)', transition: 'all 0.5s ease 0.35s' }}
             >
-              <div className="p-5 flex flex-col sm:flex-row gap-5">
-                {/* Service image */}
-                <div
-                  className="w-20 h-20 rounded-2xl shrink-0 overflow-hidden"
-                  style={{ background: '#FDF6EE' }}
+              <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'rgba(255,255,255,0.4)' }} />
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search bookings…"
+                style={{
+                  width: '100%', paddingLeft: 40, paddingRight: searchQuery ? 36 : 16,
+                  paddingTop: 11, paddingBottom: 11,
+                  background: 'rgba(255,255,255,0.1)',
+                  border: '1.5px solid rgba(255,255,255,0.18)',
+                  borderRadius: 14, color: '#fff', fontSize: 13, outline: 'none',
+                  backdropFilter: 'blur(12px)',
+                  transition: 'border-color 0.2s, background 0.2s',
+                }}
+                onFocus={e => { e.target.style.borderColor = 'rgba(255,255,255,0.4)'; e.target.style.background = 'rgba(255,255,255,0.15)'; }}
+                onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.18)'; e.target.style.background = 'rgba(255,255,255,0.1)'; }}
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full flex items-center justify-center"
+                  style={{ background: 'rgba(255,255,255,0.2)' }}>
+                  <X size={10} style={{ color: '#fff' }} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Stat pills row */}
+          <div className="flex flex-wrap gap-3 items-center">
+            {PILLS.map((pill, i) => {
+              const Icon    = pill.icon;
+              const isActive = activeStatus === pill.key;
+              const count   = counts[pill.key] || 0;
+              return (
+                <button
+                  key={pill.key}
+                  onClick={() => setActiveStatus(pill.key)}
+                  className="relative flex flex-col items-center px-5 py-3 rounded-2xl transition-all duration-250"
+                  style={{
+                    background: isActive ? pill.grad : 'rgba(255,255,255,0.08)',
+                    border: `1.5px solid ${isActive ? 'transparent' : 'rgba(255,255,255,0.13)'}`,
+                    boxShadow: isActive ? `0 8px 24px ${pill.color}50` : 'none',
+                    opacity: mounted ? 1 : 0,
+                    transform: mounted ? (isActive ? 'translateY(-2px)' : 'translateY(0)') : 'translateY(10px)',
+                    transition: `background 0.2s, box-shadow 0.2s, opacity 0.45s cubic-bezier(0.4,0,0.2,1) ${0.35 + i * 0.06}s, transform 0.45s cubic-bezier(0.4,0,0.2,1) ${0.35 + i * 0.06}s`,
+                    minWidth: 80,
+                  }}
+                  onMouseEnter={e => { if (!isActive) { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'translateY(-2px)'; } }}
+                  onMouseLeave={e => { if (!isActive) { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.transform = 'translateY(0)'; } }}
                 >
-                  {b.service?.images?.[0] ? (
-                    <img
-                      src={`${import.meta.env.VITE_UPLOAD_URL}/${b.service.images[0]}`}
-                      alt={b.service?.title}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <CategoryIcon category={b.service?.category} size={28} />
-                  )}
-                </div>
-
-                {/* Details */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
-                    <div>
-                      <h3
-                        className="font-bold"
-                        style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.05rem', color: '#1C1917' }}
-                      >
-                        {b.service?.title || 'Service'}
-                      </h3>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <div
-                          className="w-2 h-2 rounded-full"
-                          style={{ background: STATUS_BAR[b.status] }}
-                        />
-                        <span className="text-[12px] font-semibold capitalize" style={{ color: STATUS_BAR[b.status] }}>
-                          {b.status}
-                        </span>
-                      </div>
-                    </div>
-                    <Badge status={b.status}>{b.status}</Badge>
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <Icon size={12} style={{ color: isActive ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.5)' }} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: isActive ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.45)' }}>
+                      {pill.label}
+                    </span>
                   </div>
+                  <span className="font-bold leading-none" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', color: '#fff' }}>
+                    {mounted ? <AnimatedNumber target={count} /> : count}
+                  </span>
+                </button>
+              );
+            })}
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {[
-                      { label: 'Vendor',   value: b.vendor?.full_name },
-                      { label: 'Date',     value: new Date(b.booking_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) },
-                      { label: 'Amount',   value: `₹${b.total_amount?.toLocaleString('en-IN')}`, gold: true },
-                      { label: 'Category', value: b.service?.category, capitalize: true },
-                    ].map(({ label, value, gold, capitalize }) => (
-                      <div key={label} className="rounded-xl px-3 py-2" style={{ background: '#FDF9F4' }}>
-                        <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#A8A29E' }}>{label}</div>
-                        <div
-                          className="text-[13px] font-semibold truncate"
-                          style={{ color: gold ? '#B8912A' : '#1C1917', textTransform: capitalize ? 'capitalize' : 'none' }}
-                        >
-                          {value}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {b.notes && <p className="text-[12px] mt-3 italic px-3 py-2 rounded-xl" style={{ color: '#A8A29E', background: '#FDF9F4' }}>"{b.notes}"</p>}
-                  <BookingTimeline status={b.status} />
-                </div>
-
-                {/* Actions */}
-                <div className="flex flex-row sm:flex-col gap-2 justify-end shrink-0">
-                  {b.status === 'pending' && (
-                    <Button variant="danger" size="sm" onClick={() => handleCancelClick(b)}>
-                      <X size={13} /> Cancel
-                    </Button>
-                  )}
-                  {b.status === 'completed' && reviewableIds.has(b._id) && (
-                    <Button variant="gold" size="sm" onClick={() => setReviewBooking(b)}>
-                      <Star size={13} /> Review
-                    </Button>
-                  )}
-                  {b.status === 'completed' && !reviewableIds.has(b._id) && (
-                    <div
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-bold"
-                      style={{ background: 'rgba(5,150,105,0.1)', color: '#059669' }}
-                    >
-                      <CircleCheck size={13} /> Reviewed
-                    </div>
-                  )}
+            {/* Total Spent */}
+            <div
+              className="flex items-center gap-3 px-5 py-3 rounded-2xl ml-auto"
+              style={{
+                background: 'rgba(184,145,42,0.18)', border: '1.5px solid rgba(184,145,42,0.3)',
+                opacity: mounted ? 1 : 0, transition: 'opacity 0.5s 0.7s',
+              }}
+            >
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(184,145,42,0.25)' }}>
+                <IndianRupee size={16} style={{ color: '#E8C86E' }} />
+              </div>
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: 'rgba(255,255,255,0.45)' }}>Total Spent</div>
+                <div className="font-bold leading-none" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', color: '#E8C86E' }}>
+                  ₹{totalSpent.toLocaleString('en-IN')}
                 </div>
               </div>
             </div>
-          ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ══ BOOKING CARDS ══════════════════════════════════════ */}
+      {filtered.length === 0 ? (
+        /* ── Empty state ── */
+        <div
+          className="flex flex-col items-center justify-center py-24 rounded-3xl relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg,#FDF6EE 0%,#fff 50%,#FDF6EE 100%)', border: '1px solid #E8E1D9' }}
+        >
+          {/* Decorative rings */}
+          <div className="absolute pointer-events-none" style={{ width: 280, height: 280, borderRadius: '50%', border: '1px solid rgba(190,24,93,0.07)', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} />
+          <div className="absolute pointer-events-none" style={{ width: 180, height: 180, borderRadius: '50%', border: '1px solid rgba(184,145,42,0.09)', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} />
+
+          <div
+            className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5 relative"
+            style={{ background: 'linear-gradient(135deg,#BE185D,#9D174D)', boxShadow: '0 12px 40px rgba(190,24,93,0.35)' }}
+          >
+            <Calendar size={34} style={{ color: '#fff' }} />
+          </div>
+          <h3 className="font-bold mb-2" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.4rem', color: '#1C1917' }}>
+            {searchQuery ? 'No matching bookings' : activeStatus === 'all' ? 'No bookings yet' : `No ${activeStatus} bookings`}
+          </h3>
+          <p className="text-[13px] mb-7" style={{ color: '#78716C' }}>
+            {searchQuery ? 'Try different keywords or clear the filter.' : 'Start planning your perfect celebration today.'}
+          </p>
+          {!searchQuery && (
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-white font-bold text-[14px]"
+              style={{ background: 'linear-gradient(135deg,#BE185D,#9D174D)', boxShadow: '0 8px 28px rgba(190,24,93,0.4)' }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(190,24,93,0.5)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(190,24,93,0.4)'; }}
+            >
+              Browse Wedding Services <ArrowRight size={16} />
+            </Link>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filtered.map((b, idx) => {
+            const sm       = STATUS_META[b.status] || STATUS_META.pending;
+            const catMeta  = CATEGORY_ICON[b.service?.category?.toLowerCase()] || CATEGORY_ICON.other;
+            const CatIcon  = catMeta.icon;
+            const StatusIcon = sm.icon;
+            const imageUrl = b.service?.images?.[0]
+              ? `${import.meta.env.VITE_UPLOAD_URL}/${b.service.images[0]}`
+              : null;
+            const isHovered  = hoveredCard === b._id;
+            const isCancelled = b.status === 'cancelled';
+
+            return (
+              <div
+                key={b._id}
+                className="rounded-3xl overflow-hidden flex"
+                style={{
+                  background: '#fff',
+                  border: '1px solid #E8E1D9',
+                  boxShadow: isHovered
+                    ? `0 20px 60px ${sm.shadow}, 0 4px 16px rgba(28,9,16,0.06)`
+                    : `0 4px 24px ${sm.shadow}, 0 1px 4px rgba(28,9,16,0.04)`,
+                  minHeight: 180,
+                  animation: `fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) ${idx * 0.08}s both`,
+                  transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                  transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s cubic-bezier(0.4,0,0.2,1)',
+                  cursor: 'default',
+                }}
+                onMouseEnter={() => setHoveredCard(b._id)}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
+                {/* ─ Left image panel ─ */}
+                <div className="relative shrink-0 overflow-hidden" style={{ width: 200 }}>
+                  {/* Image with zoom on hover */}
+                  <div className="absolute inset-0" style={{
+                    transform: isHovered ? 'scale(1.06)' : 'scale(1)',
+                    transition: 'transform 0.6s cubic-bezier(0.4,0,0.2,1)',
+                  }}>
+                    <ImagePanel
+                      category={b.service?.category}
+                      imageUrl={imageUrl}
+                      status={b.status}
+                    />
+                  </div>
+
+                  {/* Status badge — bottom left overlay */}
+                  <div
+                    className="absolute bottom-3 left-3 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold"
+                    style={{
+                      background: isCancelled ? sm.color : 'rgba(0,0,0,0.55)',
+                      color: '#fff',
+                      backdropFilter: 'blur(8px)',
+                      border: `1px solid ${isCancelled ? 'transparent' : 'rgba(255,255,255,0.15)'}`,
+                      boxShadow: isCancelled ? `0 4px 12px ${sm.glow}` : 'none',
+                    }}
+                  >
+                    <StatusIcon size={11} />
+                    {sm.label}
+                  </div>
+
+                  {/* Gradient right edge fade */}
+                  <div className="absolute inset-y-0 right-0 w-8 pointer-events-none"
+                    style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.15))' }} />
+                </div>
+
+                {/* ─ Right content ─ */}
+                <div className="flex-1 min-w-0 flex flex-col p-6">
+                  {/* Title row */}
+                  <div className="flex items-start justify-between gap-3 mb-1">
+                    <h3
+                      className="font-bold leading-tight"
+                      style={{
+                        fontFamily: 'Playfair Display, serif',
+                        fontSize: '1.2rem',
+                        color: isCancelled ? '#A8A29E' : '#1C1917',
+                        textDecoration: isCancelled ? 'line-through' : 'none',
+                        flex: 1,
+                      }}
+                    >
+                      {b.service?.title || 'Service'}
+                    </h3>
+                    {/* Amount */}
+                    <div className="text-right shrink-0">
+                      <div className="font-bold leading-none" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', color: '#B8912A' }}>
+                        ₹{(b.total_amount || 0).toLocaleString('en-IN')}
+                      </div>
+                      <div className="text-[10px] font-medium mt-0.5" style={{ color: '#A8A29E' }}>total amount</div>
+                    </div>
+                  </div>
+
+                  {/* Meta row */}
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
+                    <div className="flex items-center gap-1.5 text-[12px] font-medium" style={{ color: '#78716C' }}>
+                      <Calendar size={12} style={{ color: sm.color }} />
+                      {new Date(b.booking_date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[12px] font-medium" style={{ color: isCancelled ? '#A8A29E' : '#78716C' }}>
+                      <User size={12} style={{ color: isCancelled ? '#A8A29E' : '#BE185D' }} />
+                      {b.vendor?.full_name || '—'}
+                    </div>
+                  </div>
+
+                  {/* Notes */}
+                  {b.notes && (
+                    <div className="flex items-start gap-2 px-3 py-2 rounded-xl mb-4 text-[12px] italic"
+                      style={{ background: '#FDF9F4', border: '1px solid #F0EBE5', color: '#78716C' }}>
+                      <MessageSquare size={11} className="shrink-0 mt-0.5" style={{ color: '#C4B5A5' }} />
+                      "{b.notes}"
+                    </div>
+                  )}
+
+                  {/* Timeline */}
+                  <div className="mb-5">
+                    <BookingTimeline status={b.status} />
+                  </div>
+
+                  {/* Bottom strip */}
+                  <div className="flex items-center justify-between gap-3 pt-4 mt-auto" style={{ borderTop: '1px solid #F5EDE4' }}>
+                    {/* Category pill */}
+                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold capitalize"
+                      style={{ background: `${catMeta.color}12`, color: catMeta.color, border: `1px solid ${catMeta.color}20` }}>
+                      <CatIcon size={12} />
+                      {b.service?.category || 'Other'}
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex items-center gap-2">
+                      {b.status === 'pending' && (
+                        <button
+                          onClick={() => handleCancelClick(b)}
+                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[12px] font-bold transition-all duration-200"
+                          style={{ background: 'rgba(220,38,38,0.07)', color: '#DC2626', border: '1px solid rgba(220,38,38,0.18)' }}
+                          onMouseEnter={e => e.currentTarget.style.background = 'rgba(220,38,38,0.14)'}
+                          onMouseLeave={e => e.currentTarget.style.background = 'rgba(220,38,38,0.07)'}
+                        >
+                          <X size={12} /> Cancel
+                        </button>
+                      )}
+                      {b.status === 'completed' && reviewableIds.has(b._id) && (
+                        <button
+                          onClick={() => setReviewBooking(b)}
+                          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-bold text-white transition-all duration-200"
+                          style={{ background: 'linear-gradient(135deg,#B8912A,#9A7520)', boxShadow: '0 4px 14px rgba(184,145,42,0.35)' }}
+                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 7px 20px rgba(184,145,42,0.45)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(184,145,42,0.35)'; }}
+                        >
+                          <Star size={12} /> Write Review
+                        </button>
+                      )}
+                      {b.status === 'completed' && !reviewableIds.has(b._id) && (
+                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[12px] font-bold"
+                          style={{ background: 'rgba(5,150,105,0.09)', color: '#059669', border: '1px solid rgba(5,150,105,0.18)' }}>
+                          <CircleCheck size={12} /> Reviewed
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 
-      {/* ── Cancel Modal ── */}
+      {/* ══ CANCEL MODAL ═══════════════════════════════════════ */}
       <Modal
         isOpen={!!cancelId}
         onClose={() => { setCancelId(null); setCancelBooking(null); }}
@@ -447,6 +675,16 @@ export default function ClientBookings() {
         }
       >
         <div className="space-y-4">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-2xl"
+            style={{ background: 'rgba(220,38,38,0.07)', border: '1px solid rgba(220,38,38,0.16)' }}>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: 'rgba(220,38,38,0.12)' }}>
+              <AlertTriangle size={16} style={{ color: '#DC2626' }} />
+            </div>
+            <p className="text-[12px] font-medium" style={{ color: '#DC2626' }}>
+              This action cannot be undone. The booking will be permanently cancelled.
+            </p>
+          </div>
           {cancelBooking && (
             <div className="rounded-2xl p-5 space-y-3" style={{ background: '#FDF6EE', border: '1px solid #E8E1D9' }}>
               {[
@@ -461,19 +699,16 @@ export default function ClientBookings() {
               ))}
               <div className="flex justify-between items-center pt-3" style={{ borderTop: '1px solid #E8E1D9' }}>
                 <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: '#A8A29E' }}>Amount</span>
-                <span className="font-bold" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', color: '#B8912A' }}>
+                <span className="font-bold" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.15rem', color: '#B8912A' }}>
                   ₹{cancelBooking.total_amount?.toLocaleString('en-IN')}
                 </span>
               </div>
             </div>
           )}
-          <p className="text-[13px]" style={{ color: '#78716C' }}>
-            Are you sure you want to cancel this booking? This action cannot be undone.
-          </p>
         </div>
       </Modal>
 
-      {/* ── Review Modal ── */}
+      {/* ══ REVIEW MODAL ════════════════════════════════════════ */}
       <Modal
         isOpen={!!reviewBooking}
         onClose={() => { setReviewBooking(null); setReview({ rating: 5, comment: '' }); }}
@@ -486,65 +721,79 @@ export default function ClientBookings() {
         }
       >
         <div className="space-y-5">
-          {reviewBooking && (
-            <div className="flex items-center gap-3 p-4 rounded-2xl" style={{ background: '#FDF6EE', border: '1px solid #E8E1D9' }}>
-              <div className="w-12 h-12 rounded-xl shrink-0 overflow-hidden" style={{ background: '#FDF6EE' }}>
-                {reviewBooking.service?.images?.[0] ? (
-                  <img src={`${import.meta.env.VITE_UPLOAD_URL}/${reviewBooking.service.images[0]}`}
-                    alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <CategoryIcon category={reviewBooking.service?.category} size={20} />
-                )}
-              </div>
-              <div className="min-w-0">
-                <div className="font-semibold truncate" style={{ fontFamily: 'Playfair Display, serif', color: '#1C1917' }}>
-                  {reviewBooking.service?.title}
+          {/* Service card */}
+          {reviewBooking && (() => {
+            const cat = CATEGORY_ICON[reviewBooking.service?.category?.toLowerCase()] || CATEGORY_ICON.other;
+            const CIcon = cat.icon;
+            return (
+              <div className="flex items-center gap-4 p-4 rounded-2xl" style={{ background: '#FDF6EE', border: '1px solid #E8E1D9' }}>
+                <div className="w-16 h-16 rounded-2xl shrink-0 overflow-hidden relative" style={{ background: cat.bg }}>
+                  {reviewBooking.service?.images?.[0] ? (
+                    <img src={`${import.meta.env.VITE_UPLOAD_URL}/${reviewBooking.service.images[0]}`}
+                      alt="" className="w-full h-full object-cover absolute inset-0" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <CIcon size={24} style={{ color: cat.color }} />
+                    </div>
+                  )}
                 </div>
-                <div className="text-[12px]" style={{ color: '#78716C' }}>{reviewBooking.vendor?.full_name}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-bold truncate" style={{ fontFamily: 'Playfair Display, serif', color: '#1C1917', fontSize: '1.05rem' }}>
+                    {reviewBooking.service?.title}
+                  </div>
+                  <div className="text-[12px] mt-0.5" style={{ color: '#78716C' }}>by {reviewBooking.vendor?.full_name}</div>
+                  <div className="flex items-center gap-1.5 mt-1 px-2 py-0.5 rounded-lg w-fit text-[11px] font-bold capitalize"
+                    style={{ background: `${cat.color}12`, color: cat.color }}>
+                    <CIcon size={10} />
+                    {reviewBooking.service?.category}
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
+          {/* Stars */}
           <div>
             <div className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: '#78716C' }}>Your Rating</div>
-            <div className="flex gap-2 mb-2">
-              {[1, 2, 3, 4, 5].map(s => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setReview(r => ({ ...r, rating: s }))}
-                  className="transition-all duration-150 hover:scale-110 active:scale-95"
-                >
-                  <Star
-                    size={36}
-                    style={{
-                      color: s <= review.rating ? '#B8912A' : '#E8E1D9',
-                      fill: s <= review.rating ? '#B8912A' : 'transparent',
-                      filter: s <= review.rating ? 'drop-shadow(0 2px 6px rgba(184,145,42,0.4))' : 'none',
-                      transition: 'all 0.15s',
-                    }}
-                  />
+            <div className="flex gap-1.5 mb-3">
+              {[1,2,3,4,5].map(s => (
+                <button key={s} type="button" onClick={() => setReview(r => ({ ...r, rating: s }))}
+                  style={{ transition: 'transform 0.15s', display: 'flex' }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.25) rotate(-5deg)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1) rotate(0deg)'}>
+                  <Star size={40} style={{
+                    color: s <= review.rating ? '#B8912A' : '#E8E1D9',
+                    fill: s <= review.rating ? '#B8912A' : 'transparent',
+                    filter: s <= review.rating ? 'drop-shadow(0 3px 10px rgba(184,145,42,0.5))' : 'none',
+                    transition: 'all 0.15s',
+                  }} />
                 </button>
               ))}
             </div>
-            <div
-              className="text-[14px] font-bold px-3 py-1 rounded-full inline-block"
-              style={{ background: 'rgba(184,145,42,0.1)', color: '#B8912A' }}
-            >
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[13px] font-bold"
+              style={{ background: 'linear-gradient(135deg,rgba(184,145,42,0.15),rgba(184,145,42,0.07))', color: '#B8912A', border: '1px solid rgba(184,145,42,0.22)' }}>
+              <Star size={12} style={{ fill: '#B8912A', color: '#B8912A' }} />
               {['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][review.rating]}
             </div>
           </div>
 
-          <Textarea
-            label="Your Review (optional)"
-            name="comment"
-            value={review.comment}
-            onChange={e => setReview(r => ({ ...r, comment: e.target.value }))}
-            placeholder="Share your experience with this vendor…"
-            rows={4}
-          />
+          {/* Comment */}
+          <div>
+            <Textarea
+              label="Your Review (optional)"
+              name="comment"
+              value={review.comment}
+              onChange={e => setReview(r => ({ ...r, comment: e.target.value }))}
+              placeholder="Share your experience with this vendor…"
+              rows={4}
+            />
+            <div className="text-right text-[11px] mt-1" style={{ color: '#A8A29E' }}>
+              {review.comment.length} / 500
+            </div>
+          </div>
         </div>
       </Modal>
+
     </div>
   );
 }
