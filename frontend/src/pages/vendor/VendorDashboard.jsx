@@ -17,7 +17,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return (
     <div className="bg-white border border-[#E8E8E4] rounded-xl p-3 shadow-lg text-sm">
       <div className="font-semibold text-[#1A1A18] mb-1">{label}</div>
-      <div className="text-[#BE185D]">₹{payload[0]?.value?.toLocaleString('en-IN')}</div>
+      <div className="text-primary">₹{payload[0]?.value?.toLocaleString('en-IN')}</div>
       <div className="text-[#6B6B65] text-xs">{payload[1]?.value} bookings</div>
     </div>
   );
@@ -82,15 +82,15 @@ export default function VendorDashboard() {
                 <AreaChart data={earnings.monthly}>
                   <defs>
                     <linearGradient id="earningsGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#BE185D" stopOpacity={0.15} />
-                      <stop offset="95%" stopColor="#BE185D" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#1B3A5C" stopOpacity={0.15} />
+                      <stop offset="95%" stopColor="#1B3A5C" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
                   <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B65' }} axisLine={false} tickLine={false} />
                   <YAxis tickFormatter={v => `₹${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: '#6B6B65' }} axisLine={false} tickLine={false} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="earnings" stroke="#BE185D" strokeWidth={2.5} fill="url(#earningsGrad)" />
+                  <Area type="monotone" dataKey="earnings" stroke="#1B3A5C" strokeWidth={2.5} fill="url(#earningsGrad)" />
                   <Area type="monotone" dataKey="bookings" stroke="#D97706" strokeWidth={1.5} fill="none" strokeDasharray="4 4" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -113,7 +113,7 @@ export default function VendorDashboard() {
             ) : (
               <div className="space-y-3">
                 {requests.slice(0, 5).map(b => (
-                  <div key={b._id} className="p-3 rounded-xl border border-[#E8E8E4] hover:border-[#BE185D]/30 transition-colors">
+                  <div key={b._id} className="p-3 rounded-xl border border-[#E8E8E4] hover:border-primary/30 transition-colors">
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <span className="text-sm font-medium text-[#1A1A18] line-clamp-1">{b.service?.title}</span>
                       <Badge status={b.status}>{b.status}</Badge>

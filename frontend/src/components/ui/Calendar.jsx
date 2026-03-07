@@ -97,13 +97,13 @@ export default function Calendar({
     <div className="bg-white rounded-2xl border border-[#E8E8E4] p-4 select-none">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <button onClick={prevMonth} className="w-8 h-8 rounded-lg hover:bg-[#FCE7F3] flex items-center justify-center text-[#6B6B65] hover:text-[#BE185D] transition-colors">
+        <button onClick={prevMonth} className="w-8 h-8 rounded-lg hover:bg-primary-light flex items-center justify-center text-muted hover:text-primary transition-colors">
           <ChevronLeft size={18} />
         </button>
         <span className="font-semibold text-[#1A1A18] text-sm">
           {MONTHS[viewMonth]} {viewYear}
         </span>
-        <button onClick={nextMonth} className="w-8 h-8 rounded-lg hover:bg-[#FCE7F3] flex items-center justify-center text-[#6B6B65] hover:text-[#BE185D] transition-colors">
+        <button onClick={nextMonth} className="w-8 h-8 rounded-lg hover:bg-primary-light flex items-center justify-center text-muted hover:text-primary transition-colors">
           <ChevronRight size={18} />
         </button>
       </div>
@@ -141,7 +141,7 @@ export default function Calendar({
       <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-[#E8E8E4]">
         {!vendorMode && (
           <div className="flex items-center gap-1.5 text-xs text-[#6B6B65]">
-            <div className="w-3 h-3 rounded bg-[#BE185D]" />
+            <div className="w-3 h-3 rounded bg-primary" />
             Selected
           </div>
         )}
@@ -155,7 +155,7 @@ export default function Calendar({
         </div>
         {!vendorMode && (
           <div className="flex items-center gap-1.5 text-xs text-[#6B6B65]">
-            <div className="w-3 h-3 rounded border border-[#BE185D]" />
+            <div className="w-3 h-3 rounded border border-primary" />
             Available
           </div>
         )}

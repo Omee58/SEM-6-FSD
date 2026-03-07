@@ -70,8 +70,8 @@ export default function AdminBookings() {
             <button key={s} onClick={() => { setStatus(s === 'all' ? '' : s); setPage(1); }}
               className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize whitespace-nowrap transition-colors ${
                 (status === '' && s === 'all') || status === s
-                  ? 'bg-[#BE185D] text-white'
-                  : 'border border-[#E8E8E4] text-[#6B6B65] hover:border-[#BE185D] hover:text-[#BE185D]'
+                  ? 'bg-primary text-white'
+                  : 'border border-border text-muted hover:border-primary hover:text-primary'
               }`}>
               {s}
             </button>
@@ -91,7 +91,7 @@ export default function AdminBookings() {
         <div className="flex justify-center gap-2 mt-6">
           {[...Array(Math.ceil(total / 10))].map((_, i) => (
             <button key={i} onClick={() => setPage(i + 1)}
-              className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${page === i + 1 ? 'bg-[#BE185D] text-white' : 'bg-white border border-[#E8E8E4] text-[#6B6B65]'}`}>
+              className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${page === i + 1 ? 'bg-primary text-white' : 'bg-white border border-border text-muted'}`}>
               {i + 1}
             </button>
           ))}

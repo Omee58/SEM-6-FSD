@@ -8,13 +8,13 @@ import {
 import { clientAPI } from '../services/api';
 
 const CATEGORIES = [
-  { icon: Camera, label: 'Photography', color: '#BE185D', bg: '#FCE7F3' },
+  { icon: Camera, label: 'Photography', color: '#8B1A3A', bg: '#FDF0F4' },
   { icon: UtensilsCrossed, label: 'Catering', color: '#D97706', bg: '#FEF3C7' },
   { icon: Building2, label: 'Venue', color: '#7C3AED', bg: '#EDE9FE' },
   { icon: Sparkles, label: 'Decoration', color: '#059669', bg: '#D1FAE5' },
   { icon: Palette, label: 'Mehendi', color: '#DC2626', bg: '#FEE2E2' },
   { icon: Music, label: 'Music & DJ', color: '#2563EB', bg: '#DBEAFE' },
-  { icon: Star, label: 'Makeup', color: '#9D174D', bg: '#FCE7F3' },
+  { icon: Star, label: 'Makeup', color: '#0891B2', bg: '#CFFAFE' },
   { icon: Car, label: 'Transport', color: '#0891B2', bg: '#CFFAFE' },
 ];
 
@@ -59,10 +59,10 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
       {/* Navbar */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-[#E8E8E4]' : 'bg-transparent'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-border' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-[#BE185D] to-[#9D174D] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary to-primary-dark flex items-center justify-center">
               <Heart size={16} className="fill-white text-white" />
             </div>
             <span className={`text-lg font-bold ${scrolled ? 'text-[#1A1A18]' : 'text-white'}`} style={{ fontFamily: 'Playfair Display, serif' }}>
@@ -70,10 +70,10 @@ export default function LandingPage() {
             </span>
           </Link>
           <div className="flex items-center gap-3">
-            <Link to="/login" className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${scrolled ? 'text-[#6B6B65] hover:text-[#BE185D]' : 'text-white/90 hover:text-white'}`}>
+            <Link to="/login" className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${scrolled ? 'text-muted hover:text-primary' : 'text-white/90 hover:text-white'}`}>
               Sign In
             </Link>
-            <Link to="/register" className="text-sm font-medium px-4 py-2 rounded-lg bg-[#BE185D] text-white hover:bg-[#9D174D] transition-colors shadow-sm">
+            <Link to="/register" className="text-sm font-medium px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors shadow-sm">
               Get Started
             </Link>
           </div>
@@ -82,7 +82,7 @@ export default function LandingPage() {
 
       {/* ── HERO ──────────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-[#BE185D] via-[#9D174D] to-[#7C1037]" />
+        <div className="absolute inset-0 bg-linear-to-br from-[#1A0409] via-[#5A0E24] to-primary" />
         <div className="absolute inset-0 opacity-20">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="absolute rounded-full border border-white/50"
@@ -108,16 +108,16 @@ export default function LandingPage() {
             <Heart size={14} className="fill-white" />
             India's #1 Wedding Marketplace
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
+          <h1 className="text-6xl md:text-8xl font-semibold leading-tight mb-6" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
             Your Perfect<br />
-            <span className="text-[#FCD34D]">Wedding</span> Awaits
+            <em className="text-accent-medium">Wedding</em> Awaits
           </h1>
           <p className="text-lg md:text-xl text-white/85 mb-10 max-w-2xl mx-auto leading-relaxed">
             Connect with India's finest wedding vendors — photographers, caterers, venues, decorators and more.
             Book with confidence, celebrate with joy.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/register" className="inline-flex items-center gap-2 bg-white text-[#BE185D] font-semibold px-8 py-4 rounded-xl hover:bg-[#FCE7F3] transition-colors shadow-lg text-base">
+            <Link to="/register" className="inline-flex items-center gap-2 bg-white text-primary font-semibold px-8 py-4 rounded-xl hover:bg-primary-light transition-colors shadow-lg text-base">
               Start Planning Free
               <ArrowRight size={18} />
             </Link>
@@ -137,7 +137,7 @@ export default function LandingPage() {
       <section id="categories" className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 bg-[#FCE7F3] text-[#BE185D] rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 bg-primary-light text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-4">
               <Sparkles size={14} />
               Services
             </div>
@@ -149,11 +149,11 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {CATEGORIES.map(({ icon: Icon, label, color, bg }) => (
               <Link to="/register" key={label}
-                className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-[#E8E8E4] bg-white hover:border-[#BE185D] hover:shadow-[0_8px_30px_rgba(190,24,93,0.12)] hover:-translate-y-1 transition-all duration-200">
+                className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-border bg-white hover:border-primary hover:shadow-[0_8px_30px_rgba(13,107,82,0.12)] hover:-translate-y-1 transition-all duration-200">
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all" style={{ background: bg }}>
                   <Icon size={24} style={{ color }} />
                 </div>
-                <span className="text-sm font-semibold text-[#1A1A18] group-hover:text-[#BE185D] transition-colors">{label}</span>
+                <span className="text-sm font-semibold text-[#1A1A18] group-hover:text-primary transition-colors">{label}</span>
               </Link>
             ))}
           </div>
@@ -164,7 +164,7 @@ export default function LandingPage() {
       <section className="py-24 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 bg-[#FCE7F3] text-[#BE185D] rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 bg-primary-light text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-4">
               <CheckCircle size={14} />
               Process
             </div>
@@ -173,11 +173,11 @@ export default function LandingPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-            <div className="hidden md:block absolute top-10 left-[33%] right-[33%] h-0.5 bg-linear-to-r from-[#FCE7F3] via-[#BE185D] to-[#FCE7F3]" />
+            <div className="hidden md:block absolute top-10 left-[33%] right-[33%] h-0.5 bg-linear-to-r from-primary-light via-primary to-primary-light" />
             {STEPS.map(({ num, title, desc }) => (
               <div key={num} className="text-center relative z-10">
-                <div className="w-20 h-20 rounded-2xl bg-linear-to-br from-[#BE185D] to-[#9D174D] flex items-center justify-center mx-auto mb-6 shadow-[0_8px_20px_rgba(190,24,93,0.3)]">
-                  <span className="text-2xl font-bold text-white" style={{ fontFamily: 'Playfair Display, serif' }}>{num}</span>
+                <div className="w-20 h-20 rounded-2xl bg-linear-to-br from-primary to-primary-dark flex items-center justify-center mx-auto mb-6 shadow-[0_8px_20px_rgba(13,107,82,0.3)]">
+                  <span className="text-3xl font-bold text-white" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{num}</span>
                 </div>
                 <h3 className="text-xl font-bold text-[#1A1A18] mb-3" style={{ fontFamily: 'Playfair Display, serif' }}>{title}</h3>
                 <p className="text-[#6B6B65] leading-relaxed text-sm">{desc}</p>
@@ -188,7 +188,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── STATS ───────────────────────────────────────────── */}
-      <section className="py-20 px-6 bg-linear-to-r from-[#BE185D] to-[#9D174D]">
+      <section className="py-20 px-6 bg-linear-to-r from-[#1A0409] to-primary">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-white text-center">
             {[
@@ -198,7 +198,7 @@ export default function LandingPage() {
               ['4.9★', 'Average Rating'],
             ].map(([v, l]) => (
               <div key={l}>
-                <div className="text-4xl font-bold mb-2" style={{ fontFamily: 'Playfair Display, serif' }}>{v}</div>
+                <div className="text-5xl font-bold mb-2" style={{ fontFamily: 'Cormorant Garamond, serif' }}>{v}</div>
                 <div className="text-white/80 text-sm">{l}</div>
               </div>
             ))}
@@ -211,7 +211,7 @@ export default function LandingPage() {
         <section className="py-24 px-6">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-14">
-              <div className="inline-flex items-center gap-2 bg-[#FCE7F3] text-[#BE185D] rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+              <div className="inline-flex items-center gap-2 bg-primary-light text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-4">
                 <Star size={14} />
                 Top Picks
               </div>
@@ -223,26 +223,26 @@ export default function LandingPage() {
               {services.map(svc => (
                 <Link to={`/services/${svc._id}`} key={svc._id}
                   className="group bg-white rounded-2xl border border-[#E8E8E4] overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.10)] hover:-translate-y-1 transition-all duration-200">
-                  <div className="h-48 bg-linear-to-br from-[#FCE7F3] to-[#FEE2E2] relative overflow-hidden">
+                  <div className="h-48 bg-linear-to-br from-primary-light to-[#F5C8D4] relative overflow-hidden">
                     {svc.images?.[0] ? (
                       <img src={`${import.meta.env.VITE_UPLOAD_URL}/${svc.images[0]}`}
                         alt={svc.title} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Heart size={40} className="text-[#BE185D]/30" />
+                        <Heart size={40} className="text-primary/30" />
                       </div>
                     )}
-                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-semibold text-[#BE185D] capitalize">
+                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-semibold text-primary capitalize">
                       {svc.category}
                     </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-[#1A1A18] mb-1 group-hover:text-[#BE185D] transition-colors">{svc.title}</h3>
-                    <p className="text-xs text-[#6B6B65] mb-3 line-clamp-2">{svc.description}</p>
+                    <h3 className="font-bold text-[#1A1A18] mb-1 group-hover:text-primary transition-colors">{svc.title}</h3>
+                    <p className="text-xs text-muted mb-3 line-clamp-2">{svc.description}</p>
                     <div className="flex items-center justify-between">
-                      <div className="text-lg font-bold text-[#BE185D]">₹{svc.price?.toLocaleString('en-IN')}</div>
+                      <div className="text-lg font-bold text-primary">₹{svc.price?.toLocaleString('en-IN')}</div>
                       {svc.avg_rating > 0 && (
-                        <div className="flex items-center gap-1 text-xs text-[#D97706]">
+                        <div className="flex items-center gap-1 text-xs text-accent">
                           <Star size={12} className="fill-current" />
                           {svc.avg_rating.toFixed(1)}
                         </div>
@@ -253,7 +253,7 @@ export default function LandingPage() {
               ))}
             </div>
             <div className="text-center mt-10">
-              <Link to="/register" className="inline-flex items-center gap-2 bg-[#BE185D] text-white font-semibold px-8 py-3 rounded-xl hover:bg-[#9D174D] transition-colors shadow-sm">
+              <Link to="/register" className="inline-flex items-center gap-2 bg-primary text-white font-semibold px-8 py-3 rounded-xl hover:bg-primary-dark transition-colors shadow-sm">
                 View All Services <ArrowRight size={16} />
               </Link>
             </div>
@@ -262,28 +262,29 @@ export default function LandingPage() {
       )}
 
       {/* ── TESTIMONIALS ────────────────────────────────────── */}
-      <section className="py-24 px-6 bg-[#F5F5F3]">
+      <section className="py-24 px-6 bg-surface-2">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 bg-[#FCE7F3] text-[#BE185D] rounded-full px-4 py-1.5 text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 bg-primary-light text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-4">
               <Heart size={14} />
               Reviews
             </div>
-            <h2 className="text-4xl font-bold text-[#1A1A18]" style={{ fontFamily: 'Playfair Display, serif' }}>
+            <h2 className="text-5xl font-semibold italic text-[#1A1A18]" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
               Love Stories from Our Couples
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {TESTIMONIALS.map(({ name, location, text, rating }) => (
-              <div key={name} className="bg-white rounded-2xl p-6 border border-[#E8E8E4] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-shadow">
-                <div className="flex gap-0.5 mb-4">
+              <div key={name} className="bg-white rounded-2xl p-6 border border-border hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-shadow relative overflow-hidden">
+                <div className="absolute top-2 left-4 text-8xl font-bold text-primary/10 leading-none select-none" style={{ fontFamily: 'Cormorant Garamond, serif' }}>"</div>
+                <div className="flex gap-0.5 mb-4 relative z-10">
                   {[...Array(rating)].map((_, i) => (
-                    <Star key={i} size={16} className="text-[#D97706] fill-current" />
+                    <Star key={i} size={16} className="text-accent fill-current" />
                   ))}
                 </div>
-                <p className="text-[#1A1A18] text-sm leading-relaxed mb-5 italic">"{text}"</p>
+                <p className="text-[#1A1A18] text-sm leading-relaxed mb-5 italic relative z-10">"{text}"</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#BE185D] to-[#9D174D] flex items-center justify-center text-white text-sm font-bold">
+                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm font-bold">
                     {name.charAt(0)}
                   </div>
                   <div>
@@ -300,26 +301,26 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA BANNER ──────────────────────────────────────── */}
-      <section className="py-20 px-6 bg-linear-to-br from-[#1A1A18] to-[#2D2D2A]">
+      <section className="py-20 px-6 bg-linear-to-br from-[#1A0409] to-[#5A1428]">
         <div className="max-w-3xl mx-auto text-center">
-          <Heart size={40} className="text-[#BE185D] fill-current mx-auto mb-6" />
-          <h2 className="text-4xl font-bold text-white mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+          <Heart size={40} className="text-accent fill-current mx-auto mb-6" />
+          <h2 className="text-5xl font-semibold text-white mb-4" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
             Ready to Plan Your Dream Wedding?
           </h2>
           <p className="text-white/70 mb-8 text-lg">Join thousands of couples who trusted ShadiSeva for their perfect day.</p>
-          <Link to="/register" className="inline-flex items-center gap-2 bg-[#BE185D] text-white font-semibold px-10 py-4 rounded-xl hover:bg-[#9D174D] transition-colors shadow-lg text-base">
+          <Link to="/register" className="inline-flex items-center gap-2 bg-primary text-white font-semibold px-10 py-4 rounded-xl hover:bg-primary-dark transition-colors shadow-lg text-base">
             Get Started Free <ArrowRight size={18} />
           </Link>
         </div>
       </section>
 
       {/* ── FOOTER ──────────────────────────────────────────── */}
-      <footer className="bg-[#1A1A18] text-white/70 px-6 py-16">
+      <footer className="bg-[#1A0409] text-white/70 px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
             <div className="md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-linear-to-br from-[#BE185D] to-[#9D174D] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary to-primary-dark flex items-center justify-center">
                   <Heart size={16} className="fill-white text-white" />
                 </div>
                 <span className="text-white font-bold text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>ShadiSeva</span>
@@ -327,7 +328,7 @@ export default function LandingPage() {
               <p className="text-sm leading-relaxed mb-5">India's most trusted wedding marketplace connecting couples with verified vendors.</p>
               <div className="flex gap-3">
                 {[Instagram, Facebook, Twitter].map((Icon, i) => (
-                  <div key={i} className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-[#BE185D] transition-colors cursor-pointer">
+                  <div key={i} className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-primary transition-colors cursor-pointer">
                     <Icon size={16} />
                   </div>
                 ))}
@@ -359,7 +360,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-white/10 pt-8 text-center text-sm">
-            <p>© 2025 ShadiSeva. Made with <Heart size={12} className="inline fill-[#BE185D] text-[#BE185D]" /> in India 🇮🇳</p>
+            <p>© 2025 ShadiSeva. Made with <Heart size={12} className="inline fill-accent text-accent" /> in India 🇮🇳</p>
           </div>
         </div>
       </footer>

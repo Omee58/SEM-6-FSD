@@ -58,7 +58,7 @@ export default function AdminVendorApprovals() {
           {vendors.map(v => (
             <Card key={v._id} padding={false}>
               <div className="p-5 flex flex-col sm:flex-row gap-4">
-                <div className="w-14 h-14 rounded-full bg-linear-to-br from-[#BE185D] to-[#9D174D] flex items-center justify-center text-white text-xl font-bold shrink-0">
+                <div className="w-14 h-14 rounded-full bg-linear-to-br from-primary to-primary-dark flex items-center justify-center text-white text-xl font-bold shrink-0">
                   {v.full_name?.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">

@@ -20,22 +20,22 @@ const CATEGORY_ICON = {
 
 const CHECKLIST = [
   { label: 'Book a venue',           category: 'venue',         icon: Building2, color: '#7C3AED' },
-  { label: 'Hire a photographer',    category: 'photography',   icon: Camera,    color: '#BE185D' },
-  { label: 'Arrange catering',       category: 'catering',      icon: Utensils,  color: '#B8912A' },
+  { label: 'Hire a photographer',    category: 'photography',   icon: Camera,    color: '#8B1A3A' },
+  { label: 'Arrange catering',       category: 'catering',      icon: Utensils,  color: '#C9A84C' },
   { label: 'Book decorations',       category: 'decoration',    icon: Flower2,   color: '#059669' },
   { label: 'Plan makeup & mehendi',  category: ['makeup','mehendi'], icon: Palette, color: '#2563EB' },
 ];
 
 const STAT_CONFIG = [
-  { key: 'total',     label: 'Total Bookings',  tab: '',          grad: 'linear-gradient(135deg,#BE185D 0%,#9D174D 100%)', glow: '0 12px 40px rgba(190,24,93,0.45)',  icon: Calendar },
-  { key: 'pending',   label: 'Pending',         tab: 'pending',   grad: 'linear-gradient(135deg,#B8912A 0%,#9A7520 100%)', glow: '0 12px 40px rgba(184,145,42,0.45)', icon: Clock },
+  { key: 'total',     label: 'Total Bookings',  tab: '',          grad: 'linear-gradient(135deg,#8B1A3A 0%,#6B1230 100%)', glow: '0 12px 40px rgba(139,26,58,0.45)',   icon: Calendar },
+  { key: 'pending',   label: 'Pending',         tab: 'pending',   grad: 'linear-gradient(135deg,#C9A84C 0%,#A88B38 100%)', glow: '0 12px 40px rgba(201,168,76,0.45)',  icon: Clock },
   { key: 'confirmed', label: 'Confirmed',       tab: 'confirmed', grad: 'linear-gradient(135deg,#059669 0%,#047857 100%)', glow: '0 12px 40px rgba(5,150,105,0.45)', icon: Heart },
   { key: 'completed', label: 'Completed',       tab: 'completed', grad: 'linear-gradient(135deg,#7C3AED 0%,#6D28D9 100%)', glow: '0 12px 40px rgba(124,58,237,0.45)', icon: Star },
 ];
 
 const QUICK_ACTIONS = [
-  { to: '/services', icon: Search,   label: 'Browse', sub: 'Find vendors',     grad: 'linear-gradient(135deg,#BE185D,#9D174D)', glow: 'rgba(190,24,93,0.3)',  delay: '0s' },
-  { to: '/planner',  icon: Star,     label: 'Budget',  sub: 'Plan finances',   grad: 'linear-gradient(135deg,#B8912A,#9A7520)', glow: 'rgba(184,145,42,0.3)', delay: '0.06s' },
+  { to: '/services', icon: Search,   label: 'Browse', sub: 'Find vendors',     grad: 'linear-gradient(135deg,#8B1A3A,#6B1230)', glow: 'rgba(139,26,58,0.3)',   delay: '0s' },
+  { to: '/planner',  icon: Star,     label: 'Budget',  sub: 'Plan finances',   grad: 'linear-gradient(135deg,#C9A84C,#A88B38)', glow: 'rgba(201,168,76,0.3)',  delay: '0.06s' },
   { to: '/bookings', icon: Calendar, label: 'Bookings',sub: 'Manage events',   grad: 'linear-gradient(135deg,#7C3AED,#6D28D9)', glow: 'rgba(124,58,237,0.3)', delay: '0.12s' },
 ];
 
@@ -133,7 +133,7 @@ export default function ClientDashboard() {
         <div
           className="relative overflow-hidden rounded-3xl text-white"
           style={{
-            background: 'linear-gradient(135deg, #0D0509 0%, #2D0D1A 30%, #6B0F30 65%, #BE185D 100%)',
+            background: 'linear-gradient(135deg, #1A0409 0%, #3D0A1A 30%, #5A0E24 65%, #8B1A3A 100%)',
             backgroundSize: '300% 300%',
             animation: 'gradientShift 8s ease infinite',
             minHeight: 220,
@@ -141,8 +141,8 @@ export default function ClientDashboard() {
           }}
         >
           {/* Floating orbs */}
-          <FloatOrb size={220} color="rgba(190,24,93,0.22)" style={{ top: -60, right: -40, animationDelay: '0s' }} />
-          <FloatOrb size={140} color="rgba(184,145,42,0.18)" style={{ bottom: -30, right: 120, animationDelay: '2s' }} />
+          <FloatOrb size={220} color="rgba(139,26,58,0.22)" style={{ top: -60, right: -40, animationDelay: '0s' }} />
+          <FloatOrb size={140} color="rgba(201,168,76,0.18)" style={{ bottom: -30, right: 120, animationDelay: '2s' }} />
           <FloatOrb size={100} color="rgba(124,58,237,0.15)" style={{ top: 10, left: '40%', animationDelay: '4s' }} />
 
           {/* Dot mesh overlay */}
@@ -164,8 +164,8 @@ export default function ClientDashboard() {
               <div
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-4"
                 style={{
-                  background: 'rgba(184,145,42,0.18)',
-                  border: '1px solid rgba(184,145,42,0.35)',
+                  background: 'rgba(201,168,76,0.18)',
+                  border: '1px solid rgba(201,168,76,0.35)',
                   animation: 'fadeIn 0.6s ease both',
                 }}
               >
@@ -217,7 +217,7 @@ export default function ClientDashboard() {
                   <div key={l}
                     className="flex items-baseline gap-1.5 px-3 py-1.5 rounded-xl"
                     style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <span className="font-bold text-lg leading-none" style={{ fontFamily: 'Playfair Display, serif', color: c }}>{v}</span>
+                    <span className="font-bold text-lg leading-none" style={{ fontFamily: 'Cormorant Garamond, serif', color: c }}>{v}</span>
                     <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{l}</span>
                   </div>
                 ))}
@@ -287,8 +287,8 @@ export default function ClientDashboard() {
               <div
                 className="text-white font-bold mb-0.5"
                 style={{
-                  fontFamily: 'Playfair Display, serif',
-                  fontSize: '2.25rem',
+                  fontFamily: 'Cormorant Garamond, serif',
+                  fontSize: '2.5rem',
                   lineHeight: 1,
                   animation: `countUp 0.5s ease ${idx * 0.08}s both`,
                 }}
@@ -320,7 +320,7 @@ export default function ClientDashboard() {
             onMouseLeave={e => { e.currentTarget.style.transform = ''; }}
           >
             {/* Background */}
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg,#1A0A10 0%,#4A0E25 50%,#BE185D 100%)' }} />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg,#1A0409 0%,#3D0A1A 50%,#8B1A3A 100%)' }} />
 
             {/* Service image as bg */}
             {nextBooking.service?.images?.[0] && (
@@ -333,7 +333,7 @@ export default function ClientDashboard() {
             )}
 
             {/* Overlay gradient */}
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(26,10,16,0.92) 0%, rgba(26,10,16,0.5) 60%, transparent 100%)' }} />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(6,15,12,0.92) 0%, rgba(6,15,12,0.5) 60%, transparent 100%)' }} />
 
             <div className="relative flex items-center gap-6 p-7">
               {/* Service icon */}
@@ -375,7 +375,7 @@ export default function ClientDashboard() {
               <div className="text-center shrink-0">
                 <div
                   className="text-white font-bold"
-                  style={{ fontFamily: 'Playfair Display, serif', fontSize: '3.5rem', lineHeight: 1, textShadow: '0 0 40px rgba(190,24,93,0.8)' }}
+                  style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '3.5rem', lineHeight: 1, textShadow: '0 0 40px rgba(139,26,58,0.8)' }}
                 >
                   {daysUntil}
                 </div>
@@ -410,7 +410,7 @@ export default function ClientDashboard() {
               <Link
                 to="/bookings"
                 className="flex items-center gap-1.5 transition-all duration-200 hover:gap-2.5"
-                style={{ fontSize: 13, fontWeight: 700, color: '#BE185D' }}
+                style={{ fontSize: 13, fontWeight: 700, color: '#8B1A3A' }}
               >
                 View all <ArrowRight size={13} />
               </Link>
@@ -425,11 +425,11 @@ export default function ClientDashboard() {
                     style={{ width: 80, height: 80 }}
                   >
                     <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto"
-                      style={{ background: 'linear-gradient(135deg,#FCE7F3,#F9D4EC)', animation: 'float 3s ease-in-out infinite' }}>
-                      <Calendar size={34} style={{ color: '#BE185D' }} />
+                      style={{ background: 'linear-gradient(135deg,#FDF0F4,#F5C8D4)', animation: 'float 3s ease-in-out infinite' }}>
+                      <Calendar size={34} style={{ color: '#8B1A3A' }} />
                     </div>
                     <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center"
-                      style={{ background: 'linear-gradient(135deg,#B8912A,#9A7520)', boxShadow: '0 2px 8px rgba(184,145,42,0.4)' }}>
+                      style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 2px 8px rgba(201,168,76,0.4)' }}>
                       <Sparkles size={12} style={{ color: '#fff' }} />
                     </div>
                   </div>
@@ -443,12 +443,12 @@ export default function ClientDashboard() {
                     to="/services"
                     className="inline-flex items-center gap-2 px-6 py-3 text-white font-bold rounded-xl transition-all"
                     style={{
-                      background: 'linear-gradient(135deg,#BE185D,#9D174D)',
-                      boxShadow: '0 8px 24px rgba(190,24,93,0.4)',
+                      background: 'linear-gradient(135deg,#8B1A3A,#6B1230)',
+                      boxShadow: '0 8px 24px rgba(139,26,58,0.4)',
                       fontSize: 13,
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(190,24,93,0.5)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 24px rgba(190,24,93,0.4)'; }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(139,26,58,0.5)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 24px rgba(139,26,58,0.4)'; }}
                   >
                     Browse Services <ArrowRight size={15} />
                   </Link>
@@ -467,8 +467,8 @@ export default function ClientDashboard() {
                           animation: `slideRight 0.4s ease ${i * 0.06}s both`,
                         }}
                         onMouseEnter={e => {
-                          e.currentTarget.style.borderColor = 'rgba(190,24,93,0.25)';
-                          e.currentTarget.style.background = '#FDF6F9';
+                          e.currentTarget.style.borderColor = 'rgba(139,26,58,0.25)';
+                          e.currentTarget.style.background = '#F0F9F5';
                           e.currentTarget.style.transform = 'translateX(4px)';
                         }}
                         onMouseLeave={e => {
@@ -479,7 +479,7 @@ export default function ClientDashboard() {
                       >
                         {/* Image / Icon */}
                         <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
-                          style={{ background: 'linear-gradient(135deg,#FCE7F3,#F9D4EC)', transition: 'transform 0.2s' }}
+                          style={{ background: 'linear-gradient(135deg,#FDF0F4,#F5C8D4)', transition: 'transform 0.2s' }}
                           onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08) rotate(-2deg)'; }}
                           onMouseLeave={e => { e.currentTarget.style.transform = ''; }}
                         >
@@ -487,7 +487,7 @@ export default function ClientDashboard() {
                             <img src={`${import.meta.env.VITE_UPLOAD_URL}/${b.service.images[0]}`}
                               alt="" className="w-full h-full object-cover rounded-xl" loading="lazy" />
                           ) : (
-                            <CatIcon size={20} style={{ color: '#BE185D' }} />
+                            <CatIcon size={20} style={{ color: '#8B1A3A' }} />
                           )}
                         </div>
 
@@ -502,7 +502,7 @@ export default function ClientDashboard() {
 
                         <div className="flex flex-col items-end gap-1.5 shrink-0">
                           <Badge status={b.status}>{b.status}</Badge>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: '#B8912A' }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: '#C9A84C' }}>
                             ₹{b.total_amount?.toLocaleString('en-IN')}
                           </div>
                         </div>
@@ -534,7 +534,7 @@ export default function ClientDashboard() {
                     to={to}
                     className="flex flex-col items-center gap-2 p-3 rounded-2xl text-center transition-all duration-200 group"
                     style={{
-                      background: '#FDF9F4',
+                      background: '#F8F7F2',
                       animation: `scaleIn 0.4s ease ${delay} both`,
                       border: '1px solid #F0EBE5',
                     }}
@@ -605,8 +605,8 @@ export default function ClientDashboard() {
                       />
                       <defs>
                         <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#BE185D" />
-                          <stop offset="100%" stopColor="#F472B6" />
+                          <stop offset="0%" stopColor="#8B1A3A" />
+                          <stop offset="100%" stopColor="#34D399" />
                         </linearGradient>
                         <linearGradient id="successGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                           <stop offset="0%" stopColor="#059669" />
@@ -617,7 +617,7 @@ export default function ClientDashboard() {
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <span
                         className="font-bold"
-                        style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.5rem', color: checkCount === CHECKLIST.length ? '#059669' : '#BE185D', lineHeight: 1 }}
+                        style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.5rem', color: checkCount === CHECKLIST.length ? '#059669' : '#8B1A3A', lineHeight: 1 }}
                       >
                         {Math.round(ringPct * 100)}%
                       </span>
@@ -636,7 +636,7 @@ export default function ClientDashboard() {
                       key={label}
                       className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200"
                       style={{
-                        background: checkedItems[i] ? '#F0FDF4' : '#FDF9F4',
+                        background: checkedItems[i] ? '#F0FDF4' : '#F8F7F2',
                         border: `1px solid ${checkedItems[i] ? 'rgba(5,150,105,0.15)' : '#F0EBE5'}`,
                         animation: `slideRight 0.4s ease ${i * 0.07}s both`,
                       }}

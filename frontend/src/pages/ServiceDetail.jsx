@@ -139,7 +139,7 @@ export default function ServiceDetail() {
         </button>
         <div className="flex items-center gap-2 flex-1">
           <div className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg,#BE185D,#9D174D)' }}>
+            style={{ background: 'linear-gradient(135deg,#8B1A3A,#6B1230)' }}>
             <Heart size={14} className="fill-white text-white" />
           </div>
           <span className="font-bold" style={{ fontFamily: 'Playfair Display, serif', color: '#1C1917' }}>ShadiSeva</span>
@@ -148,7 +148,7 @@ export default function ServiceDetail() {
           onClick={handleShare}
           className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
           style={{ color: '#78716C' }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#FCEEF7'; e.currentTarget.style.color = '#BE185D'; }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#FDF0F4'; e.currentTarget.style.color = '#8B1A3A'; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#78716C'; }}
           title="Copy link"
         >
@@ -165,7 +165,7 @@ export default function ServiceDetail() {
             <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #E8E1D9', boxShadow: '0 4px 20px rgba(28,9,16,0.08)' }}>
               <div
                 className="relative h-96 cursor-pointer"
-                style={{ background: 'linear-gradient(135deg,#FCE7F3,#FEE2E2)' }}
+                style={{ background: 'linear-gradient(135deg,#FDF0F4,#F5C8D4)' }}
                 onClick={() => images.length > 0 && setLightboxOpen(true)}
               >
                 {images.length > 0 ? (
@@ -200,7 +200,7 @@ export default function ServiceDetail() {
                   </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Heart size={64} className="text-[#BE185D]/20" />
+                    <Heart size={64} className="text-primary/20" />
                   </div>
                 )}
                 <div className="absolute top-3 left-3">
@@ -216,7 +216,7 @@ export default function ServiceDetail() {
                 <div className="flex gap-2 p-4 overflow-x-auto">
                   {images.map((img, i) => (
                     <button key={i} onClick={() => setImgIdx(i)}
-                      className={`w-16 h-16 rounded-lg overflow-hidden shrink-0 border-2 transition-colors ${i === imgIdx ? 'border-[#BE185D]' : 'border-transparent hover:border-[#BE185D]/40'}`}>
+                      className={`w-16 h-16 rounded-lg overflow-hidden shrink-0 border-2 transition-colors ${i === imgIdx ? 'border-primary' : 'border-transparent hover:border-primary/40'}`}>
                       <img src={`${import.meta.env.VITE_UPLOAD_URL}/${img}`} alt="" className="w-full h-full object-cover" loading="lazy" />
                     </button>
                   ))}
@@ -231,8 +231,8 @@ export default function ServiceDetail() {
                 {avgRating && (
                   <div className="flex items-center gap-1 px-3 py-1.5 rounded-full shrink-0"
                     style={{ background: '#FBF0D9' }}>
-                    <Star size={14} style={{ color: '#B8912A' }} className="fill-current" />
-                    <span className="text-sm font-bold" style={{ color: '#B8912A' }}>{avgRating}</span>
+                    <Star size={14} style={{ color: '#C9A84C' }} className="fill-current" />
+                    <span className="text-sm font-bold" style={{ color: '#C9A84C' }}>{avgRating}</span>
                     <span className="text-xs" style={{ color: '#78716C' }}>({reviews.length})</span>
                   </div>
                 )}
@@ -258,9 +258,9 @@ export default function ServiceDetail() {
                 interactive={!!user && user.role === 'client'}
               />
               {selectedDate && (
-                <div className="mt-4 p-3 bg-[#FCE7F3] rounded-xl flex items-center gap-2">
-                  <CheckCircle size={16} className="text-[#BE185D]" />
-                  <span className="text-sm text-[#BE185D] font-medium">
+                <div className="mt-4 p-3 bg-primary-light rounded-xl flex items-center gap-2">
+                  <CheckCircle size={16} className="text-primary" />
+                  <span className="text-sm text-primary font-medium">
                     Selected: {selectedDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </span>
                 </div>
@@ -290,14 +290,14 @@ export default function ServiceDetail() {
                   {sortedReviews.map(r => (
                     <div key={r._id} className="p-4 rounded-xl" style={{ background: '#FDF6EE', border: '1px solid #F0EBE5' }}>
                       <div className="flex items-center gap-3 mb-2">
-                        <div className="w-9 h-9 rounded-full bg-linear-to-br from-[#BE185D] to-[#9D174D] flex items-center justify-center text-white text-sm font-bold shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-linear-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm font-bold shrink-0">
                           {r.client?.full_name?.charAt(0)}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-[13px] font-semibold" style={{ color: '#1C1917' }}>{r.client?.full_name}</div>
                           <div className="flex gap-0.5 mt-0.5">
                             {[...Array(5)].map((_, i) => (
-                              <Star key={i} size={11} style={{ color: i < r.rating ? '#B8912A' : '#E8E1D9' }} className={i < r.rating ? 'fill-current' : ''} />
+                              <Star key={i} size={11} style={{ color: i < r.rating ? '#C9A84C' : '#E8E1D9' }} className={i < r.rating ? 'fill-current' : ''} />
                             ))}
                           </div>
                         </div>
@@ -317,7 +317,7 @@ export default function ServiceDetail() {
           <div className="space-y-4">
             <div className="rounded-2xl overflow-hidden sticky top-24" style={{ boxShadow: '0 8px 32px rgba(28,9,16,0.12)', border: '1px solid #E8E1D9' }}>
               {/* Gradient header */}
-              <div className="p-6 pb-5" style={{ background: 'linear-gradient(135deg,#1A0A10 0%,#3D1020 60%,#BE185D 100%)' }}>
+              <div className="p-6 pb-5" style={{ background: 'linear-gradient(135deg,#1A0409 0%,#3D0A1A 60%,#8B1A3A 100%)' }}>
                 <div className="text-[11px] uppercase tracking-[0.12em] mb-1" style={{ color: 'rgba(255,255,255,0.45)' }}>Starting from</div>
                 <div className="font-bold text-white" style={{ fontFamily: 'Playfair Display, serif', fontSize: '2rem' }}>
                   ₹{service.price?.toLocaleString('en-IN')}
@@ -340,7 +340,7 @@ export default function ServiceDetail() {
                   <div className="flex items-center gap-3 p-4 rounded-xl" style={{ background: '#FDF6EE', border: '1px solid #E8E1D9' }}>
                     <div
                       className="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold shrink-0"
-                      style={{ background: 'linear-gradient(135deg,#BE185D,#9D174D)', boxShadow: '0 3px 10px rgba(190,24,93,0.25)' }}
+                      style={{ background: 'linear-gradient(135deg,#8B1A3A,#6B1230)', boxShadow: '0 3px 10px rgba(139,26,58,0.25)' }}
                     >
                       {service.vendor.full_name?.charAt(0)}
                     </div>
@@ -348,7 +348,7 @@ export default function ServiceDetail() {
                       <div className="text-[13px] font-semibold" style={{ color: '#1C1917' }}>{service.vendor.full_name}</div>
                       {service.vendor.business_name && <div className="text-[11px] truncate" style={{ color: '#78716C' }}>{service.vendor.business_name}</div>}
                       {service.vendor.years_experience > 0 && (
-                        <div className="text-[11px] font-semibold" style={{ color: '#BE185D' }}>{service.vendor.years_experience} yrs experience</div>
+                        <div className="text-[11px] font-semibold" style={{ color: '#8B1A3A' }}>{service.vendor.years_experience} yrs experience</div>
                       )}
                       {service.vendor.phone && (
                         <div className="flex items-center gap-1 text-[11px] mt-0.5" style={{ color: '#78716C' }}>
@@ -408,7 +408,7 @@ export default function ServiceDetail() {
             ))}
             <div className="flex justify-between items-center pt-3" style={{ borderTop: '1px solid #E8E1D9' }}>
               <span className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: '#A8A29E' }}>Total</span>
-              <span className="font-bold" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.25rem', color: '#B8912A' }}>
+              <span className="font-bold" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.25rem', color: '#C9A84C' }}>
                 ₹{service.price?.toLocaleString('en-IN')}
               </span>
             </div>

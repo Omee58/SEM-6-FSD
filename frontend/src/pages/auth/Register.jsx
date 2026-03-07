@@ -78,7 +78,7 @@ export default function Register() {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#BE185D] via-[#9D174D] to-[#7C1037] items-center justify-center p-12 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#1A0409] via-[#5A0E24] to-primary items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="absolute rounded-full border border-white"
@@ -89,7 +89,7 @@ export default function Register() {
           <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-8 border border-white/30">
             <Heart size={40} className="fill-white text-white" />
           </div>
-          <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+          <h1 className="text-5xl font-semibold mb-4 italic" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
             Join ShadiSeva
           </h1>
           <p className="text-white/80 text-lg leading-relaxed">
@@ -112,7 +112,7 @@ export default function Register() {
       <div className="flex-1 flex items-center justify-center p-8 bg-[#FAFAF8] overflow-y-auto">
         <div className="w-full max-w-md py-6">
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-[#BE185D] to-[#9D174D] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary to-primary-dark flex items-center justify-center">
               <Heart size={20} className="fill-white text-white" />
             </div>
             <span className="text-xl font-bold text-[#1A1A18]" style={{ fontFamily: 'Playfair Display, serif' }}>ShadiSeva</span>
@@ -133,12 +133,12 @@ export default function Register() {
                   onClick={() => setForm(f => ({ ...f, role: value }))}
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
                     form.role === value
-                      ? 'border-[#BE185D] bg-[#FCE7F3]'
-                      : 'border-[#E8E8E4] hover:border-[#BE185D]/40'
+                      ? 'border-primary bg-primary-light'
+                      : 'border-border hover:border-primary/40'
                   }`}
                 >
-                  <Icon size={20} className={form.role === value ? 'text-[#BE185D]' : 'text-[#6B6B65]'} />
-                  <div className={`text-sm font-semibold mt-2 ${form.role === value ? 'text-[#BE185D]' : 'text-[#1A1A18]'}`}>{label}</div>
+                  <Icon size={20} className={form.role === value ? 'text-primary' : 'text-muted'} />
+                  <div className={`text-sm font-semibold mt-2 ${form.role === value ? 'text-primary' : 'text-text'}`}>{label}</div>
                   <div className="text-xs text-[#6B6B65] mt-0.5">{desc}</div>
                 </button>
               ))}
@@ -239,7 +239,7 @@ export default function Register() {
 
             <div className="mt-5 text-center text-sm text-[#6B6B65]">
               Already have an account?{' '}
-              <Link to="/login" className="text-[#BE185D] font-semibold hover:text-[#9D174D]">
+              <Link to="/login" className="text-primary font-semibold hover:text-primary-dark">
                 Sign in
               </Link>
             </div>

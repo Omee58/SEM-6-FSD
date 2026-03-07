@@ -1,11 +1,11 @@
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
 const ACCENT = {
-  rose:   { grad: 'linear-gradient(135deg,#BE185D,#9D174D)', glow: 'rgba(190,24,93,0.18)',  text: '#BE185D' },
-  gold:   { grad: 'linear-gradient(135deg,#B8912A,#9A7520)', glow: 'rgba(184,145,42,0.18)', text: '#B8912A' },
-  green:  { grad: 'linear-gradient(135deg,#059669,#047857)', glow: 'rgba(5,150,105,0.18)',  text: '#059669' },
-  blue:   { grad: 'linear-gradient(135deg,#2563EB,#1D4ED8)', glow: 'rgba(37,99,235,0.18)',  text: '#2563EB' },
-  purple: { grad: 'linear-gradient(135deg,#7C3AED,#6D28D9)', glow: 'rgba(124,58,237,0.18)', text: '#7C3AED' },
+  rose:   { grad: 'linear-gradient(135deg,#8B1A3A,#6B1230)', glow: 'rgba(139,26,58,0.18)',   text: '#8B1A3A' },
+  gold:   { grad: 'linear-gradient(135deg,#C9A84C,#A88B38)', glow: 'rgba(201,168,76,0.18)',  text: '#C9A84C' },
+  green:  { grad: 'linear-gradient(135deg,#059669,#047857)', glow: 'rgba(5,150,105,0.18)',   text: '#059669' },
+  blue:   { grad: 'linear-gradient(135deg,#2563EB,#1D4ED8)', glow: 'rgba(37,99,235,0.18)',   text: '#2563EB' },
+  purple: { grad: 'linear-gradient(135deg,#7C3AED,#6D28D9)', glow: 'rgba(124,58,237,0.18)',  text: '#7C3AED' },
 };
 
 export default function StatsCard({ icon: Icon, label, value, trend, trendValue, accent = 'rose', onClick }) {
@@ -43,7 +43,7 @@ export default function StatsCard({ icon: Icon, label, value, trend, trendValue,
       <div>
         <div
           className="font-bold leading-none mb-1"
-          style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.875rem', color: '#1C1917' }}
+          style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: '2rem', color: '#1C1A16', fontWeight: 700 }}
         >
           {value}
         </div>

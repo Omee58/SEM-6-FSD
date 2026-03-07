@@ -15,7 +15,7 @@ import { Textarea } from '../../components/ui/Input';
 
 /* ─── Status meta ────────────────────────────────────── */
 const STATUS_META = {
-  pending:   { color: '#B8912A', bg: 'rgba(184,145,42,0.12)',  label: 'Pending',   icon: Clock,        shadow: 'rgba(184,145,42,0.18)',  glow: 'rgba(184,145,42,0.35)' },
+  pending:   { color: '#C9A84C', bg: 'rgba(201,168,76,0.12)',  label: 'Pending',   icon: Clock,        shadow: 'rgba(201,168,76,0.18)',  glow: 'rgba(201,168,76,0.35)' },
   confirmed: { color: '#059669', bg: 'rgba(5,150,105,0.12)',   label: 'Confirmed', icon: CheckCircle2, shadow: 'rgba(5,150,105,0.18)',   glow: 'rgba(5,150,105,0.35)'  },
   completed: { color: '#7C3AED', bg: 'rgba(124,58,237,0.12)',  label: 'Completed', icon: CircleCheck,  shadow: 'rgba(124,58,237,0.18)',  glow: 'rgba(124,58,237,0.35)' },
   cancelled: { color: '#DC2626', bg: 'rgba(220,38,38,0.12)',   label: 'Cancelled', icon: XCircle,      shadow: 'rgba(220,38,38,0.15)',   glow: 'rgba(220,38,38,0.30)'  },
@@ -23,10 +23,10 @@ const STATUS_META = {
 
 /* ─── Category meta ──────────────────────────────────── */
 const CATEGORY_ICON = {
-  photography: { icon: Camera,     color: '#BE185D', bg: 'linear-gradient(145deg,rgba(190,24,93,0.18),rgba(190,24,93,0.04))',   name: 'Photography' },
+  photography: { icon: Camera,     color: '#8B1A3A', bg: 'linear-gradient(145deg,rgba(139,26,58,0.18),rgba(139,26,58,0.04))',   name: 'Photography' },
   catering:    { icon: Utensils,   color: '#059669', bg: 'linear-gradient(145deg,rgba(5,150,105,0.18),rgba(5,150,105,0.04))',   name: 'Catering'    },
   venue:       { icon: Building2,  color: '#2563EB', bg: 'linear-gradient(145deg,rgba(37,99,235,0.18),rgba(37,99,235,0.04))',   name: 'Venue'       },
-  decoration:  { icon: Flower2,    color: '#B8912A', bg: 'linear-gradient(145deg,rgba(184,145,42,0.18),rgba(184,145,42,0.04))', name: 'Decoration'  },
+  decoration:  { icon: Flower2,    color: '#C9A84C', bg: 'linear-gradient(145deg,rgba(201,168,76,0.18),rgba(201,168,76,0.04))', name: 'Decoration'  },
   mehendi:     { icon: Paintbrush, color: '#7C3AED', bg: 'linear-gradient(145deg,rgba(124,58,237,0.18),rgba(124,58,237,0.04))', name: 'Mehendi'     },
   music:       { icon: Music,      color: '#0891B2', bg: 'linear-gradient(145deg,rgba(8,145,178,0.18),rgba(8,145,178,0.04))',   name: 'Music'       },
   makeup:      { icon: Sparkles,   color: '#DB2777', bg: 'linear-gradient(145deg,rgba(219,39,119,0.18),rgba(219,39,119,0.04))', name: 'Makeup'      },
@@ -168,13 +168,13 @@ function BookingTimeline({ status }) {
               <div className="relative">
                 {isActive && (
                   <div className="absolute inset-0 rounded-full pointer-events-none"
-                    style={{ margin: -5, border: '2px solid rgba(190,24,93,0.25)', animation: 'glowPulse 2s ease-in-out infinite' }} />
+                    style={{ margin: -5, border: '2px solid rgba(139,26,58,0.25)', animation: 'glowPulse 2s ease-in-out infinite' }} />
                 )}
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center relative z-10"
                   style={isActive ? {
-                    background: 'linear-gradient(135deg,#BE185D,#9D174D)',
-                    boxShadow: '0 3px 12px rgba(190,24,93,0.4)',
+                    background: 'linear-gradient(135deg,#8B1A3A,#6B1230)',
+                    boxShadow: '0 3px 12px rgba(139,26,58,0.4)',
                     color: '#fff',
                   } : isDone ? {
                     background: 'linear-gradient(135deg,#059669,#047857)',
@@ -190,7 +190,7 @@ function BookingTimeline({ status }) {
               </div>
               {/* Label */}
               <span className="text-[9px] font-bold uppercase tracking-wide whitespace-nowrap"
-                style={{ color: isActive ? '#BE185D' : isDone ? '#059669' : '#A8A29E' }}>
+                style={{ color: isActive ? '#8B1A3A' : isDone ? '#059669' : '#A8A29E' }}>
                 {step.label}
               </span>
             </div>
@@ -298,8 +298,8 @@ export default function ClientBookings() {
 
   /* ── Hero pill definitions ── */
   const PILLS = [
-    { key: 'all',       label: 'All Bookings', icon: Layers,       color: '#BE185D', grad: 'linear-gradient(135deg,#BE185D,#9D174D)' },
-    { key: 'pending',   label: 'Pending',      icon: Clock,        color: '#B8912A', grad: 'linear-gradient(135deg,#B8912A,#9A7520)' },
+    { key: 'all',       label: 'All Bookings', icon: Layers,       color: '#8B1A3A', grad: 'linear-gradient(135deg,#8B1A3A,#6B1230)' },
+    { key: 'pending',   label: 'Pending',      icon: Clock,        color: '#C9A84C', grad: 'linear-gradient(135deg,#C9A84C,#A88B38)' },
     { key: 'confirmed', label: 'Confirmed',    icon: CheckCircle2, color: '#059669', grad: 'linear-gradient(135deg,#059669,#047857)' },
     { key: 'completed', label: 'Completed',    icon: CircleCheck,  color: '#7C3AED', grad: 'linear-gradient(135deg,#7C3AED,#6D28D9)' },
     { key: 'cancelled', label: 'Cancelled',    icon: XCircle,      color: '#DC2626', grad: 'linear-gradient(135deg,#DC2626,#B91C1C)' },
@@ -313,7 +313,7 @@ export default function ClientBookings() {
       <div
         className="relative rounded-3xl overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg,#0D0509 0%,#1E0A14 30%,#3D1020 60%,#BE185D 100%)',
+          background: 'linear-gradient(135deg,#1A0409 0%,#3D0A1A 30%,#5A0E24 60%,#8B1A3A 100%)',
           backgroundSize: '300% 300%',
           animation: 'gradientShift 9s ease infinite',
         }}
@@ -323,8 +323,8 @@ export default function ClientBookings() {
           style={{ backgroundImage: 'radial-gradient(circle,rgba(255,255,255,0.06) 1px,transparent 1px)', backgroundSize: '26px 26px' }} />
 
         {/* Orbs */}
-        <Orb size={260} color="rgba(190,24,93,0.25)"  style={{ top: -80,  right: -20,  animationDelay: '0s'   }} />
-        <Orb size={180} color="rgba(184,145,42,0.18)" style={{ bottom: -60, right: 200, animationDelay: '3s'  }} />
+        <Orb size={260} color="rgba(139,26,58,0.25)"  style={{ top: -80,  right: -20,  animationDelay: '0s'   }} />
+        <Orb size={180} color="rgba(201,168,76,0.18)" style={{ bottom: -60, right: 200, animationDelay: '3s'  }} />
         <Orb size={120} color="rgba(124,58,237,0.14)" style={{ top: 40, left: '45%',   animationDelay: '1.5s' }} />
 
         {/* Decorative rings (desktop) */}
@@ -443,12 +443,12 @@ export default function ClientBookings() {
             <div
               className="flex items-center gap-3 px-5 py-3 rounded-2xl ml-auto"
               style={{
-                background: 'rgba(184,145,42,0.18)', border: '1.5px solid rgba(184,145,42,0.3)',
+                background: 'rgba(201,168,76,0.18)', border: '1.5px solid rgba(201,168,76,0.3)',
                 opacity: mounted ? 1 : 0, transition: 'opacity 0.5s 0.7s',
               }}
             >
               <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: 'rgba(184,145,42,0.25)' }}>
+                style={{ background: 'rgba(201,168,76,0.25)' }}>
                 <IndianRupee size={16} style={{ color: '#E8C86E' }} />
               </div>
               <div>
@@ -470,12 +470,12 @@ export default function ClientBookings() {
           style={{ background: 'linear-gradient(135deg,#FDF6EE 0%,#fff 50%,#FDF6EE 100%)', border: '1px solid #E8E1D9' }}
         >
           {/* Decorative rings */}
-          <div className="absolute pointer-events-none" style={{ width: 280, height: 280, borderRadius: '50%', border: '1px solid rgba(190,24,93,0.07)', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} />
-          <div className="absolute pointer-events-none" style={{ width: 180, height: 180, borderRadius: '50%', border: '1px solid rgba(184,145,42,0.09)', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} />
+          <div className="absolute pointer-events-none" style={{ width: 280, height: 280, borderRadius: '50%', border: '1px solid rgba(139,26,58,0.07)', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} />
+          <div className="absolute pointer-events-none" style={{ width: 180, height: 180, borderRadius: '50%', border: '1px solid rgba(201,168,76,0.09)', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }} />
 
           <div
             className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5 relative"
-            style={{ background: 'linear-gradient(135deg,#BE185D,#9D174D)', boxShadow: '0 12px 40px rgba(190,24,93,0.35)' }}
+            style={{ background: 'linear-gradient(135deg,#8B1A3A,#6B1230)', boxShadow: '0 12px 40px rgba(139,26,58,0.35)' }}
           >
             <Calendar size={34} style={{ color: '#fff' }} />
           </div>
@@ -489,9 +489,9 @@ export default function ClientBookings() {
             <Link
               to="/services"
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-white font-bold text-[14px]"
-              style={{ background: 'linear-gradient(135deg,#BE185D,#9D174D)', boxShadow: '0 8px 28px rgba(190,24,93,0.4)' }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(190,24,93,0.5)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(190,24,93,0.4)'; }}
+              style={{ background: 'linear-gradient(135deg,#8B1A3A,#6B1230)', boxShadow: '0 8px 28px rgba(139,26,58,0.4)' }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 40px rgba(139,26,58,0.5)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(139,26,58,0.4)'; }}
             >
               Browse Wedding Services <ArrowRight size={16} />
             </Link>
@@ -581,7 +581,7 @@ export default function ClientBookings() {
                     </h3>
                     {/* Amount */}
                     <div className="text-right shrink-0">
-                      <div className="font-bold leading-none" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', color: '#B8912A' }}>
+                      <div className="font-bold leading-none" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', color: '#C9A84C' }}>
                         ₹{(b.total_amount || 0).toLocaleString('en-IN')}
                       </div>
                       <div className="text-[10px] font-medium mt-0.5" style={{ color: '#A8A29E' }}>total amount</div>
@@ -595,7 +595,7 @@ export default function ClientBookings() {
                       {new Date(b.booking_date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
                     <div className="flex items-center gap-1.5 text-[12px] font-medium" style={{ color: isCancelled ? '#A8A29E' : '#78716C' }}>
-                      <User size={12} style={{ color: isCancelled ? '#A8A29E' : '#BE185D' }} />
+                      <User size={12} style={{ color: isCancelled ? '#A8A29E' : '#8B1A3A' }} />
                       {b.vendor?.full_name || '—'}
                     </div>
                   </div>
@@ -640,9 +640,9 @@ export default function ClientBookings() {
                         <button
                           onClick={() => setReviewBooking(b)}
                           className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-bold text-white transition-all duration-200"
-                          style={{ background: 'linear-gradient(135deg,#B8912A,#9A7520)', boxShadow: '0 4px 14px rgba(184,145,42,0.35)' }}
-                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 7px 20px rgba(184,145,42,0.45)'; }}
-                          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(184,145,42,0.35)'; }}
+                          style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 4px 14px rgba(201,168,76,0.35)' }}
+                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 7px 20px rgba(201,168,76,0.45)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(201,168,76,0.35)'; }}
                         >
                           <Star size={12} /> Write Review
                         </button>
@@ -699,7 +699,7 @@ export default function ClientBookings() {
               ))}
               <div className="flex justify-between items-center pt-3" style={{ borderTop: '1px solid #E8E1D9' }}>
                 <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: '#A8A29E' }}>Amount</span>
-                <span className="font-bold" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.15rem', color: '#B8912A' }}>
+                <span className="font-bold" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.15rem', color: '#C9A84C' }}>
                   ₹{cancelBooking.total_amount?.toLocaleString('en-IN')}
                 </span>
               </div>
@@ -762,17 +762,17 @@ export default function ClientBookings() {
                   onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.25) rotate(-5deg)'}
                   onMouseLeave={e => e.currentTarget.style.transform = 'scale(1) rotate(0deg)'}>
                   <Star size={40} style={{
-                    color: s <= review.rating ? '#B8912A' : '#E8E1D9',
-                    fill: s <= review.rating ? '#B8912A' : 'transparent',
-                    filter: s <= review.rating ? 'drop-shadow(0 3px 10px rgba(184,145,42,0.5))' : 'none',
+                    color: s <= review.rating ? '#C9A84C' : '#E8E1D9',
+                    fill: s <= review.rating ? '#C9A84C' : 'transparent',
+                    filter: s <= review.rating ? 'drop-shadow(0 3px 10px rgba(201,168,76,0.5))' : 'none',
                     transition: 'all 0.15s',
                   }} />
                 </button>
               ))}
             </div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[13px] font-bold"
-              style={{ background: 'linear-gradient(135deg,rgba(184,145,42,0.15),rgba(184,145,42,0.07))', color: '#B8912A', border: '1px solid rgba(184,145,42,0.22)' }}>
-              <Star size={12} style={{ fill: '#B8912A', color: '#B8912A' }} />
+              style={{ background: 'linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.07))', color: '#C9A84C', border: '1px solid rgba(201,168,76,0.22)' }}>
+              <Star size={12} style={{ fill: '#C9A84C', color: '#C9A84C' }} />
               {['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][review.rating]}
             </div>
           </div>

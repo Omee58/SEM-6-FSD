@@ -12,8 +12,8 @@ import { authAPI, clientAPI, reviewAPI } from '../../services/api';
 
 /* ─── Avatar colour presets ─────────────────────────── */
 const AVATAR_COLORS = [
-  { id: 'gold',   grad: 'linear-gradient(135deg,#B8912A,#9A7520)', color: '#B8912A', glow: 'rgba(184,145,42,0.4)' },
-  { id: 'rose',   grad: 'linear-gradient(135deg,#BE185D,#9D174D)', color: '#BE185D', glow: 'rgba(190,24,93,0.4)'  },
+  { id: 'gold',   grad: 'linear-gradient(135deg,#C9A84C,#A88B38)', color: '#C9A84C', glow: 'rgba(201,168,76,0.4)' },
+  { id: 'rose',   grad: 'linear-gradient(135deg,#8B1A3A,#6B1230)', color: '#8B1A3A', glow: 'rgba(139,26,58,0.4)'  },
   { id: 'purple', grad: 'linear-gradient(135deg,#7C3AED,#6D28D9)', color: '#7C3AED', glow: 'rgba(124,58,237,0.4)' },
   { id: 'blue',   grad: 'linear-gradient(135deg,#2563EB,#1D4ED8)', color: '#2563EB', glow: 'rgba(37,99,235,0.4)'  },
   { id: 'green',  grad: 'linear-gradient(135deg,#059669,#047857)', color: '#059669', glow: 'rgba(5,150,105,0.4)'  },
@@ -22,10 +22,10 @@ const AVATAR_COLORS = [
 
 /* ─── Category icons ─────────────────────────────────── */
 const CATEGORY_ICON = {
-  photography: { icon: Camera,   color: '#BE185D', bg: 'rgba(190,24,93,0.12)'   },
+  photography: { icon: Camera,   color: '#8B1A3A', bg: 'rgba(139,26,58,0.12)'   },
   catering:    { icon: Utensils, color: '#059669', bg: 'rgba(5,150,105,0.12)'   },
   music:       { icon: Music,    color: '#7C3AED', bg: 'rgba(124,58,237,0.12)'  },
-  decoration:  { icon: Flower2,  color: '#B8912A', bg: 'rgba(184,145,42,0.12)'  },
+  decoration:  { icon: Flower2,  color: '#C9A84C', bg: 'rgba(201,168,76,0.12)'  },
   mehendi:     { icon: Sparkles, color: '#DB2777', bg: 'rgba(219,39,119,0.12)'  },
   transport:   { icon: Car,      color: '#2563EB', bg: 'rgba(37,99,235,0.12)'   },
   other:       { icon: Star,     color: '#78716C', bg: 'rgba(120,113,108,0.1)'  },
@@ -52,7 +52,7 @@ function getStrength(pw) {
     { label: '',           color: ''        },
     { label: 'Weak',       color: '#DC2626' },
     { label: 'Fair',       color: '#D97706' },
-    { label: 'Good',       color: '#B8912A' },
+    { label: 'Good',       color: '#C9A84C' },
     { label: 'Strong',     color: '#059669' },
     { label: 'Very Strong',color: '#047857' },
   ];
@@ -219,8 +219,8 @@ export default function ClientProfile() {
 
   /* ── Achievements ── */
   const ACHIEVEMENTS = [
-    { id: 'first',    label: 'First Step',      icon: Calendar, grad: 'linear-gradient(135deg,#BE185D,#9D174D)', glow: 'rgba(190,24,93,0.35)',  unlocked: totalBookings >= 1  },
-    { id: 'happy',    label: 'Happy Client',     icon: Star,     grad: 'linear-gradient(135deg,#B8912A,#9A7520)', glow: 'rgba(184,145,42,0.35)', unlocked: completedCount >= 1 },
+    { id: 'first',    label: 'First Step',      icon: Calendar, grad: 'linear-gradient(135deg,#8B1A3A,#6B1230)', glow: 'rgba(139,26,58,0.35)',  unlocked: totalBookings >= 1  },
+    { id: 'happy',    label: 'Happy Client',     icon: Star,     grad: 'linear-gradient(135deg,#C9A84C,#A88B38)', glow: 'rgba(201,168,76,0.35)', unlocked: completedCount >= 1 },
     { id: 'planner',  label: 'Wedding Planner',  icon: Crown,    grad: 'linear-gradient(135deg,#7C3AED,#6D28D9)', glow: 'rgba(124,58,237,0.35)', unlocked: completedCount >= 3 },
     { id: 'reviewer', label: 'Trusted Reviewer', icon: Heart,    grad: 'linear-gradient(135deg,#059669,#047857)', glow: 'rgba(5,150,105,0.35)',  unlocked: reviewsGiven >= 1   },
   ];
@@ -304,8 +304,8 @@ export default function ClientProfile() {
     : '—';
 
   const TABS = [
-    { key: 'info',     label: 'Personal Info', icon: User,      iconColor: '#BE185D', iconBg: '#FCEEF7'                 },
-    { key: 'security', label: 'Security',       icon: Shield,    iconColor: '#B8912A', iconBg: '#FBF0D9'                 },
+    { key: 'info',     label: 'Personal Info', icon: User,      iconColor: '#8B1A3A', iconBg: '#FDF0F4'                 },
+    { key: 'security', label: 'Security',       icon: Shield,    iconColor: '#C9A84C', iconBg: '#FBF5E0'                 },
     { key: 'activity', label: 'Activity',       icon: BarChart3, iconColor: '#7C3AED', iconBg: 'rgba(124,58,237,0.1)'   },
   ];
 
@@ -317,7 +317,7 @@ export default function ClientProfile() {
       <div
         className="relative rounded-3xl overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg,#0D0509 0%,#1E0A14 35%,#3D1020 65%,#BE185D 100%)',
+          background: 'linear-gradient(135deg,#1A0409 0%,#3D0A1A 35%,#5A0E24 65%,#8B1A3A 100%)',
           backgroundSize: '300% 300%',
           animation: 'gradientShift 9s ease infinite',
           minHeight: 160,
@@ -327,9 +327,9 @@ export default function ClientProfile() {
           backgroundImage: 'radial-gradient(circle,rgba(255,255,255,0.06) 1px,transparent 1px)',
           backgroundSize: '26px 26px',
         }} />
-        <Orb size={180} color="rgba(190,24,93,0.3)"   style={{ top: -50, right: 60,   animationDelay: '0s'   }} />
-        <Orb size={120} color="rgba(184,145,42,0.22)" style={{ bottom: -30, right: 220, animationDelay: '3s' }} />
-        <Orb size={90}  color="rgba(190,24,93,0.15)"  style={{ top: 20, left: '45%',  animationDelay: '1.5s' }} />
+        <Orb size={180} color="rgba(139,26,58,0.3)"   style={{ top: -50, right: 60,   animationDelay: '0s'   }} />
+        <Orb size={120} color="rgba(201,168,76,0.22)" style={{ bottom: -30, right: 220, animationDelay: '3s' }} />
+        <Orb size={90}  color="rgba(139,26,58,0.15)"  style={{ top: 20, left: '45%',  animationDelay: '1.5s' }} />
 
         <div className="relative flex flex-col justify-center px-8 py-10" style={{ minHeight: 160 }}>
           <div
@@ -339,7 +339,7 @@ export default function ClientProfile() {
               opacity: mounted ? 1 : 0, transition: 'opacity 0.5s 0.1s',
             }}
           >
-            <Crown size={11} style={{ color: '#B8912A' }} /> My Profile
+            <Crown size={11} style={{ color: '#C9A84C' }} /> My Profile
           </div>
           <h1 className="text-white font-bold mb-1" style={{
             fontFamily: 'Playfair Display, serif',
@@ -393,7 +393,7 @@ export default function ClientProfile() {
                 }}
               >{initial}</div>
               <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center z-20"
-                style={{ background: 'linear-gradient(135deg,#B8912A,#9A7520)', boxShadow: '0 2px 8px rgba(184,145,42,0.5)' }}>
+                style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 2px 8px rgba(201,168,76,0.5)' }}>
                 <Crown size={13} style={{ color: '#fff' }} />
               </div>
             </div>
@@ -424,8 +424,8 @@ export default function ClientProfile() {
               <svg width={100} height={100} viewBox="0 0 100 100">
                 <defs>
                   <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor={completionPct >= 100 ? '#059669' : '#B8912A'} />
-                    <stop offset="100%" stopColor={completionPct >= 100 ? '#047857' : '#9A7520'} />
+                    <stop offset="0%" stopColor={completionPct >= 100 ? '#059669' : '#C9A84C'} />
+                    <stop offset="100%" stopColor={completionPct >= 100 ? '#047857' : '#A88B38'} />
                   </linearGradient>
                 </defs>
                 <circle cx={50} cy={50} r={RING_R} fill="none" stroke="#F0EBE5" strokeWidth={7} />
@@ -442,7 +442,7 @@ export default function ClientProfile() {
                 />
                 <text x={50} y={46} textAnchor="middle" dominantBaseline="middle"
                   fontFamily="Playfair Display, serif" fontSize={18} fontWeight="700"
-                  fill={completionPct >= 100 ? '#059669' : '#B8912A'}>
+                  fill={completionPct >= 100 ? '#059669' : '#C9A84C'}>
                   {completionPct}%
                 </text>
                 <text x={50} y={62} textAnchor="middle" fontSize={10} fill="#78716C" fontFamily="system-ui,sans-serif">
@@ -455,8 +455,8 @@ export default function ClientProfile() {
             {/* Live stats */}
             <div className="space-y-2.5">
               {[
-                { label: 'Total Bookings', val: <AnimatedNumber target={totalBookings} />,              icon: Calendar,      color: '#BE185D', bg: '#FCEEF7'                },
-                { label: 'Total Spent',    val: <AnimatedCurrency target={totalSpent} />,               icon: IndianRupee,   color: '#B8912A', bg: '#FBF0D9'                },
+                { label: 'Total Bookings', val: <AnimatedNumber target={totalBookings} />,              icon: Calendar,      color: '#8B1A3A', bg: '#FDF0F4'                },
+                { label: 'Total Spent',    val: <AnimatedCurrency target={totalSpent} />,               icon: IndianRupee,   color: '#C9A84C', bg: '#FBF5E0'                },
                 { label: 'Reviews Given',  val: <AnimatedNumber target={reviewsGiven} />,               icon: Star,          color: '#7C3AED', bg: 'rgba(124,58,237,0.1)'   },
               ].map(stat => (
                 <div key={stat.label} className="flex items-center gap-3 px-3 py-2.5 rounded-2xl" style={{ background: '#FDFAF6', border: '1px solid #F0EBE5' }}>
@@ -490,7 +490,7 @@ export default function ClientProfile() {
               },
               {
                 show: true,
-                icon: Calendar, bg: '#FBF0D9', color: '#B8912A',
+                icon: Calendar, bg: '#FBF5E0', color: '#C9A84C',
                 label: 'Member Since',
                 value: <span className="text-[13px] font-bold" style={{ color: '#1C1917' }}>{memberSince}</span>,
               },
@@ -528,7 +528,7 @@ export default function ClientProfile() {
                     className="flex flex-col items-center gap-1.5 p-3 rounded-2xl text-center"
                     style={{
                       background: ach.unlocked ? '#FDFAF6' : '#F5EDE4',
-                      border: `1px solid ${ach.unlocked ? 'rgba(184,145,42,0.2)' : '#E8E1D9'}`,
+                      border: `1px solid ${ach.unlocked ? 'rgba(201,168,76,0.2)' : '#E8E1D9'}`,
                       animation: ach.unlocked ? `scaleIn 0.5s cubic-bezier(0.34,1.56,0.64,1) ${idx * 0.08}s both` : 'none',
                     }}
                   >
@@ -582,7 +582,7 @@ export default function ClientProfile() {
           {/* ══ PERSONAL INFO TAB ══════════════════════════════ */}
           {activeTab === 'info' && (
             <form onSubmit={handleProfileSubmit} noValidate className="space-y-3">
-              <ProfileField label="Full Name" icon={User} iconColor="#BE185D" iconBg="#FCEEF7">
+              <ProfileField label="Full Name" icon={User} iconColor="#8B1A3A" iconBg="#FDF0F4">
                 <input
                   type="text"
                   value={profile.full_name}
@@ -617,8 +617,8 @@ export default function ClientProfile() {
                 disabled={profileLoading}
                 className="w-full py-3.5 rounded-2xl text-[14px] font-bold text-white flex items-center justify-center gap-2.5 transition-all duration-200"
                 style={{
-                  background: profileSaved ? 'linear-gradient(135deg,#059669,#047857)' : 'linear-gradient(135deg,#BE185D,#9D174D)',
-                  boxShadow: profileSaved ? '0 6px 20px rgba(5,150,105,0.35)' : '0 6px 20px rgba(190,24,93,0.35)',
+                  background: profileSaved ? 'linear-gradient(135deg,#059669,#047857)' : 'linear-gradient(135deg,#8B1A3A,#6B1230)',
+                  boxShadow: profileSaved ? '0 6px 20px rgba(5,150,105,0.35)' : '0 6px 20px rgba(139,26,58,0.35)',
                   opacity: profileLoading ? 0.7 : 1,
                 }}
                 onMouseEnter={e => { if (!profileLoading && !profileSaved) e.currentTarget.style.transform = 'translateY(-2px)'; }}
@@ -635,9 +635,9 @@ export default function ClientProfile() {
           {activeTab === 'security' && (
             <form onSubmit={handlePassSubmit} noValidate className="space-y-3">
               <div className="rounded-2xl p-4 flex items-center gap-3"
-                style={{ background: 'linear-gradient(135deg,#FBF0D9,#FDF6EE)', border: '1px solid rgba(184,145,42,0.25)' }}>
+                style={{ background: 'linear-gradient(135deg,#FBF5E0,#FDF6EE)', border: '1px solid rgba(201,168,76,0.25)' }}>
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: 'linear-gradient(135deg,#B8912A,#9A7520)', boxShadow: '0 4px 12px rgba(184,145,42,0.3)' }}>
+                  style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 4px 12px rgba(201,168,76,0.3)' }}>
                   <KeyRound size={18} style={{ color: '#fff' }} />
                 </div>
                 <div>
@@ -665,7 +665,7 @@ export default function ClientProfile() {
                 <FieldError msg={passErrors.current_password} />
               </ProfileField>
 
-              <ProfileField label="New Password" icon={Shield} iconColor="#BE185D" iconBg="#FCEEF7">
+              <ProfileField label="New Password" icon={Shield} iconColor="#8B1A3A" iconBg="#FDF0F4">
                 <div className="relative">
                   <input
                     type={showPass.new ? 'text' : 'password'}
@@ -728,7 +728,7 @@ export default function ClientProfile() {
                 type="submit"
                 disabled={passLoading}
                 className="w-full py-3.5 rounded-2xl text-[14px] font-bold text-white flex items-center justify-center gap-2.5 transition-all duration-200"
-                style={{ background: 'linear-gradient(135deg,#B8912A,#9A7520)', boxShadow: '0 6px 20px rgba(184,145,42,0.35)', opacity: passLoading ? 0.7 : 1 }}
+                style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 6px 20px rgba(201,168,76,0.35)', opacity: passLoading ? 0.7 : 1 }}
                 onMouseEnter={e => { if (!passLoading) e.currentTarget.style.transform = 'translateY(-2px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}
               >
@@ -748,13 +748,13 @@ export default function ClientProfile() {
                     label: 'Total Spent',
                     val: dataLoading ? '—' : <AnimatedCurrency target={totalSpent} />,
                     sub: `${totalBookings} booking${totalBookings !== 1 ? 's' : ''}`,
-                    color: '#BE185D', bg: 'linear-gradient(135deg,#FFF0F6,#FDFAF6)', border: 'rgba(190,24,93,0.15)',
+                    color: '#8B1A3A', bg: 'linear-gradient(135deg,#FDF0F4,#FDFAF6)', border: 'rgba(139,26,58,0.15)',
                   },
                   {
                     label: 'Biggest',
                     val: dataLoading ? '—' : biggestBooking ? <AnimatedCurrency target={biggestBooking.total_amount} /> : '—',
                     sub: biggestBooking?.service?.title?.slice(0, 18) || 'No bookings yet',
-                    color: '#B8912A', bg: 'linear-gradient(135deg,#FBF0D9,#FDF6EE)', border: 'rgba(184,145,42,0.2)',
+                    color: '#C9A84C', bg: 'linear-gradient(135deg,#FBF5E0,#FDF6EE)', border: 'rgba(201,168,76,0.2)',
                   },
                   {
                     label: 'Avg / Booking',
@@ -800,7 +800,7 @@ export default function ClientProfile() {
               <div className="rounded-3xl p-5" style={{ background: '#fff', border: '1px solid #E8E1D9' }}>
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-[13px] font-bold" style={{ color: '#1C1917' }}>Recent Bookings</div>
-                  <Link to="/bookings" className="flex items-center gap-1 text-[12px] font-bold" style={{ color: '#BE185D' }}>
+                  <Link to="/bookings" className="flex items-center gap-1 text-[12px] font-bold" style={{ color: '#8B1A3A' }}>
                     View All <ChevronRight size={13} />
                   </Link>
                 </div>
@@ -835,7 +835,7 @@ export default function ClientProfile() {
                             </div>
                           </div>
                           <div className="text-right shrink-0">
-                            <div className="text-[13px] font-bold" style={{ color: '#B8912A', fontFamily: 'Playfair Display, serif' }}>
+                            <div className="text-[13px] font-bold" style={{ color: '#C9A84C', fontFamily: 'Playfair Display, serif' }}>
                               ₹{(b.total_amount || 0).toLocaleString('en-IN')}
                             </div>
                             <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full mt-0.5 inline-block" style={{ background: sm.bg, color: sm.color }}>

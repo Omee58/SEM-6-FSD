@@ -56,7 +56,7 @@ export default function VendorBookings() {
         {TABS.map(t => (
           <button key={t} onClick={() => setTab(t)}
             className={`px-5 py-2 rounded-full text-sm font-medium capitalize transition-colors ${
-              tab === t ? 'bg-[#BE185D] text-white' : 'bg-white border border-[#E8E8E4] text-[#6B6B65] hover:border-[#BE185D] hover:text-[#BE185D]'
+              tab === t ? 'bg-primary text-white' : 'bg-white border border-border text-muted hover:border-primary hover:text-primary'
             }`}>
             {t === 'requests' ? `Pending Requests (${requests.length})` : `All Bookings (${allBookings.length})`}
           </button>
@@ -70,8 +70,8 @@ export default function VendorBookings() {
           {display.map(b => (
             <Card key={b._id} padding={false}>
               <div className="p-5 flex flex-col sm:flex-row gap-4">
-                <div className="w-14 h-14 rounded-xl bg-[#FCE7F3] flex items-center justify-center shrink-0">
-                  <Calendar size={22} className="text-[#BE185D]" />
+                <div className="w-14 h-14 rounded-xl bg-primary-light flex items-center justify-center shrink-0">
+                  <Calendar size={22} className="text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-start justify-between gap-2 mb-2">

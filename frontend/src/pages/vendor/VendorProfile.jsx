@@ -85,7 +85,7 @@ export default function VendorProfile() {
         <Card>
           <h2 className="font-semibold text-[#1A1A18] mb-5" style={{ fontFamily: 'Playfair Display, serif' }}>Personal Information</h2>
           <div className="flex items-center gap-4 mb-6 p-4 bg-[#FAFAF8] rounded-xl">
-            <div className="w-16 h-16 rounded-full bg-linear-to-br from-[#BE185D] to-[#9D174D] flex items-center justify-center text-white text-2xl font-bold">
+            <div className="w-16 h-16 rounded-full bg-linear-to-br from-primary to-primary-dark flex items-center justify-center text-white text-2xl font-bold">
               {user?.full_name?.charAt(0)}
             </div>
             <div>
@@ -133,7 +133,7 @@ export default function VendorProfile() {
         {/* Availability Calendar */}
         <Card className="lg:col-span-2">
           <div className="flex items-center gap-3 mb-5">
-            <CalendarCheck size={20} className="text-[#BE185D]" />
+            <CalendarCheck size={20} className="text-primary" />
             <div>
               <h2 className="font-semibold text-[#1A1A18]" style={{ fontFamily: 'Playfair Display, serif' }}>Manage Availability</h2>
               <p className="text-xs text-[#6B6B65]">Click any date to block/unblock it. Clients won't see blocked dates as available.</p>

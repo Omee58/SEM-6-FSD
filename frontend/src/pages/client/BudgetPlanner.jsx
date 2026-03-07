@@ -8,35 +8,35 @@ import Button from '../../components/ui/Button';
 
 const PRESETS = {
   intimate: [
-    { category: 'catering',     label: 'Catering',     pct: 35, color: '#B8912A' },
-    { category: 'photography',  label: 'Photography',  pct: 25, color: '#BE185D' },
+    { category: 'catering',     label: 'Catering',     pct: 35, color: '#C9A84C' },
+    { category: 'photography',  label: 'Photography',  pct: 25, color: '#8B1A3A' },
     { category: 'decoration',   label: 'Decoration',   pct: 20, color: '#059669' },
     { category: 'venue',        label: 'Venue',        pct: 15, color: '#7C3AED' },
     { category: 'others',       label: 'Others',       pct: 5,  color: '#78716C' },
   ],
   standard: [
-    { category: 'catering',    label: 'Catering',    pct: 30, color: '#B8912A' },
+    { category: 'catering',    label: 'Catering',    pct: 30, color: '#C9A84C' },
     { category: 'venue',       label: 'Venue',       pct: 20, color: '#7C3AED' },
-    { category: 'photography', label: 'Photography', pct: 20, color: '#BE185D' },
+    { category: 'photography', label: 'Photography', pct: 20, color: '#8B1A3A' },
     { category: 'decoration',  label: 'Decoration',  pct: 15, color: '#059669' },
     { category: 'music',       label: 'Music & DJ',  pct: 10, color: '#2563EB' },
     { category: 'others',      label: 'Others',      pct: 5,  color: '#78716C' },
   ],
   grand: [
-    { category: 'catering',    label: 'Catering',    pct: 28, color: '#B8912A' },
+    { category: 'catering',    label: 'Catering',    pct: 28, color: '#C9A84C' },
     { category: 'venue',       label: 'Venue',       pct: 22, color: '#7C3AED' },
-    { category: 'photography', label: 'Photography', pct: 18, color: '#BE185D' },
+    { category: 'photography', label: 'Photography', pct: 18, color: '#8B1A3A' },
     { category: 'decoration',  label: 'Decoration',  pct: 15, color: '#059669' },
     { category: 'music',       label: 'Music & DJ',  pct: 8,  color: '#2563EB' },
-    { category: 'makeup',      label: 'Makeup',      pct: 5,  color: '#9D174D' },
+    { category: 'makeup',      label: 'Makeup',      pct: 5,  color: '#6B1230' },
     { category: 'others',      label: 'Others',      pct: 4,  color: '#78716C' },
   ],
 };
 
 const STYLES = [
-  { value: 'intimate', label: 'Intimate', desc: 'Upto 100 guests', icon: Heart,  color: '#BE185D', bg: 'rgba(190,24,93,0.1)'  },
+  { value: 'intimate', label: 'Intimate', desc: 'Upto 100 guests', icon: Heart,  color: '#8B1A3A', bg: 'rgba(139,26,58,0.1)'  },
   { value: 'standard', label: 'Standard', desc: '100–300 guests',  icon: Gem,    color: '#7C3AED', bg: 'rgba(124,58,237,0.1)' },
-  { value: 'grand',    label: 'Grand',    desc: '300+ guests',     icon: Crown,  color: '#B8912A', bg: 'rgba(184,145,42,0.1)' },
+  { value: 'grand',    label: 'Grand',    desc: '300+ guests',     icon: Crown,  color: '#C9A84C', bg: 'rgba(201,168,76,0.1)' },
 ];
 
 const LS_KEY = 'shadiseva_planner';
@@ -80,7 +80,7 @@ export default function BudgetPlanner() {
     return (
       <div className="rounded-xl p-3 text-sm" style={{ background: '#fff', border: '1px solid #E8E1D9', boxShadow: '0 8px 24px rgba(28,9,16,0.12)' }}>
         <div className="font-semibold" style={{ color: '#1C1917' }}>{name}</div>
-        <div className="font-bold" style={{ color: '#B8912A' }}>₹{value?.toLocaleString('en-IN')}</div>
+        <div className="font-bold" style={{ color: '#C9A84C' }}>₹{value?.toLocaleString('en-IN')}</div>
       </div>
     );
   };
@@ -92,7 +92,7 @@ export default function BudgetPlanner() {
       <div
         className="relative rounded-3xl overflow-hidden mb-8"
         style={{
-          background: 'linear-gradient(135deg,#0D0509 0%,#1E0A14 40%,#2C1018 70%,#B8912A 100%)',
+          background: 'linear-gradient(135deg,#1A0409 0%,#3D0A1A 40%,#5A0E24 70%,#8B1A3A 100%)',
           backgroundSize: '300% 300%',
           animation: 'gradientShift 10s ease infinite',
           minHeight: 170,
@@ -103,9 +103,9 @@ export default function BudgetPlanner() {
           backgroundSize: '26px 26px',
         }} />
         <div className="absolute rounded-full pointer-events-none"
-          style={{ width: 180, height: 180, background: 'rgba(184,145,42,0.22)', filter: 'blur(55px)', top: -50, right: 80, animation: 'floatSlow 7s ease-in-out infinite' }} />
+          style={{ width: 180, height: 180, background: 'rgba(201,168,76,0.22)', filter: 'blur(55px)', top: -50, right: 80, animation: 'floatSlow 7s ease-in-out infinite' }} />
         <div className="absolute rounded-full pointer-events-none"
-          style={{ width: 120, height: 120, background: 'rgba(190,24,93,0.18)', filter: 'blur(45px)', bottom: -20, right: 280, animation: 'floatSlow 9s ease-in-out infinite', animationDelay: '3s' }} />
+          style={{ width: 120, height: 120, background: 'rgba(139,26,58,0.18)', filter: 'blur(45px)', bottom: -20, right: 280, animation: 'floatSlow 9s ease-in-out infinite', animationDelay: '3s' }} />
 
         <div className="relative p-8">
           <div
@@ -118,7 +118,7 @@ export default function BudgetPlanner() {
               transition: 'opacity 0.5s 0.1s',
             }}
           >
-            <Calculator size={11} style={{ color: '#B8912A' }} /> Budget Planner
+            <Calculator size={11} style={{ color: '#C9A84C' }} /> Budget Planner
           </div>
           <h1
             className="text-white font-bold mb-1"
@@ -167,7 +167,7 @@ export default function BudgetPlanner() {
             <div className="flex items-center gap-4 mb-7">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-                style={{ background: 'linear-gradient(135deg,#B8912A,#9A7520)', boxShadow: '0 6px 16px rgba(184,145,42,0.3)' }}
+                style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 6px 16px rgba(201,168,76,0.3)' }}
               >
                 <Calculator size={22} style={{ color: '#fff' }} />
               </div>
@@ -194,7 +194,7 @@ export default function BudgetPlanner() {
                   />
                 </div>
                 {budget && (
-                  <p className="text-[12px] mt-1 font-semibold" style={{ color: '#B8912A' }}>
+                  <p className="text-[12px] mt-1 font-semibold" style={{ color: '#C9A84C' }}>
                     = ₹{Number(budget).toLocaleString('en-IN')}
                   </p>
                 )}
@@ -277,7 +277,7 @@ export default function BudgetPlanner() {
             {[
               { label: 'Total Budget', value: `₹${plan.budget.toLocaleString('en-IN')}`,                        color: '#1C1917',  bg: '#FDF9F4' },
               { label: 'Planned',      value: `₹${totalPlanned.toLocaleString('en-IN')}`,                       color: '#2563EB',  bg: '#EFF6FF' },
-              { label: 'Committed',    value: `₹${totalCommitted.toLocaleString('en-IN')}`,                     color: '#B8912A',  bg: '#FBF0D9' },
+              { label: 'Committed',    value: `₹${totalCommitted.toLocaleString('en-IN')}`,                     color: '#C9A84C',  bg: '#FBF5E0' },
               { label: 'Remaining',    value: `₹${(plan.budget - totalCommitted).toLocaleString('en-IN')}`,     color: '#059669',  bg: '#F0FDF4' },
             ].map(({ label, value, color, bg }, i) => (
               <div
@@ -351,7 +351,7 @@ export default function BudgetPlanner() {
                           <Link
                             to={`/services?category=${row.category}`}
                             className="text-[12px] font-semibold flex items-center gap-1 transition-all"
-                            style={{ color: '#BE185D' }}
+                            style={{ color: '#8B1A3A' }}
                             onMouseEnter={e => e.currentTarget.style.gap = '6px'}
                             onMouseLeave={e => e.currentTarget.style.gap = '4px'}
                           >
@@ -364,9 +364,9 @@ export default function BudgetPlanner() {
                           <span style={{ color: '#A8A29E' }}>Budget: </span>
                           <span className="font-semibold" style={{ color: '#1C1917' }}>₹{suggested.toLocaleString('en-IN')}</span>
                         </div>
-                        <div className="rounded-lg px-3 py-1.5" style={{ background: '#FBF0D9' }}>
+                        <div className="rounded-lg px-3 py-1.5" style={{ background: '#FBF5E0' }}>
                           <span style={{ color: '#A8A29E' }}>Booked: </span>
-                          <span className="font-bold" style={{ color: '#B8912A' }}>₹{committed.toLocaleString('en-IN')}</span>
+                          <span className="font-bold" style={{ color: '#C9A84C' }}>₹{committed.toLocaleString('en-IN')}</span>
                         </div>
                       </div>
                       <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#F0EBE5' }}>
@@ -399,17 +399,17 @@ export default function BudgetPlanner() {
           {guests > 0 && (
             <div
               className="mt-4 rounded-2xl p-5 flex items-center gap-4"
-              style={{ background: 'linear-gradient(135deg,#FBF0D9,#FDF6EE)', border: '1px solid #E8E1D9' }}
+              style={{ background: 'linear-gradient(135deg,#FDF0F4,#F5F3EE)', border: '1px solid #E8E1D9' }}
             >
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: 'linear-gradient(135deg,#B8912A,#9A7520)', boxShadow: '0 4px 12px rgba(184,145,42,0.3)' }}
+                style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 4px 12px rgba(201,168,76,0.3)' }}
               >
                 <Users size={18} style={{ color: '#fff' }} />
               </div>
               <div className="text-[13px]">
                 <span style={{ color: '#78716C' }}>Per guest budget: </span>
-                <span className="font-bold" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.05rem', color: '#B8912A' }}>
+                <span className="font-bold" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.05rem', color: '#C9A84C' }}>
                   ₹{Math.round(plan.budget / Number(guests)).toLocaleString('en-IN')}
                 </span>
                 <span style={{ color: '#78716C' }}> for {guests} guests</span>

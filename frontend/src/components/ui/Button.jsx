@@ -6,17 +6,16 @@ export default function Button({
 
   const variants = {
     primary:
-      'text-white shadow-sm ' +
-      'bg-gradient-to-br from-[#BE185D] to-[#9D174D] ' +
-      'hover:from-[#C9195F] hover:to-[#A81852] ' +
-      'hover:shadow-[0_8px_24px_rgba(190,24,93,0.35)]',
+      'text-white shadow-sm bg-primary ' +
+      'hover:bg-primary-dark ' +
+      'hover:shadow-primary',
     secondary:
-      'bg-white text-[#1C1917] border border-[#E8E1D9] ' +
-      'hover:border-[#BE185D] hover:text-[#BE185D] hover:bg-[#FCEEF7] ' +
+      'bg-white text-[#1C1A16] border border-[#E0DDD6] ' +
+      'hover:border-primary hover:text-primary hover:bg-primary-light ' +
       'shadow-sm',
     ghost:
-      'bg-transparent text-[#78716C] ' +
-      'hover:bg-[#F5EDE4] hover:text-[#BE185D]',
+      'bg-transparent text-[#6B6560] ' +
+      'hover:bg-primary-light hover:text-primary',
     danger:
       'bg-gradient-to-br from-[#DC2626] to-[#B91C1C] text-white shadow-sm ' +
       'hover:shadow-[0_6px_20px_rgba(220,38,38,0.3)]',
@@ -25,9 +24,9 @@ export default function Button({
       'hover:shadow-[0_6px_20px_rgba(5,150,105,0.3)]',
     gold:
       'text-white shadow-sm ' +
-      'bg-gradient-to-br from-[#B8912A] to-[#9A7520] ' +
-      'hover:from-[#C9A030] hover:to-[#A07B26] ' +
-      'hover:shadow-[0_8px_24px_rgba(184,145,42,0.35)]',
+      'bg-gradient-to-br from-[#C9A84C] to-[#A88B38] ' +
+      'hover:from-[#E8C66A] hover:to-[#C9A84C] ' +
+      'hover:shadow-[0_8px_24px_rgba(201,168,76,0.35)]',
   };
 
   const sizes = {

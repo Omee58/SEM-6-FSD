@@ -16,10 +16,10 @@ const SORT_OPTIONS = [
 ];
 
 const CATEGORY_META = {
-  photography: { icon: Camera,     color: '#BE185D', bg: 'rgba(190,24,93,0.12)'   },
+  photography: { icon: Camera,     color: '#8B1A3A', bg: 'rgba(139,26,58,0.12)'   },
   catering:    { icon: Utensils,   color: '#059669', bg: 'rgba(5,150,105,0.12)'   },
   venue:       { icon: Building2,  color: '#2563EB', bg: 'rgba(37,99,235,0.12)'   },
-  decoration:  { icon: Flower2,    color: '#B8912A', bg: 'rgba(184,145,42,0.12)'  },
+  decoration:  { icon: Flower2,    color: '#C9A84C', bg: 'rgba(201,168,76,0.12)'  },
   mehendi:     { icon: Paintbrush, color: '#7C3AED', bg: 'rgba(124,58,237,0.12)'  },
   music:       { icon: Music,      color: '#0891B2', bg: 'rgba(8,145,178,0.12)'   },
   makeup:      { icon: Sparkles,   color: '#DB2777', bg: 'rgba(219,39,119,0.12)'  },
@@ -34,7 +34,7 @@ function StarRating({ rating }) {
         <Star
           key={i}
           size={11}
-          style={{ color: i <= Math.round(rating) ? '#B8912A' : '#E8E1D9' }}
+          style={{ color: i <= Math.round(rating) ? '#C9A84C' : '#E0DDD6' }}
           className={i <= Math.round(rating) ? 'fill-current' : ''}
         />
       ))}
@@ -131,7 +131,7 @@ export default function ClientServices() {
       <div
         className="relative rounded-3xl overflow-hidden mb-8"
         style={{
-          background: 'linear-gradient(135deg,#0D0509 0%,#2C0D1A 40%,#BE185D 100%)',
+          background: 'linear-gradient(135deg,#1A0409 0%,#3D0A1A 40%,#8B1A3A 100%)',
           backgroundSize: '300% 300%',
           animation: 'gradientShift 8s ease infinite',
           minHeight: 220,
@@ -144,9 +144,9 @@ export default function ClientServices() {
         }} />
 
         {/* Floating orbs */}
-        <FloatOrb size={180} color="rgba(190,24,93,0.25)" style={{ top: -40, right: 60, animationDelay: '0s' }} />
-        <FloatOrb size={120} color="rgba(184,145,42,0.2)" style={{ bottom: -20, right: 200, animationDelay: '2.5s' }} />
-        <FloatOrb size={100} color="rgba(190,24,93,0.15)" style={{ top: 20, left: '40%', animationDelay: '1.2s' }} />
+        <FloatOrb size={180} color="rgba(139,26,58,0.25)" style={{ top: -40, right: 60, animationDelay: '0s' }} />
+        <FloatOrb size={120} color="rgba(201,168,76,0.2)" style={{ bottom: -20, right: 200, animationDelay: '2.5s' }} />
+        <FloatOrb size={100} color="rgba(139,26,58,0.15)" style={{ top: 20, left: '40%', animationDelay: '1.2s' }} />
 
         <div className="relative p-8 pb-10">
           {/* Label */}
@@ -161,7 +161,7 @@ export default function ClientServices() {
               transition: 'all 0.5s cubic-bezier(0.4,0,0.2,1)',
             }}
           >
-            <Sparkles size={11} style={{ color: '#B8912A' }} />
+            <Sparkles size={11} style={{ color: '#C9A84C' }} />
             India's Finest Wedding Vendors
           </div>
 
@@ -216,16 +216,16 @@ export default function ClientServices() {
                   backdropFilter: 'blur(8px)',
                   transition: 'border-color 0.2s, box-shadow 0.2s',
                 }}
-                onFocus={e => { e.currentTarget.style.borderColor = '#BE185D'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(190,24,93,0.15)'; }}
+                onFocus={e => { e.currentTarget.style.borderColor = '#8B1A3A'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139,26,58,0.15)'; }}
                 onBlur={e => { e.currentTarget.style.borderColor = 'transparent'; e.currentTarget.style.boxShadow = 'none'; }}
               />
             </div>
             <button
               type="submit"
               className="px-6 py-3 text-white text-[14px] font-bold rounded-xl transition-all duration-200"
-              style={{ background: 'linear-gradient(135deg,#B8912A,#9A7520)', boxShadow: '0 4px 16px rgba(184,145,42,0.4)', whiteSpace: 'nowrap' }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(184,145,42,0.5)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(184,145,42,0.4)'; }}
+              style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 4px 16px rgba(201,168,76,0.4)', whiteSpace: 'nowrap' }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(201,168,76,0.5)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(201,168,76,0.4)'; }}
             >
               Search
             </button>
@@ -247,15 +247,15 @@ export default function ClientServices() {
           onClick={() => { setCategory(''); setPage(1); }}
           className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold transition-all duration-200"
           style={!category ? {
-            background: 'linear-gradient(135deg,#BE185D,#9D174D)',
+            background: 'linear-gradient(135deg,#8B1A3A,#6B1230)',
             color: '#fff',
-            boxShadow: '0 4px 12px rgba(190,24,93,0.3)',
+            boxShadow: '0 4px 12px rgba(139,26,58,0.3)',
           } : {
             background: '#fff',
             color: '#78716C',
             border: '1.5px solid #E8E1D9',
           }}
-          onMouseEnter={e => { if (category) { e.currentTarget.style.borderColor = '#BE185D'; e.currentTarget.style.color = '#BE185D'; } }}
+          onMouseEnter={e => { if (category) { e.currentTarget.style.borderColor = '#8B1A3A'; e.currentTarget.style.color = '#8B1A3A'; } }}
           onMouseLeave={e => { if (category) { e.currentTarget.style.borderColor = '#E8E1D9'; e.currentTarget.style.color = '#78716C'; } }}
         >
           <Sparkles size={13} /> All Services
@@ -306,7 +306,7 @@ export default function ClientServices() {
             <button
               onClick={handleClearFilters}
               className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold rounded-xl transition-all"
-              style={{ color: '#BE185D', background: '#FCEEF7', border: '1px solid rgba(190,24,93,0.25)' }}
+              style={{ color: '#8B1A3A', background: '#FDF0F4', border: '1px solid rgba(139,26,58,0.25)' }}
             >
               <X size={13} /> Clear
             </button>
@@ -326,7 +326,7 @@ export default function ClientServices() {
           <span>services</span>
           {category && (
             <span>
-              in <span className="font-semibold capitalize" style={{ color: '#BE185D' }}>{category}</span>
+              in <span className="font-semibold capitalize" style={{ color: '#8B1A3A' }}>{category}</span>
             </span>
           )}
         </div>
@@ -344,9 +344,9 @@ export default function ClientServices() {
         >
           <div
             className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5"
-            style={{ background: 'linear-gradient(135deg,#FCEEF7,#FCE7F3)', boxShadow: '0 8px 24px rgba(190,24,93,0.12)' }}
+            style={{ background: 'linear-gradient(135deg,#FDF0F4,#F5C8D4)', boxShadow: '0 8px 24px rgba(139,26,58,0.12)' }}
           >
-            <Heart size={36} style={{ color: '#BE185D', opacity: 0.7 }} />
+            <Heart size={36} style={{ color: '#8B1A3A', opacity: 0.7 }} />
           </div>
           <h3 className="font-bold mb-2" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.25rem', color: '#1C1917' }}>
             No Services Found
@@ -360,7 +360,7 @@ export default function ClientServices() {
             <button
               onClick={handleClearFilters}
               className="px-6 py-2.5 rounded-xl text-[14px] font-semibold text-white transition-all"
-              style={{ background: 'linear-gradient(135deg,#BE185D,#9D174D)', boxShadow: '0 4px 16px rgba(190,24,93,0.3)' }}
+              style={{ background: 'linear-gradient(135deg,#8B1A3A,#6B1230)', boxShadow: '0 4px 16px rgba(139,26,58,0.3)' }}
             >
               Clear All Filters
             </button>
@@ -426,7 +426,7 @@ export default function ClientServices() {
                     {svc.avg_rating > 0 && (
                       <div
                         className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-bold"
-                        style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', color: '#B8912A' }}
+                        style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', color: '#C9A84C' }}
                       >
                         <Star size={11} className="fill-current" />
                         {svc.avg_rating.toFixed(1)}
@@ -437,7 +437,7 @@ export default function ClientServices() {
                     <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                       <div
                         className="text-center py-2.5 rounded-xl text-[13px] font-bold text-white"
-                        style={{ background: 'linear-gradient(135deg,#BE185D,#9D174D)', boxShadow: '0 4px 16px rgba(190,24,93,0.45)' }}
+                        style={{ background: 'linear-gradient(135deg,#8B1A3A,#6B1230)', boxShadow: '0 4px 16px rgba(139,26,58,0.45)' }}
                       >
                         View Details →
                       </div>
@@ -449,7 +449,7 @@ export default function ClientServices() {
                     <h3
                       className="font-bold mb-1.5 line-clamp-1 transition-colors duration-200"
                       style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.05rem', color: '#1C1917' }}
-                      onMouseEnter={e => { e.currentTarget.closest('.group').style.color = '#BE185D'; }}
+                      onMouseEnter={e => { e.currentTarget.closest('.group').style.color = '#8B1A3A'; }}
                     >
                       {svc.title}
                     </h3>
@@ -464,7 +464,7 @@ export default function ClientServices() {
                         {svc.avg_rating > 0 ? (
                           <>
                             <StarRating rating={svc.avg_rating} />
-                            <span className="text-[11px] font-semibold" style={{ color: '#B8912A' }}>
+                            <span className="text-[11px] font-semibold" style={{ color: '#C9A84C' }}>
                               {svc.avg_rating.toFixed(1)}
                             </span>
                           </>
@@ -484,7 +484,7 @@ export default function ClientServices() {
                         <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: '#A8A29E' }}>Starting from</div>
                         <div
                           className="font-bold"
-                          style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', color: '#B8912A' }}
+                          style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.3rem', color: '#C9A84C' }}
                         >
                           ₹{svc.price?.toLocaleString('en-IN')}
                         </div>
@@ -513,7 +513,7 @@ export default function ClientServices() {
                 disabled={page <= 1}
                 className="w-10 h-10 rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{ border: '1.5px solid #E8E1D9', color: '#78716C', background: '#fff' }}
-                onMouseEnter={e => { if (page > 1) { e.currentTarget.style.borderColor = '#BE185D'; e.currentTarget.style.color = '#BE185D'; } }}
+                onMouseEnter={e => { if (page > 1) { e.currentTarget.style.borderColor = '#8B1A3A'; e.currentTarget.style.color = '#8B1A3A'; } }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = '#E8E1D9'; e.currentTarget.style.color = '#78716C'; }}
               >
                 <ChevronLeft size={16} />
@@ -535,15 +535,15 @@ export default function ClientServices() {
                       onClick={() => handlePageChange(p)}
                       className="w-10 h-10 rounded-xl text-[13px] font-bold transition-all"
                       style={p === page ? {
-                        background: 'linear-gradient(135deg,#BE185D,#9D174D)',
+                        background: 'linear-gradient(135deg,#8B1A3A,#6B1230)',
                         color: '#fff',
-                        boxShadow: '0 4px 14px rgba(190,24,93,0.35)',
+                        boxShadow: '0 4px 14px rgba(139,26,58,0.35)',
                       } : {
                         border: '1.5px solid #E8E1D9',
                         color: '#78716C',
                         background: '#fff',
                       }}
-                      onMouseEnter={e => { if (p !== page) { e.currentTarget.style.borderColor = '#BE185D'; e.currentTarget.style.color = '#BE185D'; } }}
+                      onMouseEnter={e => { if (p !== page) { e.currentTarget.style.borderColor = '#8B1A3A'; e.currentTarget.style.color = '#8B1A3A'; } }}
                       onMouseLeave={e => { if (p !== page) { e.currentTarget.style.borderColor = '#E8E1D9'; e.currentTarget.style.color = '#78716C'; } }}
                     >
                       {p}
@@ -556,7 +556,7 @@ export default function ClientServices() {
                 disabled={page >= pagination.pages}
                 className="w-10 h-10 rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{ border: '1.5px solid #E8E1D9', color: '#78716C', background: '#fff' }}
-                onMouseEnter={e => { if (page < pagination.pages) { e.currentTarget.style.borderColor = '#BE185D'; e.currentTarget.style.color = '#BE185D'; } }}
+                onMouseEnter={e => { if (page < pagination.pages) { e.currentTarget.style.borderColor = '#8B1A3A'; e.currentTarget.style.color = '#8B1A3A'; } }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = '#E8E1D9'; e.currentTarget.style.color = '#78716C'; }}
               >
                 <ChevronRight size={16} />

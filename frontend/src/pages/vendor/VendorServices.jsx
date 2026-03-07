@@ -99,13 +99,13 @@ export default function VendorServices() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {services.map(svc => (
             <Card key={svc._id} padding={false} className="overflow-hidden">
-              <div className="h-44 bg-linear-to-br from-[#FCE7F3] to-[#FEE2E2] relative">
+              <div className="h-44 bg-linear-to-br from-primary-light to-[#CCDCEE] relative">
                 {svc.images?.[0] ? (
                   <img src={`${import.meta.env.VITE_UPLOAD_URL}/${svc.images[0]}`}
                     alt={svc.title} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Image size={32} className="text-[#BE185D]/30" />
+                    <Image size={32} className="text-primary/30" />
                   </div>
                 )}
                 <div className="absolute top-3 left-3">
@@ -116,8 +116,8 @@ export default function VendorServices() {
                 <h3 className="font-semibold text-[#1A1A18] mb-1 line-clamp-1">{svc.title}</h3>
                 <p className="text-xs text-[#6B6B65] mb-3 line-clamp-2">{svc.description}</p>
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-lg font-bold text-[#BE185D]">₹{svc.price?.toLocaleString('en-IN')}</div>
-                  <span className="text-xs bg-[#FCE7F3] text-[#BE185D] px-2 py-1 rounded-full capitalize">{svc.category}</span>
+                  <div className="text-lg font-bold text-primary">₹{svc.price?.toLocaleString('en-IN')}</div>
+                  <span className="text-xs bg-primary-light text-primary px-2 py-1 rounded-full capitalize">{svc.category}</span>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="secondary" size="sm" className="flex-1" onClick={() => openEdit(svc)}>
@@ -167,7 +167,7 @@ export default function VendorServices() {
             <label className="text-sm font-medium text-[#1A1A18] block mb-2">Images</label>
             <div
               onClick={() => fileRef.current?.click()}
-              className="border-2 border-dashed border-[#E8E8E4] rounded-xl p-5 text-center cursor-pointer hover:border-[#BE185D] hover:bg-[#FAFAF8] transition-colors"
+              className="border-2 border-dashed border-border rounded-xl p-5 text-center cursor-pointer hover:border-primary hover:bg-primary-light transition-colors"
             >
               <Image size={24} className="text-[#6B6B65] mx-auto mb-2" />
               <p className="text-sm text-[#6B6B65]">Click to upload images (JPEG, PNG, WebP — max 5MB each)</p>

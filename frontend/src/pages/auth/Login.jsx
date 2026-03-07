@@ -45,7 +45,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#BE185D] via-[#9D174D] to-[#7C1037] items-center justify-center p-12 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-linear-to-br from-[#1A0409] via-[#5A0E24] to-primary items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="absolute rounded-full border border-white"
@@ -56,7 +56,7 @@ export default function Login() {
           <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-8 border border-white/30">
             <Heart size={40} className="fill-white text-white" />
           </div>
-          <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: 'Playfair Display, serif' }}>
+          <h1 className="text-5xl font-semibold mb-4 italic" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
             Welcome to ShadiSeva
           </h1>
           <p className="text-white/80 text-lg leading-relaxed">
@@ -78,7 +78,7 @@ export default function Login() {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
-            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-[#BE185D] to-[#9D174D] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary to-primary-dark flex items-center justify-center">
               <Heart size={20} className="fill-white text-white" />
             </div>
             <span className="text-xl font-bold text-[#1A1A18]" style={{ fontFamily: 'Playfair Display, serif' }}>ShadiSeva</span>
@@ -146,14 +146,14 @@ export default function Login() {
 
             <div className="mt-6 text-center text-sm text-[#6B6B65]">
               Don't have an account?{' '}
-              <Link to="/register" className="text-[#BE185D] font-semibold hover:text-[#9D174D]">
+              <Link to="/register" className="text-primary font-semibold hover:text-primary-dark">
                 Create one free
               </Link>
             </div>
 
             {/* Demo credentials */}
-            <div className="mt-6 p-4 bg-[#FCE7F3] rounded-xl">
-              <p className="text-xs font-semibold text-[#BE185D] mb-2">Demo Credentials</p>
+            <div className="mt-6 p-4 bg-primary-light rounded-xl">
+              <p className="text-xs font-semibold text-primary mb-2">Demo Credentials</p>
               <div className="space-y-1 text-xs text-[#6B6B65]">
                 <div><span className="font-medium text-[#1A1A18]">Admin:</span> admin@shadiseva.com / Admin@123</div>
                 <div><span className="font-medium text-[#1A1A18]">Vendor:</span> rajesh@vendor.com / Vendor@123</div>

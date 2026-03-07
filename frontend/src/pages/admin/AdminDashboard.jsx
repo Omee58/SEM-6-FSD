@@ -18,7 +18,7 @@ const CustomBarTooltip = ({ active, payload, label }) => {
   return (
     <div className="bg-white border border-[#E8E8E4] rounded-xl p-3 shadow-lg text-sm">
       <div className="font-semibold text-[#1A1A18] mb-1">{label}</div>
-      <div className="text-[#BE185D]">₹{payload[0]?.value?.toLocaleString('en-IN')}</div>
+      <div className="text-primary">₹{payload[0]?.value?.toLocaleString('en-IN')}</div>
       {payload[1] && <div className="text-[#6B6B65] text-xs">{payload[1]?.value} bookings</div>}
     </div>
   );
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B65' }} axisLine={false} tickLine={false} />
                 <YAxis tickFormatter={v => `₹${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11, fill: '#6B6B65' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomBarTooltip />} />
-                <Bar dataKey="revenue" fill="#BE185D" radius={[6, 6, 0, 0]} maxBarSize={40} />
+                <Bar dataKey="revenue" fill="#C9A84C" radius={[6, 6, 0, 0]} maxBarSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -134,14 +134,14 @@ export default function AdminDashboard() {
           <div className="space-y-3">
             {topCategories.map((cat, i) => (
               <div key={cat._id} className="flex items-center gap-4">
-                <div className="w-6 h-6 rounded-full bg-[#FCE7F3] flex items-center justify-center text-xs font-bold text-[#BE185D]">{i + 1}</div>
+                <div className="w-6 h-6 rounded-full bg-primary-light flex items-center justify-center text-xs font-bold text-primary">{i + 1}</div>
                 <div className="flex-1">
                   <div className="flex justify-between text-sm mb-1">
                     <span className="font-medium capitalize text-[#1A1A18]">{cat._id}</span>
                     <span className="text-[#6B6B65]">{cat.count} services</span>
                   </div>
                   <div className="h-2 bg-[#F3F4F6] rounded-full overflow-hidden">
-                    <div className="h-full bg-linear-to-r from-[#BE185D] to-[#9D174D] rounded-full"
+                    <div className="h-full bg-linear-to-r from-primary to-primary-dark rounded-full"
                       style={{ width: `${Math.min(100, (cat.count / (topCategories[0]?.count || 1)) * 100)}%` }} />
                   </div>
                 </div>
