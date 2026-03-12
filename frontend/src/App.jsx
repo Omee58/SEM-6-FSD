@@ -27,6 +27,9 @@ import AdminVendorApprovals from './pages/admin/AdminVendorApprovals';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminBookings from './pages/admin/AdminBookings';
 import AdminProfile from './pages/admin/AdminProfile';
+import AdminAnalytics from './pages/admin/AdminAnalytics';
+import AdminReviews from './pages/admin/AdminReviews';
+import AdminReports from './pages/admin/AdminReports';
 
 function ClientRoutes() {
   return (
@@ -68,9 +71,12 @@ function AdminRoutes() {
         <Routes>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="approvals" element={<AdminVendorApprovals />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route path="bookings" element={<AdminBookings />} />
-          <Route path="profile" element={<AdminProfile />} />
+          <Route path="users"     element={<AdminUsers />} />
+          <Route path="bookings"  element={<AdminBookings />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="reviews"   element={<AdminReviews />} />
+          <Route path="reports"   element={<AdminReports />} />
+          <Route path="profile"   element={<AdminProfile />} />
           <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>
       </SidebarLayout>

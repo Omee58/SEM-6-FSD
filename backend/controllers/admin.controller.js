@@ -197,9 +197,9 @@ const getAllBookings = async (req, res) => {
 
     const [bookings, total, revenueAgg] = await Promise.all([
       Booking.find(filter)
-        .populate('client', 'full_name email')
-        .populate('vendor', 'full_name email')
-        .populate('service', 'title category')
+        .populate('client',  'full_name email phone')
+        .populate('vendor',  'full_name email phone business_name category_specialization years_experience')
+        .populate('service', 'title category description price location images avg_rating review_count')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limitNum),
@@ -240,14 +240,18 @@ const getAllBookings = async (req, res) => {
 const getStats = async (req, res) => {
   try {
     const now = new Date();
-    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+    const monthsParam = parseInt(req.query.months, 10);
+    // 0 or NaN → all available (capped at 24); otherwise use provided value (min 1, max 24)
+    const numMonths = (!monthsParam || monthsParam <= 0) ? 24 : Math.min(monthsParam, 24);
+    const rangeStart = new Date(now.getFullYear(), now.getMonth() - (numMonths - 1), 1);
 
-    // Build last 6 months array (oldest first)
+    // Build months array (oldest first)
     const lastSixMonths = [];
-    for (let i = 5; i >= 0; i--) {
+    for (let i = numMonths - 1; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       lastSixMonths.push({ year: d.getFullYear(), month: d.getMonth() + 1 });
     }
+    const sixMonthsAgo = rangeStart; // reuse variable name used in aggregation below
 
     const [
       userCounts,
@@ -392,6 +396,40 @@ const getStats = async (req, res) => {
   }
 };
 
+// ─── GET /admin/reviews ───────────────────────────────────────────────────────
+
+const getAllReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find()
+      .populate('client',  'full_name email')
+      .populate('service', 'title category')
+      .populate('vendor',  'full_name')
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Reviews retrieved.',
+      data: { reviews },
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message || 'Server error.', data: {} });
+  }
+};
+
+// ─── DELETE /admin/reviews/:id ────────────────────────────────────────────────
+
+const deleteReview = async (req, res) => {
+  try {
+    const review = await Review.findByIdAndDelete(req.params.id);
+    if (!review) {
+      return res.status(404).json({ success: false, message: 'Review not found.', data: {} });
+    }
+    return res.status(200).json({ success: true, message: 'Review deleted.', data: {} });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message || 'Server error.', data: {} });
+  }
+};
+
 // ─── Exports ──────────────────────────────────────────────────────────────────
 
 module.exports = {
@@ -402,4 +440,6 @@ module.exports = {
   getAllUsers,
   getAllBookings,
   getStats,
+  getAllReviews,
+  deleteReview,
 };

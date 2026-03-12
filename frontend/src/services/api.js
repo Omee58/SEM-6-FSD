@@ -57,12 +57,15 @@ export const vendorAPI = {
 
 // Admin
 export const adminAPI = {
-  getStats: () => API.get('/admin/stats'),
-  getVendorRequests: () => API.get('/admin/vendor-requests'),
-  acceptVendor: (id) => API.patch(`/admin/vendor-requests/${id}/accept`),
-  rejectVendor: (id, reason) => API.patch(`/admin/vendor-requests/${id}/reject`, { reason }),
-  getAllUsers: (params) => API.get('/admin/users', { params }),
-  getAllBookings: (params) => API.get('/admin/bookings', { params }),
+  getStats:          (params)     => API.get('/admin/stats', { params }),
+  getVendorRequests: ()           => API.get('/admin/vendor-requests'),
+  acceptVendor:      (id)         => API.patch(`/admin/vendor-requests/${id}/accept`),
+  rejectVendor:      (id, reason) => API.patch(`/admin/vendor-requests/${id}/reject`, { reason }),
+  getAllUsers:        (params)     => API.get('/admin/users',    { params }),
+  getAllBookings:     (params)     => API.get('/admin/bookings', { params }),
+  // new pages
+  getReviews:        (params)     => API.get('/admin/reviews',  { params }),
+  deleteReview:      (id)         => API.delete(`/admin/reviews/${id}`),
 };
 
 // Reviews

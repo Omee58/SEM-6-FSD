@@ -1,7 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Search, Calendar, Calculator, User,
-  Bell, Package, UserCheck, Users, LogOut, Heart, Gem
+  Bell, Package, UserCheck, Users, LogOut, Heart, Gem,
+  BarChart3, Star, FileDown,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -22,9 +23,12 @@ const NAV = {
   admin: [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/admin/approvals', icon: UserCheck,        label: 'Vendor Approvals' },
-    { to: '/admin/users',     icon: Users,             label: 'All Users' },
-    { to: '/admin/bookings',  icon: Calendar,          label: 'All Bookings' },
-    { to: '/admin/profile',   icon: User,              label: 'Profile' },
+    { to: '/admin/users',     icon: Users,            label: 'All Users' },
+    { to: '/admin/bookings',  icon: Calendar,         label: 'All Bookings' },
+    { to: '/admin/analytics', icon: BarChart3,        label: 'Analytics' },
+    { to: '/admin/reviews',   icon: Star,             label: 'Reviews' },
+    { to: '/admin/reports',   icon: FileDown,         label: 'Reports' },
+    { to: '/admin/profile',   icon: User,             label: 'Profile' },
   ],
 };
 
@@ -91,7 +95,7 @@ function NavItem({ to, icon: Icon, label, active, onClick, theme }) {
     <Link
       to={to}
       onClick={onClick}
-      className="flex items-center gap-3 px-3 py-[10px] rounded-xl text-sm font-medium transition-all duration-200"
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
       style={active ? {
         background: theme.activeBg,
         color: theme.activeText,

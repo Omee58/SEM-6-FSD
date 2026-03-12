@@ -3,7 +3,7 @@ const router = express.Router();
 const { authMiddleware } = require('../middleware/auth.middleware');
 const {
   getAdminProfile, getVendorRequests, acceptVendorRequest, rejectVendorRequest,
-  getAllUsers, getAllBookings, getStats
+  getAllUsers, getAllBookings, getStats, getAllReviews, deleteReview,
 } = require('../controllers/admin.controller');
 const { updateProfile } = require('../controllers/auth.controller');
 
@@ -23,5 +23,9 @@ router.patch('/vendor-requests/:vendorId/reject', rejectVendorRequest);
 router.get('/users', getAllUsers);
 router.get('/bookings', getAllBookings);
 router.get('/stats', getStats);
+
+// Reviews
+router.get('/reviews', getAllReviews);
+router.delete('/reviews/:id', deleteReview);
 
 module.exports = router;
