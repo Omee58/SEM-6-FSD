@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Search, Star, MapPin, Heart, X, ChevronLeft, ChevronRight, Sparkles, Camera, Utensils, Music, Flower2, Paintbrush, Car, Building2, Gem } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import { clientAPI } from '../../services/api';
 import { SERVICE_CATEGORIES } from '../../constants/categories';
 import EmptyState from '../../components/ui/EmptyState';
@@ -58,6 +59,7 @@ function FloatOrb({ size, color, style }) {
 }
 
 export default function ClientServices() {
+  const { user }  = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchRef = useRef(null);
@@ -232,6 +234,39 @@ export default function ClientServices() {
           </form>
         </div>
       </div>
+
+      {/* ── Your Picks (preferred categories from profile) ── */}
+      {(user?.preferred_categories?.length > 0) && (
+        <div
+          className="flex flex-wrap items-center gap-2 mb-4 px-4 py-3 rounded-2xl"
+          style={{
+            background: 'linear-gradient(135deg,#FDF0F4,#FDF6EE)',
+            border: '1px solid rgba(139,26,58,0.15)',
+            opacity: mounted ? 1 : 0,
+            transition: 'opacity 0.5s 0.3s',
+          }}
+        >
+          <span className="text-[11px] font-bold uppercase tracking-widest shrink-0" style={{ color: '#8B1A3A' }}>
+            Your Picks
+          </span>
+          {user.preferred_categories.map(cat => {
+            const meta = CATEGORY_META[cat] || CATEGORY_META.other;
+            const CatIcon = meta.icon;
+            return (
+              <button
+                key={cat}
+                onClick={() => { setCategory(cat); setPage(1); }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-200"
+                style={{ background: meta.bg, color: meta.color, border: `1.5px solid ${meta.color}40` }}
+                onMouseEnter={e => { e.currentTarget.style.background = meta.color; e.currentTarget.style.color = '#fff'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = meta.bg; e.currentTarget.style.color = meta.color; }}
+              >
+                <CatIcon size={12} /> {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* ── Category Pills ── */}
       <div
@@ -491,12 +526,16 @@ export default function ClientServices() {
                       </div>
                       <div className="text-right">
                         <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color: '#A8A29E' }}>By</div>
-                        <div
-                          className="text-[12px] font-semibold px-2.5 py-1 rounded-full"
+                        <Link
+                          to={`/vendors/${svc.vendor?._id}`}
+                          onClick={e => e.stopPropagation()}
+                          className="text-[12px] font-semibold px-2.5 py-1 rounded-full inline-block transition-all"
                           style={{ background: '#FDF6EE', color: '#78716C' }}
+                          onMouseEnter={e => { e.currentTarget.style.background = '#FDF0F4'; e.currentTarget.style.color = '#8B1A3A'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = '#FDF6EE'; e.currentTarget.style.color = '#78716C'; }}
                         >
                           {svc.vendor?.full_name}
-                        </div>
+                        </Link>
                       </div>
                     </div>
                   </div>

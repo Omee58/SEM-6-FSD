@@ -299,6 +299,39 @@ const cancelBooking = async (req, res) => {
   }
 };
 
+// ─── GET /client/vendors/:vendorId ────────────────────────────────────────────
+
+const getVendorPublicProfile = async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+
+    const vendor = await User.findOne({ _id: vendorId, role: 'vendor', verified: true }).select(
+      'full_name email phone business_name business_description years_experience ' +
+      'profile_photo cover_image service_cities instagram_url portfolio_url ' +
+      'languages gst_number min_price max_price certifications avg_response_time category_specialization'
+    );
+
+    if (!vendor) {
+      return res.status(404).json({ success: false, message: 'Vendor not found.', data: {} });
+    }
+
+    const services = await Service.find({ vendor: vendorId, status: 'active' })
+      .select('title description category price images avg_rating review_count location')
+      .sort({ avg_rating: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Vendor profile retrieved.',
+      data: { vendor, services },
+    });
+  } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(400).json({ success: false, message: 'Invalid vendor ID.', data: {} });
+    }
+    return res.status(500).json({ success: false, message: err.message || 'Server error.', data: {} });
+  }
+};
+
 // ─── Exports ──────────────────────────────────────────────────────────────────
 
 module.exports = {
@@ -306,4 +339,5 @@ module.exports = {
   bookService,
   getClientBookings,
   cancelBooking,
+  getVendorPublicProfile,
 };

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { Link } from 'react-router-dom';
 import { Calculator, ArrowRight, IndianRupee, Users, Sparkles, RefreshCw, Heart, Gem, Crown } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import { clientAPI } from '../../services/api';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -41,11 +42,20 @@ const STYLES = [
 
 const LS_KEY = 'shadiseva_planner';
 
+const WEDDING_TYPE_TO_STYLE = {
+  traditional: 'standard',
+  modern:      'intimate',
+  destination: 'grand',
+  court:       'intimate',
+  other:       'standard',
+};
+
 export default function BudgetPlanner() {
+  const { user } = useAuth();
   const saved  = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-  const [budget,  setBudget]  = useState(saved.budget  || '');
+  const [budget,  setBudget]  = useState(saved.budget  || (user?.budget ? String(user.budget) : ''));
   const [guests,  setGuests]  = useState(saved.guests  || '');
-  const [style,   setStyle]   = useState(saved.style   || 'standard');
+  const [style,   setStyle]   = useState(saved.style   || (user?.wedding_type ? (WEDDING_TYPE_TO_STYLE[user.wedding_type] || 'standard') : 'standard'));
   const [plan,    setPlan]    = useState(saved.plan    || null);
   const [bookings, setBookings] = useState([]);
   const [sliders,  setSliders]  = useState({});
@@ -156,32 +166,64 @@ export default function BudgetPlanner() {
       {!plan ? (
         /* ── STEP 1: INPUT ── */
         <div
-          className="max-w-2xl mx-auto"
+          className="rounded-3xl overflow-hidden"
           style={{
+            boxShadow: '0 8px 48px rgba(28,9,16,0.1)',
+            border: '1px solid #E8E1D9',
             opacity: mounted ? 1 : 0,
             transform: mounted ? 'translateY(0)' : 'translateY(20px)',
             transition: 'all 0.55s cubic-bezier(0.4,0,0.2,1) 0.3s',
           }}
         >
-          <Card>
-            <div className="flex items-center gap-4 mb-7">
-              <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-                style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 6px 16px rgba(201,168,76,0.3)' }}
-              >
-                <Calculator size={22} style={{ color: '#fff' }} />
-              </div>
-              <div>
-                <h2 className="font-semibold" style={{ fontFamily: 'Playfair Display, serif', color: '#1C1917', fontSize: '1.1rem' }}>
-                  Set Your Budget
+          <div className="grid grid-cols-1 lg:grid-cols-5">
+
+            {/* ── Left decorative panel ── */}
+            <div
+              className="lg:col-span-2 relative overflow-hidden p-8 flex flex-col justify-between"
+              style={{ background: 'linear-gradient(160deg,#1A0409 0%,#4A0E1E 50%,#8B1A3A 100%)', minHeight: 420 }}
+            >
+              {/* Orbs */}
+              <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, background: 'rgba(201,168,76,0.15)', filter: 'blur(50px)', top: -40, right: -30 }} />
+              <div className="absolute rounded-full pointer-events-none" style={{ width: 160, height: 160, background: 'rgba(139,26,58,0.3)', filter: 'blur(40px)', bottom: 40, left: -20 }} />
+              {/* Dot grid */}
+              <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
+
+              <div className="relative">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5" style={{ background: 'rgba(201,168,76,0.2)', border: '1px solid rgba(201,168,76,0.3)' }}>
+                  <Calculator size={22} style={{ color: '#C9A84C' }} />
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Playfair Display, serif', lineHeight: 1.25 }}>
+                  Plan Your Perfect Wedding
                 </h2>
-                <p className="text-[13px]" style={{ color: '#78716C' }}>We'll create a smart allocation plan for you</p>
+                <p className="text-[13px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                  Tell us your budget and we'll create a smart allocation across all wedding categories.
+                </p>
+              </div>
+
+              {/* Tips */}
+              <div className="relative space-y-3 mt-8">
+                {[
+                  { icon: '💰', tip: 'Catering is typically the biggest spend (28–35%)' },
+                  { icon: '📸', tip: 'Photography & video memories last a lifetime' },
+                  { icon: '🎯', tip: 'Book venue 6–12 months in advance for best deals' },
+                ].map(({ icon, tip }) => (
+                  <div key={tip} className="flex items-start gap-3 p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <span className="text-[18px] shrink-0 mt-0.5">{icon}</span>
+                    <p className="text-[12px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>{tip}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="space-y-5">
+            {/* ── Right form panel ── */}
+            <div className="lg:col-span-3 bg-white p-8 space-y-6">
+
+              {/* Step 1 — Budget */}
               <div>
-                <label className="label-caps block mb-1.5">Total Budget (₹) <span style={{ color: '#DC2626' }}>*</span></label>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold text-white" style={{ background: '#8B1A3A' }}>1</div>
+                  <label className="label-caps">Total Budget (₹) <span style={{ color: '#DC2626' }}>*</span></label>
+                </div>
                 <div className="relative">
                   <IndianRupee size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#A8A29E' }} />
                   <input
@@ -193,15 +235,44 @@ export default function BudgetPlanner() {
                     min="10000" max="100000000"
                   />
                 </div>
-                {budget && (
-                  <p className="text-[12px] mt-1 font-semibold" style={{ color: '#C9A84C' }}>
-                    = ₹{Number(budget).toLocaleString('en-IN')}
+                {budget ? (
+                  <p className="text-[13px] mt-1.5 font-bold" style={{ color: '#C9A84C' }}>
+                    ₹{Number(budget).toLocaleString('en-IN')}
                   </p>
-                )}
+                ) : null}
+                {/* Quick presets */}
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {[
+                    { label: '₹2 Lakh',  value: 200000  },
+                    { label: '₹5 Lakh',  value: 500000  },
+                    { label: '₹10 Lakh', value: 1000000 },
+                    { label: '₹25 Lakh', value: 2500000 },
+                    { label: '₹50 Lakh', value: 5000000 },
+                  ].map(p => (
+                    <button
+                      key={p.value}
+                      type="button"
+                      onClick={() => setBudget(String(p.value))}
+                      className="px-3 py-1 rounded-full text-[12px] font-semibold transition-all"
+                      style={Number(budget) === p.value
+                        ? { background: '#8B1A3A', color: '#fff' }
+                        : { background: '#FDF0F4', color: '#8B1A3A', border: '1px solid rgba(139,26,58,0.2)' }
+                      }
+                      onMouseEnter={e => { if (Number(budget) !== p.value) { e.currentTarget.style.background = '#F5C8D4'; } }}
+                      onMouseLeave={e => { if (Number(budget) !== p.value) { e.currentTarget.style.background = '#FDF0F4'; } }}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
+              {/* Step 2 — Guests */}
               <div>
-                <label className="label-caps block mb-1.5">Number of Guests</label>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold text-white" style={{ background: '#8B1A3A' }}>2</div>
+                  <label className="label-caps">Number of Guests</label>
+                </div>
                 <div className="relative">
                   <Users size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#A8A29E' }} />
                   <input
@@ -213,10 +284,19 @@ export default function BudgetPlanner() {
                     min="1"
                   />
                 </div>
+                {budget && guests && !isNaN(Number(budget)) && !isNaN(Number(guests)) && Number(guests) > 0 && (
+                  <p className="text-[12px] mt-1.5 font-semibold" style={{ color: '#78716C' }}>
+                    ≈ <span style={{ color: '#C9A84C' }}>₹{Math.round(Number(budget) / Number(guests)).toLocaleString('en-IN')}</span> per guest
+                  </p>
+                )}
               </div>
 
+              {/* Step 3 — Wedding Style */}
               <div>
-                <label className="label-caps block mb-3">Wedding Style</label>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold text-white" style={{ background: '#8B1A3A' }}>3</div>
+                  <label className="label-caps">Wedding Style</label>
+                </div>
                 <div className="grid grid-cols-3 gap-3">
                   {STYLES.map(s => {
                     const SIcon = s.icon;
@@ -226,31 +306,34 @@ export default function BudgetPlanner() {
                         key={s.value}
                         type="button"
                         onClick={() => setStyle(s.value)}
-                        className="p-4 rounded-2xl text-center transition-all duration-200"
+                        className="relative p-4 rounded-2xl text-center transition-all duration-200 overflow-hidden"
                         style={isActive ? {
                           border: `2px solid ${s.color}`,
                           background: s.bg,
-                          boxShadow: `0 4px 16px ${s.color}22`,
+                          boxShadow: `0 6px 20px ${s.color}30`,
+                          transform: 'translateY(-2px)',
                         } : {
                           border: '2px solid #E8E1D9',
-                          background: '#fff',
+                          background: '#FAFAF8',
                         }}
-                        onMouseEnter={e => { if (!isActive) e.currentTarget.style.borderColor = `${s.color}66`; }}
-                        onMouseLeave={e => { if (!isActive) e.currentTarget.style.borderColor = '#E8E1D9'; }}
+                        onMouseEnter={e => { if (!isActive) { e.currentTarget.style.borderColor = `${s.color}66`; e.currentTarget.style.transform = 'translateY(-1px)'; } }}
+                        onMouseLeave={e => { if (!isActive) { e.currentTarget.style.borderColor = '#E8E1D9'; e.currentTarget.style.transform = 'translateY(0)'; } }}
                       >
+                        {isActive && (
+                          <div className="absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: s.color }}>
+                            <span className="text-white text-[9px] font-bold">✓</span>
+                          </div>
+                        )}
                         <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2"
-                          style={{ background: isActive ? s.color : s.bg }}
+                          className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 transition-all duration-200"
+                          style={{ background: isActive ? s.color : s.bg, boxShadow: isActive ? `0 4px 12px ${s.color}44` : 'none' }}
                         >
-                          <SIcon size={20} style={{ color: isActive ? '#fff' : s.color }} />
+                          <SIcon size={22} style={{ color: isActive ? '#fff' : s.color }} />
                         </div>
-                        <div
-                          className="text-[13px] font-bold"
-                          style={{ color: isActive ? s.color : '#1C1917' }}
-                        >
+                        <div className="text-[13px] font-bold mb-0.5" style={{ color: isActive ? s.color : '#1C1917' }}>
                           {s.label}
                         </div>
-                        <div className="text-[11px]" style={{ color: '#78716C' }}>{s.desc}</div>
+                        <div className="text-[11px]" style={{ color: '#A8A29E' }}>{s.desc}</div>
                       </button>
                     );
                   })}
@@ -261,7 +344,7 @@ export default function BudgetPlanner() {
                 <Sparkles size={17} /> Calculate My Plan
               </Button>
             </div>
-          </Card>
+          </div>
         </div>
       ) : (
         /* ── STEP 2: ALLOCATION VIEW ── */
@@ -297,7 +380,7 @@ export default function BudgetPlanner() {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
             {/* Pie Chart */}
             <Card className="lg:col-span-2">
               <h3 className="font-semibold mb-5" style={{ fontFamily: 'Playfair Display, serif', color: '#1C1917' }}>Budget Allocation</h3>
@@ -369,26 +452,49 @@ export default function BudgetPlanner() {
                           <span className="font-bold" style={{ color: '#C9A84C' }}>₹{committed.toLocaleString('en-IN')}</span>
                         </div>
                       </div>
-                      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#F0EBE5' }}>
-                        <div
-                          className="h-full rounded-full transition-all duration-700"
-                          style={{ width: `${progress}%`, background: row.color }}
+                      {/* Spending progress bar */}
+                      <div className="mb-3">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#A8A29E' }}>
+                            Spending Progress
+                          </span>
+                          <span className="text-[10px] font-bold" style={{ color: committed > suggested ? '#DC2626' : row.color }}>
+                            {committed > 0 ? `${Math.round((committed / (suggested || 1)) * 100)}% spent` : 'Not booked yet'}
+                          </span>
+                        </div>
+                        <div className="h-2 rounded-full overflow-hidden" style={{ background: '#F0EBE5' }}>
+                          <div
+                            className="h-full rounded-full transition-all duration-700"
+                            style={{ width: `${progress}%`, background: committed > suggested ? '#DC2626' : row.color }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Allocation slider */}
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: '#A8A29E' }}>
+                            Adjust Allocation
+                          </span>
+                          <span className="text-[10px] font-bold" style={{ color: row.color }}>
+                            {sliders[row.category] ?? row.pct}%
+                          </span>
+                        </div>
+                        <input
+                          type="range" min="0" max="80"
+                          value={sliders[row.category] ?? row.pct}
+                          onChange={e => {
+                            const val = Number(e.target.value);
+                            setSliders(s => ({ ...s, [row.category]: val }));
+                            setPlan(p => ({
+                              ...p,
+                              rows: p.rows.map(r => r.category === row.category ? { ...r, pct: val } : r),
+                            }));
+                          }}
+                          className="w-full"
+                          style={{ accentColor: row.color }}
                         />
                       </div>
-                      <input
-                        type="range" min="0" max="80"
-                        value={sliders[row.category] ?? row.pct}
-                        onChange={e => {
-                          const val = Number(e.target.value);
-                          setSliders(s => ({ ...s, [row.category]: val }));
-                          setPlan(p => ({
-                            ...p,
-                            rows: p.rows.map(r => r.category === row.category ? { ...r, pct: val } : r),
-                          }));
-                        }}
-                        className="w-full mt-2"
-                        style={{ accentColor: row.color }}
-                      />
                     </div>
                   );
                 })}

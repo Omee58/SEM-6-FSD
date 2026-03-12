@@ -26,11 +26,14 @@ export const authAPI = {
   getMe: () => API.get('/auth/me'),
   updateProfile: (data) => API.put('/auth/profile', data),
   updatePassword: (data) => API.put('/auth/password', data),
+  uploadProfilePhoto: (formData) => API.put('/auth/profile-photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  uploadCoverImage: (formData) => API.put('/auth/cover-image', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
 };
 
 // Client
 export const clientAPI = {
   getServices: (params) => API.get('/client/services', { params }),
+  getVendorProfile: (vendorId) => API.get(`/client/vendors/${vendorId}`),
   bookService: (data) => API.post('/client/bookings', data),
   getBookings: () => API.get('/client/bookings'),
   cancelBooking: (id) => API.patch(`/client/bookings/${id}/cancel`),

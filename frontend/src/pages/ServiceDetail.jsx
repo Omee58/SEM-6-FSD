@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Star, MapPin, Heart, ArrowLeft, Phone, CheckCircle, Share2, X, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
+import { Star, MapPin, Heart, ArrowLeft, Phone, CheckCircle, Share2, X, ChevronLeft, ChevronRight, ArrowUpDown, ExternalLink } from 'lucide-react';
 import { toast } from 'react-toastify';
+import Footer from '../components/layout/Footer';
 import { clientAPI, vendorAPI, reviewAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Calendar from '../components/ui/Calendar';
@@ -337,14 +338,20 @@ export default function ServiceDetail() {
 
               <div className="p-6 bg-white space-y-4">
                 {service.vendor && (
-                  <div className="flex items-center gap-3 p-4 rounded-xl" style={{ background: '#FDF6EE', border: '1px solid #E8E1D9' }}>
+                  <Link
+                    to={`/vendors/${service.vendor._id}`}
+                    className="flex items-center gap-3 p-4 rounded-xl transition-all block"
+                    style={{ background: '#FDF6EE', border: '1px solid #E8E1D9' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#FDF0F4'; e.currentTarget.style.borderColor = 'rgba(139,26,58,0.3)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = '#FDF6EE'; e.currentTarget.style.borderColor = '#E8E1D9'; }}
+                  >
                     <div
                       className="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold shrink-0"
                       style={{ background: 'linear-gradient(135deg,#8B1A3A,#6B1230)', boxShadow: '0 3px 10px rgba(139,26,58,0.25)' }}
                     >
                       {service.vendor.full_name?.charAt(0)}
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="text-[13px] font-semibold" style={{ color: '#1C1917' }}>{service.vendor.full_name}</div>
                       {service.vendor.business_name && <div className="text-[11px] truncate" style={{ color: '#78716C' }}>{service.vendor.business_name}</div>}
                       {service.vendor.years_experience > 0 && (
@@ -356,7 +363,8 @@ export default function ServiceDetail() {
                         </div>
                       )}
                     </div>
-                  </div>
+                    <ExternalLink size={13} style={{ color: '#A8A29E', flexShrink: 0 }} />
+                  </Link>
                 )}
 
                 {user?.role === 'client' ? (
@@ -386,6 +394,8 @@ export default function ServiceDetail() {
           </div>
         </div>
       </div>
+
+      <Footer />
 
       {/* Booking Confirm Modal */}
       <Modal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} title="Confirm Your Booking"

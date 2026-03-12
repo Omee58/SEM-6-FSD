@@ -1,14 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   User, Mail, Phone, Lock, Save, AlertCircle, Eye, EyeOff,
   Shield, CheckCircle2, Crown, KeyRound, Calendar, Star, Heart,
   Camera, Utensils, Music, Sparkles, Car, ChevronRight,
-  ShieldCheck, BarChart3, IndianRupee, Flower2,
+  ShieldCheck, BarChart3, IndianRupee, Flower2, MapPin,
+  MessageCircle,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI, clientAPI, reviewAPI } from '../../services/api';
+
+/* ─── Wedding categories ─────────────────────────────── */
+const WEDDING_CATEGORIES = ['photography', 'catering', 'venue', 'decoration', 'mehendi', 'music', 'makeup', 'transport'];
+const WEDDING_TYPES = ['traditional', 'modern', 'destination', 'court', 'other'];
+const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001';
 
 /* ─── Avatar colour presets ─────────────────────────── */
 const AVATAR_COLORS = [
@@ -159,10 +165,25 @@ export default function ClientProfile() {
   };
 
   /* ── Profile form state ── */
-  const [profile, setProfile]               = useState({ full_name: user?.full_name || '', phone: user?.phone || '' });
+  const [profile, setProfile] = useState({
+    full_name: user?.full_name || '',
+    phone: user?.phone || '',
+    partner_name: user?.partner_name || '',
+    city: user?.city || '',
+    budget: user?.budget || '',
+    wedding_type: user?.wedding_type || 'traditional',
+    whatsapp: user?.whatsapp || '',
+    wedding_date: user?.wedding_date ? new Date(user.wedding_date).toISOString().split('T')[0] : '',
+    preferred_categories: user?.preferred_categories || [],
+  });
   const [profileErrors, setProfileErrors]   = useState({});
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaved, setProfileSaved]     = useState(false);
+
+  /* ── Photo upload state ── */
+  const photoInputRef = useRef(null);
+  const [photoLoading, setPhotoLoading] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState(user?.profile_photo ? `${API_BASE}${user.profile_photo}` : '');
 
   /* ── Password form state ── */
   const [passwords, setPasswords]   = useState({ current_password: '', new_password: '', confirm_password: '' });
@@ -296,6 +317,30 @@ export default function ClientProfile() {
     setPassLoading(false);
   };
 
+  const handlePhotoChange = async e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoPreview(URL.createObjectURL(file));
+    const fd = new FormData();
+    fd.append('profile_photo', file);
+    setPhotoLoading(true);
+    try {
+      const res = await authAPI.uploadProfilePhoto(fd);
+      updateUser(res.data.user);
+      toast.success('Profile photo updated!');
+    } catch (err) { toast.error(err.response?.data?.message || 'Photo upload failed'); }
+    setPhotoLoading(false);
+  };
+
+  const toggleCategory = cat => {
+    setProfile(p => ({
+      ...p,
+      preferred_categories: p.preferred_categories.includes(cat)
+        ? p.preferred_categories.filter(c => c !== cat)
+        : [...p.preferred_categories, cat],
+    }));
+  };
+
   const strength  = getStrength(passwords.new_password);
   const passMatch = passwords.new_password && passwords.confirm_password && passwords.new_password === passwords.confirm_password;
   const initial   = user?.full_name?.charAt(0)?.toUpperCase() || '?';
@@ -383,19 +428,29 @@ export default function ClientProfile() {
                 margin: -6, border: `2px dashed ${avatarColor.color}99`,
                 animation: 'spin 8s linear infinite',
               }} />
-              <div
-                className="w-24 h-24 rounded-full flex items-center justify-center text-white font-bold relative z-10"
-                style={{
-                  background: avatarColor.grad,
-                  boxShadow: `0 0 0 4px ${avatarColor.glow}, 0 8px 32px ${avatarColor.glow}`,
-                  fontFamily: 'Playfair Display, serif', fontSize: '2.2rem',
-                  transition: 'background 0.4s, box-shadow 0.4s',
-                }}
-              >{initial}</div>
-              <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center z-20"
-                style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 2px 8px rgba(201,168,76,0.5)' }}>
-                <Crown size={13} style={{ color: '#fff' }} />
-              </div>
+              {photoPreview
+                ? <img src={photoPreview} alt="avatar" className="w-24 h-24 rounded-full object-cover relative z-10"
+                    style={{ boxShadow: `0 0 0 4px ${avatarColor.glow}, 0 8px 32px ${avatarColor.glow}` }} />
+                : <div
+                    className="w-24 h-24 rounded-full flex items-center justify-center text-white font-bold relative z-10"
+                    style={{
+                      background: avatarColor.grad,
+                      boxShadow: `0 0 0 4px ${avatarColor.glow}, 0 8px 32px ${avatarColor.glow}`,
+                      fontFamily: 'Playfair Display, serif', fontSize: '2.2rem',
+                      transition: 'background 0.4s, box-shadow 0.4s',
+                    }}
+                  >{initial}</div>
+              }
+              <button
+                onClick={() => photoInputRef.current?.click()}
+                disabled={photoLoading}
+                className="absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center z-20 cursor-pointer"
+                style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 2px 8px rgba(201,168,76,0.5)' }}
+                title="Upload photo"
+              >
+                {photoLoading ? <span className="spinner" style={{ width: 12, height: 12 }} /> : <Camera size={12} style={{ color: '#fff' }} />}
+              </button>
+              <input ref={photoInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
             </div>
 
             {/* Colour picker dots */}
@@ -611,6 +666,90 @@ export default function ClientProfile() {
                 />
                 <FieldError msg={profileErrors.phone} />
               </ProfileField>
+
+              <ProfileField label="WhatsApp Number" icon={MessageCircle} iconColor="#25D366" iconBg="rgba(37,211,102,0.1)">
+                <input
+                  type="tel"
+                  value={profile.whatsapp}
+                  onChange={e => setProfile(p => ({ ...p, whatsapp: e.target.value }))}
+                  className="input-base"
+                  placeholder="WhatsApp number (if different)"
+                />
+              </ProfileField>
+
+              <ProfileField label="City / Location" icon={MapPin} iconColor="#2563EB" iconBg="#EFF6FF">
+                <input
+                  type="text"
+                  value={profile.city}
+                  onChange={e => setProfile(p => ({ ...p, city: e.target.value }))}
+                  className="input-base"
+                  placeholder="e.g. Mumbai, Delhi, Jaipur"
+                />
+              </ProfileField>
+
+              <div className="rounded-2xl p-4" style={{ background: '#FDFAF6', border: '1px solid #F0EBE5' }}>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ background: '#FDF0F4' }}>
+                    <Heart size={15} style={{ color: '#8B1A3A' }} />
+                  </div>
+                  <label className="label-caps">Wedding Details</label>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-[11px] font-medium mb-1 block" style={{ color: '#78716C' }}>Partner's Name</label>
+                    <input type="text" value={profile.partner_name}
+                      onChange={e => setProfile(p => ({ ...p, partner_name: e.target.value }))}
+                      className="input-base" placeholder="Your partner's name" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-medium mb-1 block" style={{ color: '#78716C' }}>Wedding Date</label>
+                    <input type="date" value={profile.wedding_date}
+                      onChange={e => setProfile(p => ({ ...p, wedding_date: e.target.value }))}
+                      className="input-base" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-medium mb-1 block" style={{ color: '#78716C' }}>Wedding Type</label>
+                    <select value={profile.wedding_type}
+                      onChange={e => setProfile(p => ({ ...p, wedding_type: e.target.value }))}
+                      className="input-base">
+                      {WEDDING_TYPES.map(t => (
+                        <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-medium mb-1 block" style={{ color: '#78716C' }}>Total Budget (₹)</label>
+                    <input type="number" min="0" value={profile.budget}
+                      onChange={e => setProfile(p => ({ ...p, budget: e.target.value }))}
+                      className="input-base" placeholder="e.g. 500000" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl p-4" style={{ background: '#FDFAF6', border: '1px solid #F0EBE5' }}>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(124,58,237,0.1)' }}>
+                    <Star size={15} style={{ color: '#7C3AED' }} />
+                  </div>
+                  <label className="label-caps">Preferred Services</label>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {WEDDING_CATEGORIES.map(cat => {
+                    const active = profile.preferred_categories.includes(cat);
+                    return (
+                      <button key={cat} type="button" onClick={() => toggleCategory(cat)}
+                        className="px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-150"
+                        style={{
+                          background: active ? 'linear-gradient(135deg,#8B1A3A,#6B1230)' : '#F0EBE5',
+                          color: active ? '#fff' : '#78716C',
+                          border: active ? 'none' : '1px solid #E8E1D9',
+                        }}>
+                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
               <button
                 type="submit"

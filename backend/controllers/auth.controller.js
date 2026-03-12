@@ -14,9 +14,33 @@ const safeUser = (user) => ({
   phone: user.phone,
   role: user.role,
   verified: user.verified,
+  profile_photo: user.profile_photo,
+  // Client fields
+  wedding_date: user.wedding_date,
+  partner_name: user.partner_name,
+  city: user.city,
+  budget: user.budget,
+  wedding_type: user.wedding_type,
+  whatsapp: user.whatsapp,
+  preferred_categories: user.preferred_categories,
+  // Vendor fields
   business_name: user.business_name,
   business_description: user.business_description,
   years_experience: user.years_experience,
+  cover_image: user.cover_image,
+  service_cities: user.service_cities,
+  instagram_url: user.instagram_url,
+  portfolio_url: user.portfolio_url,
+  languages: user.languages,
+  gst_number: user.gst_number,
+  min_price: user.min_price,
+  max_price: user.max_price,
+  certifications: user.certifications,
+  avg_response_time: user.avg_response_time,
+  category_specialization: user.category_specialization,
+  // Admin fields
+  admin_level: user.admin_level,
+  last_login: user.last_login,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
 });
@@ -115,6 +139,9 @@ const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    user.last_login = new Date();
+    await user.save({ validateBeforeSave: false });
+
     return res.status(200).json({
       success: true,
       message: 'Login successful.',
@@ -156,17 +183,45 @@ const getMe = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { full_name, phone, business_name, business_description, years_experience } = req.body;
+    const {
+      full_name, phone,
+      // Client fields
+      wedding_date, partner_name, city, budget, wedding_type, whatsapp, preferred_categories,
+      // Vendor fields
+      business_name, business_description, years_experience,
+      service_cities, instagram_url, portfolio_url, languages,
+      gst_number, min_price, max_price, certifications, avg_response_time, category_specialization,
+    } = req.body;
 
     const updates = {};
 
     if (full_name !== undefined) updates.full_name = full_name;
     if (phone !== undefined) updates.phone = phone;
 
+    if (req.user.role === 'client') {
+      if (wedding_date !== undefined) updates.wedding_date = wedding_date || null;
+      if (partner_name !== undefined) updates.partner_name = partner_name;
+      if (city !== undefined) updates.city = city;
+      if (budget !== undefined) updates.budget = budget;
+      if (wedding_type !== undefined) updates.wedding_type = wedding_type;
+      if (whatsapp !== undefined) updates.whatsapp = whatsapp;
+      if (preferred_categories !== undefined) updates.preferred_categories = preferred_categories;
+    }
+
     if (req.user.role === 'vendor') {
       if (business_name !== undefined) updates.business_name = business_name;
       if (business_description !== undefined) updates.business_description = business_description;
       if (years_experience !== undefined) updates.years_experience = years_experience;
+      if (service_cities !== undefined) updates.service_cities = service_cities;
+      if (instagram_url !== undefined) updates.instagram_url = instagram_url;
+      if (portfolio_url !== undefined) updates.portfolio_url = portfolio_url;
+      if (languages !== undefined) updates.languages = languages;
+      if (gst_number !== undefined) updates.gst_number = gst_number;
+      if (min_price !== undefined) updates.min_price = min_price;
+      if (max_price !== undefined) updates.max_price = max_price;
+      if (certifications !== undefined) updates.certifications = certifications;
+      if (avg_response_time !== undefined) updates.avg_response_time = avg_response_time;
+      if (category_specialization !== undefined) updates.category_specialization = category_specialization;
     }
 
     if (Object.keys(updates).length === 0) {
@@ -272,6 +327,55 @@ const updatePassword = async (req, res) => {
   }
 };
 
+// ─── PUT /auth/profile-photo ──────────────────────────────────────────────────
+
+const uploadProfilePhoto = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded.', data: {} });
+    }
+    const photoPath = `/uploads/${req.file.filename}`;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { profile_photo: photoPath } },
+      { new: true }
+    );
+    return res.status(200).json({
+      success: true,
+      message: 'Profile photo updated.',
+      data: { user: safeUser(updatedUser) },
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message || 'Server error.', data: {} });
+  }
+};
+
+// ─── PUT /auth/cover-image ────────────────────────────────────────────────────
+
+const uploadCoverImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded.', data: {} });
+    }
+    if (req.user.role !== 'vendor') {
+      return res.status(403).json({ success: false, message: 'Only vendors can upload a cover image.', data: {} });
+    }
+    const coverPath = `/uploads/${req.file.filename}`;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { cover_image: coverPath } },
+      { new: true }
+    );
+    return res.status(200).json({
+      success: true,
+      message: 'Cover image updated.',
+      data: { user: safeUser(updatedUser) },
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message || 'Server error.', data: {} });
+  }
+};
+
 // ─── Exports ──────────────────────────────────────────────────────────────────
 
 module.exports = {
@@ -280,4 +384,6 @@ module.exports = {
   getMe,
   updateProfile,
   updatePassword,
+  uploadProfilePhoto,
+  uploadCoverImage,
 };

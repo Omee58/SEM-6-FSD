@@ -116,6 +116,11 @@ export default function ClientDashboard() {
     ? Math.ceil((new Date(nextBooking.booking_date) - new Date()) / 86400000)
     : null;
 
+  const weddingDate    = user?.wedding_date ? new Date(user.wedding_date) : null;
+  const daysToWedding  = weddingDate && weddingDate > new Date()
+    ? Math.ceil((weddingDate - new Date()) / 86400000)
+    : null;
+
   const statValues = {
     total: bookings.length, pending: pending.length,
     confirmed: confirmed.length, completed: completed.length,
@@ -186,7 +191,7 @@ export default function ClientDashboard() {
                 }}
               >
                 {getGreeting()},<br />
-                {user?.full_name?.split(' ')[0]}
+                {user?.full_name?.split(' ')[0]}{user?.partner_name ? ` & ${user.partner_name.split(' ')[0]}` : ''}
               </h1>
 
               <p
@@ -197,7 +202,9 @@ export default function ClientDashboard() {
                   animation: 'fadeUp 0.6s ease 0.2s both',
                 }}
               >
-                Your dream wedding is coming together beautifully.
+                {daysToWedding
+                  ? `Your wedding day is in ${daysToWedding} day${daysToWedding === 1 ? '' : 's'}! Everything is coming together beautifully.`
+                  : 'Your dream wedding is coming together beautifully.'}
               </p>
 
               {/* Stat pills inside hero */}
@@ -213,6 +220,7 @@ export default function ClientDashboard() {
                   { v: upcoming.length,   l: 'Upcoming',  c: '#86EFAC' },
                   { v: completed.length,  l: 'Completed', c: '#C4B5FD' },
                   { v: `${checkCount}/${CHECKLIST.length}`, l: 'Checklist', c: '#FDE68A' },
+                  ...(daysToWedding ? [{ v: `${daysToWedding}d`, l: 'To Wedding', c: '#FDA4AF' }] : []),
                 ].map(({ v, l, c }) => (
                   <div key={l}
                     className="flex items-baseline gap-1.5 px-3 py-1.5 rounded-xl"
@@ -303,6 +311,54 @@ export default function ClientDashboard() {
             </div>
           ))}
         </div>
+
+        {/* ══════════════════════════════════════════════
+            WEDDING DAY COUNTDOWN
+            ══════════════════════════════════════════════ */}
+        {daysToWedding && (
+          <div
+            className="relative overflow-hidden rounded-3xl"
+            style={{
+              background: 'linear-gradient(135deg,#4A0E1E 0%,#8B1A3A 50%,#C9A84C 100%)',
+              animation: 'fadeUp 0.6s ease 0.32s both',
+            }}
+          >
+            <div className="absolute inset-0 pointer-events-none" style={{
+              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)',
+              backgroundSize: '22px 22px',
+            }} />
+            <div className="relative flex items-center gap-6 px-7 py-5">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <Heart size={11} className="fill-pink-300 text-pink-300" style={{ animation: 'heartbeat 2s ease-in-out infinite' }} />
+                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: '#FDA4AF', textTransform: 'uppercase' }}>
+                    Wedding Day Countdown
+                  </span>
+                </div>
+                <div className="text-white font-bold truncate" style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.2rem' }}>
+                  {user?.partner_name
+                    ? `${user.full_name?.split(' ')[0]} & ${user.partner_name.split(' ')[0]}'s Wedding`
+                    : `${user?.full_name?.split(' ')[0]}'s Wedding Day`}
+                </div>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <Calendar size={11} style={{ color: 'rgba(255,255,255,0.5)' }} />
+                  <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>
+                    {new Date(user.wedding_date).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                    {user?.city ? ` · ${user.city}` : ''}
+                  </span>
+                </div>
+              </div>
+              <div className="text-center shrink-0">
+                <div className="text-white font-bold" style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '3.5rem', lineHeight: 1, textShadow: '0 0 40px rgba(201,168,76,0.6)' }}>
+                  {daysToWedding}
+                </div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                  {daysToWedding === 1 ? 'day to go' : 'days to go'}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ══════════════════════════════════════════════
             NEXT BOOKING — cinematic feature card

@@ -15,6 +15,7 @@ import ClientServices from './pages/client/ClientServices';
 import ClientBookings from './pages/client/ClientBookings';
 import ClientProfile from './pages/client/ClientProfile';
 import BudgetPlanner from './pages/client/BudgetPlanner';
+import VendorPublicProfile from './pages/client/VendorPublicProfile';
 
 import VendorDashboard from './pages/vendor/VendorDashboard';
 import VendorBookings from './pages/vendor/VendorBookings';
@@ -86,6 +87,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/services/:id" element={<ServiceDetail />} />
+          <Route path="/vendors/:vendorId" element={<VendorPublicProfile />} />
           <Route path="/*" element={<ClientRoutes />} />
           <Route path="/vendor/*" element={<VendorRoutes />} />
           <Route path="/admin/*" element={<AdminRoutes />} />

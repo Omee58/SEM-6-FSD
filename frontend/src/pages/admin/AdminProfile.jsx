@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Mail, Phone, Lock, Save, Shield } from 'lucide-react';
+import { User, Mail, Phone, Lock, Save, Shield, Clock, ShieldCheck } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI } from '../../services/api';
@@ -51,9 +51,43 @@ export default function AdminProfile() {
             <div>
               <div className="font-semibold text-[#1A1A18]">{user?.full_name}</div>
               <div className="text-sm text-[#6B6B65]">{user?.email}</div>
-              <div className="flex items-center gap-1 mt-1">
+              <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                 <Shield size={11} className="text-[#7C3AED]" />
                 <span className="text-xs bg-[#EDE9FE] text-[#5B21B6] px-2 py-0.5 rounded-full">Administrator</span>
+                {user?.admin_level && (
+                  <span className="text-xs px-2 py-0.5 rounded-full font-semibold"
+                    style={{ background: user.admin_level === 'super_admin' ? '#FEF3C7' : '#F0EBE5', color: user.admin_level === 'super_admin' ? '#92400E' : '#78716C' }}>
+                    {user.admin_level === 'super_admin' ? 'Super Admin' : 'Moderator'}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Admin info row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+            <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: '#F5F3FF', border: '1px solid #DDD6FE' }}>
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#EDE9FE' }}>
+                <ShieldCheck size={15} className="text-[#7C3AED]" />
+              </div>
+              <div>
+                <div className="text-[11px] font-medium" style={{ color: '#78716C' }}>Access Level</div>
+                <div className="text-[13px] font-bold" style={{ color: '#5B21B6' }}>
+                  {user?.admin_level === 'super_admin' ? 'Super Admin' : 'Moderator'}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: '#FAFAF8', border: '1px solid #E8E1D9' }}>
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#F0EBE5' }}>
+                <Clock size={15} style={{ color: '#C9A84C' }} />
+              </div>
+              <div>
+                <div className="text-[11px] font-medium" style={{ color: '#78716C' }}>Last Login</div>
+                <div className="text-[13px] font-bold" style={{ color: '#1A1A18' }}>
+                  {user?.last_login
+                    ? new Date(user.last_login).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                    : '—'}
+                </div>
               </div>
             </div>
           </div>

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('../middleware/auth.middleware');
-const { getAllServices, bookService, getClientBookings, cancelBooking } = require('../controllers/client.controller');
+const { getAllServices, bookService, getClientBookings, cancelBooking, getVendorPublicProfile } = require('../controllers/client.controller');
 
 const clientMiddleware = (req, res, next) => {
   if (req.user.role !== 'client')
@@ -9,8 +9,9 @@ const clientMiddleware = (req, res, next) => {
   next();
 };
 
-// Public route — no auth required (for landing page featured services)
+// Public routes — no auth required
 router.get('/services', getAllServices);
+router.get('/vendors/:vendorId', getVendorPublicProfile);
 
 // Protected routes
 router.post('/bookings', authMiddleware, clientMiddleware, bookService);
