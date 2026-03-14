@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { clientAPI } from '../../services/api';
+import { imgUrl } from '../../utils/imageUrl';
 import Badge from '../../components/ui/Badge';
 import { PageSpinner } from '../../components/ui/Spinner';
 
@@ -382,7 +383,7 @@ export default function ClientDashboard() {
             {nextBooking.service?.images?.[0] && (
               <div className="absolute inset-0">
                 <img
-                  src={`${import.meta.env.VITE_UPLOAD_URL}/${nextBooking.service.images[0]}`}
+                  src={imgUrl(nextBooking.service.images[0])}
                   alt="" className="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500"
                 />
               </div>
@@ -398,7 +399,7 @@ export default function ClientDashboard() {
                 style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}
               >
                 {nextBooking.service?.images?.[0] ? (
-                  <img src={`${import.meta.env.VITE_UPLOAD_URL}/${nextBooking.service.images[0]}`}
+                  <img src={imgUrl(nextBooking.service.images[0])}
                     alt="" className="w-full h-full object-cover rounded-2xl" loading="lazy" />
                 ) : (() => {
                   const Icon = CATEGORY_ICON[nextBooking.service?.category] || CATEGORY_ICON.other;
@@ -540,7 +541,7 @@ export default function ClientDashboard() {
                           onMouseLeave={e => { e.currentTarget.style.transform = ''; }}
                         >
                           {b.service?.images?.[0] ? (
-                            <img src={`${import.meta.env.VITE_UPLOAD_URL}/${b.service.images[0]}`}
+                            <img src={imgUrl(b.service.images[0])}
                               alt="" className="w-full h-full object-cover rounded-xl" loading="lazy" />
                           ) : (
                             <CatIcon size={20} style={{ color: '#8B1A3A' }} />
@@ -717,7 +718,7 @@ export default function ClientDashboard() {
                       <span
                         className="flex-1 text-[13px] font-medium"
                         style={{
-                          color: checkedItems[i] ? '#86EFAC' : '#1C1917',
+                          color: checkedItems[i] ? '#A8A29E' : '#1C1917',
                           textDecoration: checkedItems[i] ? 'line-through' : 'none',
                           transition: 'all 0.3s',
                         }}

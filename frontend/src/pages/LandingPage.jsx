@@ -6,6 +6,7 @@ import {
   MapPin, CheckCircle
 } from 'lucide-react';
 import { clientAPI } from '../services/api';
+import { imgUrl } from '../utils/imageUrl';
 import Footer from '../components/layout/Footer';
 
 const CATEGORIES = [
@@ -226,7 +227,7 @@ export default function LandingPage() {
                   className="group bg-white rounded-2xl border border-[#E8E8E4] overflow-hidden hover:shadow-[0_10px_40px_rgba(0,0,0,0.10)] hover:-translate-y-1 transition-all duration-200">
                   <div className="h-48 bg-linear-to-br from-primary-light to-[#F5C8D4] relative overflow-hidden">
                     {svc.images?.[0] ? (
-                      <img src={`${import.meta.env.VITE_UPLOAD_URL}/${svc.images[0]}`}
+                      <img src={imgUrl(svc.images[0])}
                         alt={svc.title} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">

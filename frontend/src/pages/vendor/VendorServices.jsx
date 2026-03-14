@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { vendorAPI } from '../../services/api';
+import { imgUrl } from '../../utils/imageUrl';
 import { SERVICE_CATEGORIES } from '../../constants/categories';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
@@ -61,7 +62,7 @@ export default function VendorServices() {
   const openEdit = svc => {
     setEditing(svc);
     setForm({ title: svc.title, description: svc.description, price: svc.price, category: svc.category, location: svc.location, status: svc.status });
-    setPreviews(svc.images?.map(img => `${import.meta.env.VITE_UPLOAD_URL}/${img}`) || []);
+    setPreviews(svc.images?.map(img => imgUrl(img)).filter(Boolean) || []);
     setImages([]);
     setModalOpen(true);
   };
@@ -198,7 +199,7 @@ export default function VendorServices() {
                   {/* Image */}
                   <div className="relative overflow-hidden" style={{ height: 220, background: `linear-gradient(135deg,${meta.bg},rgba(253,246,238,0.5))` }}>
                     {svc.images?.[0] ? (
-                      <img src={`${import.meta.env.VITE_UPLOAD_URL}/${svc.images[0]}`}
+                      <img src={imgUrl(svc.images[0])}
                         alt={svc.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />

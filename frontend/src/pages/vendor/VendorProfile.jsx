@@ -56,8 +56,9 @@ export default function VendorProfile() {
   const coverInputRef = useRef(null);
   const [photoLoading, setPhotoLoading] = useState(false);
   const [coverLoading, setCoverLoading] = useState(false);
-  const [photoPreview, setPhotoPreview] = useState(user?.profile_photo ? `${API_BASE}${user.profile_photo}` : '');
-  const [coverPreview, setCoverPreview] = useState(user?.cover_image   ? `${API_BASE}${user.cover_image}`   : '');
+  const resolveUrl = path => !path ? '' : path.startsWith('http') ? path : `${API_BASE}${path}`;
+  const [photoPreview, setPhotoPreview] = useState(resolveUrl(user?.profile_photo));
+  const [coverPreview, setCoverPreview] = useState(resolveUrl(user?.cover_image));
 
   const [cityInput,      setCityInput]      = useState('');
   const [certInput,      setCertInput]      = useState('');

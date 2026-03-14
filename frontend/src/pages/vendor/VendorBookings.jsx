@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { vendorAPI } from '../../services/api';
+import { imgUrl } from '../../utils/imageUrl';
 import Badge from '../../components/ui/Badge';
 import { PageSpinner } from '../../components/ui/Spinner';
 
@@ -181,7 +182,7 @@ export default function VendorBookings() {
                     <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0 flex items-center justify-center"
                       style={{ background: `${catColor}15` }}>
                       {b.service?.images?.[0] ? (
-                        <img src={`${import.meta.env.VITE_UPLOAD_URL}/${b.service.images[0]}`}
+                        <img src={imgUrl(b.service.images[0])}
                           alt="" className="w-full h-full object-cover" />
                       ) : (
                         <Calendar size={26} style={{ color: catColor }} />

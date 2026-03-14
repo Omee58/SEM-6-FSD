@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { adminAPI } from '../../services/api';
 import { PageSpinner } from '../../components/ui/Spinner';
+import { imgUrl } from '../../utils/imageUrl';
 
 /* ─── constants ──────────────────────────────────────────────── */
 const STATUS_TABS = [
@@ -77,8 +78,7 @@ function InfoRow({ icon: Icon, label, value, color = '#475569' }) {
 function BookingModal({ booking: b, onClose }) {
   const catColor = CAT_COLORS[b.service?.category] || '#6366F1';
   const sc       = STATUS_CFG[b.status] || STATUS_CFG.pending;
-  const apiBase  = (import.meta.env.VITE_API_URL || 'http://localhost:5001/api').replace('/api', '');
-  const cover    = b.service?.images?.[0];
+  const cover    = imgUrl(b.service?.images?.[0]);
 
   const TIMELINE    = ['pending', 'confirmed', 'completed'];
   const isCancelled = b.status === 'cancelled';
@@ -94,7 +94,7 @@ function BookingModal({ booking: b, onClose }) {
         {/* ── Modal header (cover / gradient) ── */}
         <div className="relative overflow-hidden shrink-0" style={{ minHeight: 140 }}>
           {cover && (
-            <img src={`${apiBase}/${cover}`} alt="" className="absolute inset-0 w-full h-full object-cover"
+            <img src={cover} alt="" className="absolute inset-0 w-full h-full object-cover"
               onError={e => { e.target.style.display = 'none'; }} />
           )}
           <div className="absolute inset-0"
@@ -268,7 +268,7 @@ function BookingModal({ booking: b, onClose }) {
                 <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#94A3B8' }}>Photos</p>
                 <div className="flex gap-2 flex-wrap">
                   {b.service.images.slice(0, 5).map((img, i) => (
-                    <img key={i} src={`${apiBase}/${img}`} alt=""
+                    <img key={i} src={imgUrl(img)} alt=""
                       className="w-20 h-16 rounded-xl object-cover"
                       style={{ border: '1px solid #E2E8F0' }}
                       onError={e => { e.target.style.display = 'none'; }} />
