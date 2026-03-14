@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Search, Star, MapPin, Heart, X, ChevronLeft, ChevronRight, Sparkles, Camera, Utensils, Music, Flower2, Paintbrush, Car, Building2, Gem } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { clientAPI } from '../../services/api';
+import { imgUrl } from '../../utils/imageUrl';
 import { SERVICE_CATEGORIES } from '../../constants/categories';
 import EmptyState from '../../components/ui/EmptyState';
 import { ServiceCardSkeleton } from '../../components/ui/Skeleton';
@@ -68,6 +69,8 @@ export default function ClientServices() {
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
   const [loading, setLoading]       = useState(true);
   const [mounted, setMounted]       = useState(false);
+  const [wishlist, setWishlist]     = useState(new Set());
+  const [wishlistLoading, setWishlistLoading] = useState(new Set());
 
   const [search,   setSearch]   = useState(searchParams.get('search')   || '');
   const [category, setCategory] = useState(searchParams.get('category') || '');
@@ -77,6 +80,27 @@ export default function ClientServices() {
   const hasActiveFilters = search || category || sort;
 
   useEffect(() => { setTimeout(() => setMounted(true), 60); }, []);
+
+  useEffect(() => {
+    if (user?.role === 'client') {
+      clientAPI.getWishlist().then(res => {
+        const ids = (res.data.services || []).map(s => s._id);
+        setWishlist(new Set(ids));
+      }).catch(() => {});
+    }
+  }, [user]);
+
+  const handleToggleWishlist = async (e, serviceId) => {
+    e.stopPropagation();
+    if (!user) { navigate('/login'); return; }
+    if (wishlistLoading.has(serviceId)) return;
+    setWishlistLoading(s => new Set(s).add(serviceId));
+    try {
+      const res = await clientAPI.toggleWishlist(serviceId);
+      setWishlist(new Set(res.data.wishlist));
+    } catch {}
+    setWishlistLoading(s => { const n = new Set(s); n.delete(serviceId); return n; });
+  };
 
   const fetchServices = useCallback(async (params) => {
     setLoading(true);
@@ -127,11 +151,11 @@ export default function ClientServices() {
   };
 
   return (
-    <div>
+    <div className="space-y-6">
 
       {/* ── Hero Banner ── */}
       <div
-        className="relative rounded-3xl overflow-hidden mb-8"
+        className="relative rounded-3xl overflow-hidden"
         style={{
           background: 'linear-gradient(135deg,#1A0409 0%,#3D0A1A 40%,#8B1A3A 100%)',
           backgroundSize: '300% 300%',
@@ -413,19 +437,20 @@ export default function ClientServices() {
                   className="group rounded-2xl overflow-hidden cursor-pointer"
                   style={{
                     background: '#fff',
+                    border: '1px solid #EDE8E3',
                     boxShadow: '0 2px 16px rgba(28,9,16,0.07)',
                     opacity: mounted ? 1 : 0,
                     transform: mounted ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.97)',
                     transition: `opacity 0.5s cubic-bezier(0.4,0,0.2,1) ${idx * 0.06}s, transform 0.5s cubic-bezier(0.4,0,0.2,1) ${idx * 0.06}s, box-shadow 0.25s ease`,
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 20px 56px rgba(28,9,16,0.15)'; e.currentTarget.style.transform = 'translateY(-5px) scale(1)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 16px rgba(28,9,16,0.07)'; e.currentTarget.style.transform = 'translateY(0) scale(1)'; }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 20px 56px rgba(28,9,16,0.15)'; e.currentTarget.style.borderColor = 'rgba(139,26,58,0.12)'; e.currentTarget.style.transform = 'translateY(-5px) scale(1)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 2px 16px rgba(28,9,16,0.07)'; e.currentTarget.style.borderColor = '#EDE8E3'; e.currentTarget.style.transform = 'translateY(0) scale(1)'; }}
                 >
                   {/* Image */}
                   <div className="relative overflow-hidden" style={{ height: 220, background: `linear-gradient(135deg,${meta.bg},rgba(253,246,238,0.5))` }}>
                     {svc.images?.[0] ? (
                       <img
-                        src={`${import.meta.env.VITE_UPLOAD_URL}/${svc.images[0]}`}
+                        src={imgUrl(svc.images[0])}
                         alt={svc.title}
                         loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -460,13 +485,31 @@ export default function ClientServices() {
                     {/* Rating pill */}
                     {svc.avg_rating > 0 && (
                       <div
-                        className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-bold"
+                        className="absolute top-3 right-12 flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-bold"
                         style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', color: '#C9A84C' }}
                       >
                         <Star size={11} className="fill-current" />
                         {svc.avg_rating.toFixed(1)}
                       </div>
                     )}
+
+                    {/* Wishlist heart button */}
+                    <button
+                      onClick={e => handleToggleWishlist(e, svc._id)}
+                      className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                      style={{
+                        background: wishlist.has(svc._id) ? 'rgba(139,26,58,0.9)' : 'rgba(255,255,255,0.92)',
+                        backdropFilter: 'blur(8px)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                      }}
+                      title={wishlist.has(svc._id) ? 'Remove from wishlist' : 'Add to wishlist'}
+                    >
+                      <Heart
+                        size={14}
+                        style={{ color: wishlist.has(svc._id) ? '#fff' : '#8B1A3A' }}
+                        className={wishlist.has(svc._id) ? 'fill-current' : ''}
+                      />
+                    </button>
 
                     {/* CTA on hover */}
                     <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">

@@ -109,8 +109,22 @@ const rejectVendorRequest = async (req, res) => {
       emailTemplates.vendorRejectedEmail(vendor.full_name, reason || null)
     );
 
-    await Service.deleteMany({ vendor: vendorId });
-    await User.findByIdAndDelete(vendorId);
+    // Audit log
+    console.log(`[ADMIN AUDIT] ${new Date().toISOString()} | Admin ${req.user._id} rejected vendor ${vendorId} (${vendor.email}) | Reason: ${reason || 'none'}`);
+
+    // Atomic deletion: both operations must succeed or neither commits
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      await Service.deleteMany({ vendor: vendorId }, { session });
+      await User.findByIdAndDelete(vendorId, { session });
+      await session.commitTransaction();
+    } catch (txErr) {
+      await session.abortTransaction();
+      throw txErr;
+    } finally {
+      session.endSession();
+    }
 
     return res.status(200).json({
       success: true,
@@ -145,9 +159,10 @@ const getAllUsers = async (req, res) => {
       filter.verified = verified === 'true';
     }
     if (search) {
+      const escaped = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       filter.$or = [
-        { full_name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
+        { full_name: { $regex: escaped, $options: 'i' } },
+        { email: { $regex: escaped, $options: 'i' } },
       ];
     }
 

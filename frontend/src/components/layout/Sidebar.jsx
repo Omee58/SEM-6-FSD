@@ -10,6 +10,7 @@ const NAV = {
   client: [
     { to: '/dashboard',  icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/services',   icon: Search,           label: 'Browse Services' },
+    { to: '/wishlist',   icon: Heart,            label: 'Saved Services' },
     { to: '/bookings',   icon: Calendar,         label: 'My Bookings' },
     { to: '/planner',    icon: Calculator,        label: 'Budget Planner' },
     { to: '/profile',    icon: User,              label: 'Profile' },

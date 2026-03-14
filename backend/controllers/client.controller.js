@@ -17,14 +17,16 @@ const getAllServices = async (req, res) => {
       serviceFilter.category = category.toLowerCase();
     }
 
+    const escapeRegex = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
     if (location) {
-      serviceFilter.location = { $regex: location, $options: 'i' };
+      serviceFilter.location = { $regex: escapeRegex(location), $options: 'i' };
     }
 
     if (search) {
       serviceFilter.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
+        { title:       { $regex: escapeRegex(search), $options: 'i' } },
+        { description: { $regex: escapeRegex(search), $options: 'i' } },
       ];
     }
 
@@ -150,6 +152,21 @@ const bookService = async (req, res) => {
       return res.status(403).json({
         success: false,
         message: 'You cannot book your own service.',
+        data: {},
+      });
+    }
+
+    // Prevent double booking same service on same date
+    const existing = await Booking.findOne({
+      client: req.user._id,
+      service: service._id,
+      booking_date: parsedDate,
+      status: { $in: ['pending', 'confirmed'] },
+    });
+    if (existing) {
+      return res.status(409).json({
+        success: false,
+        message: 'You already have an active booking for this service on that date.',
         data: {},
       });
     }
@@ -332,6 +349,55 @@ const getVendorPublicProfile = async (req, res) => {
   }
 };
 
+// ─── POST /client/wishlist/:serviceId ─────────────────────────────────────────
+
+const toggleWishlist = async (req, res) => {
+  try {
+    const { serviceId } = req.params;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found.', data: {} });
+
+    const idx = user.wishlist.findIndex(id => id.toString() === serviceId);
+    if (idx === -1) {
+      user.wishlist.push(serviceId);
+    } else {
+      user.wishlist.splice(idx, 1);
+    }
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json({
+      success: true,
+      message: idx === -1 ? 'Added to wishlist.' : 'Removed from wishlist.',
+      data: { wishlist: user.wishlist.map(id => id.toString()) },
+    });
+  } catch (err) {
+    if (err.name === 'CastError') {
+      return res.status(400).json({ success: false, message: 'Invalid service ID.', data: {} });
+    }
+    return res.status(500).json({ success: false, message: err.message || 'Server error.', data: {} });
+  }
+};
+
+// ─── GET /client/wishlist ─────────────────────────────────────────────────────
+
+const getWishlist = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).populate({
+      path: 'wishlist',
+      populate: { path: 'vendor', select: 'full_name business_name profile_photo' },
+    });
+    if (!user) return res.status(404).json({ success: false, message: 'User not found.', data: {} });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Wishlist retrieved.',
+      data: { services: user.wishlist || [] },
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message || 'Server error.', data: {} });
+  }
+};
+
 // ─── Exports ──────────────────────────────────────────────────────────────────
 
 module.exports = {
@@ -340,4 +406,6 @@ module.exports = {
   getClientBookings,
   cancelBooking,
   getVendorPublicProfile,
+  toggleWishlist,
+  getWishlist,
 };

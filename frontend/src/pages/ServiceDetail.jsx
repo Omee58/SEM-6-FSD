@@ -4,6 +4,7 @@ import { Star, MapPin, Heart, ArrowLeft, Phone, CheckCircle, Share2, X, ChevronL
 import { toast } from 'react-toastify';
 import Footer from '../components/layout/Footer';
 import { clientAPI, vendorAPI, reviewAPI } from '../services/api';
+import { imgUrl } from '../utils/imageUrl';
 import { useAuth } from '../context/AuthContext';
 import Calendar from '../components/ui/Calendar';
 import Button from '../components/ui/Button';
@@ -33,6 +34,9 @@ export default function ServiceDetail() {
   const [reviews, setReviews] = useState([]);
   const [reviewSort, setReviewSort] = useState('recent');
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  const [wishlisted, setWishlisted] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
   const [blockedDates, setBlockedDates] = useState([]);
@@ -49,7 +53,7 @@ export default function ServiceDetail() {
       try {
         const svcRes = await vendorAPI.getServiceById(id);
         const svc = svcRes.data.service;
-        if (!svc) { toast.error('Service not found'); navigate(-1); return; }
+        if (!svc) { setNotFound(true); return; }
         setService(svc);
 
         const [revRes, availRes] = await Promise.allSettled([
@@ -61,7 +65,8 @@ export default function ServiceDetail() {
           setBookedDates((availRes.value.data.booked_dates || []).map(d => new Date(d)));
           setBlockedDates((availRes.value.data.blocked_dates || []).map(d => new Date(d)));
         }
-      } catch {
+      } catch (err) {
+        if (err.response?.status === 404) { setNotFound(true); return; }
         toast.error('Failed to load service');
         navigate(-1);
       } finally {
@@ -70,6 +75,26 @@ export default function ServiceDetail() {
     };
     load();
   }, [id]);
+
+  useEffect(() => {
+    if (user?.role === 'client') {
+      clientAPI.getWishlist().then(res => {
+        const ids = (res.data.services || []).map(s => s._id);
+        setWishlisted(ids.includes(id));
+      }).catch(() => {});
+    }
+  }, [user, id]);
+
+  const handleToggleWishlist = async () => {
+    if (!user) { navigate('/login'); return; }
+    if (wishlistLoading) return;
+    setWishlistLoading(true);
+    try {
+      const res = await clientAPI.toggleWishlist(id);
+      setWishlisted(res.data.wishlist.includes(id));
+    } catch {}
+    setWishlistLoading(false);
+  };
 
   // Keyboard navigation for lightbox
   useEffect(() => {
@@ -109,6 +134,42 @@ export default function ServiceDetail() {
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--color-bg)' }}><PageSpinner /></div>;
+
+  if (notFound) return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: 'var(--color-bg)' }}>
+      <div
+        className="w-24 h-24 rounded-3xl flex items-center justify-center mb-6"
+        style={{ background: 'linear-gradient(135deg,#FDF0F4,#F5C8D4)', boxShadow: '0 12px 40px rgba(139,26,58,0.15)' }}
+      >
+        <Heart size={42} style={{ color: '#8B1A3A', opacity: 0.5 }} />
+      </div>
+      <h1 className="text-2xl font-bold mb-2 text-center" style={{ fontFamily: 'Playfair Display, serif', color: '#1C1917' }}>
+        Service No Longer Available
+      </h1>
+      <p className="text-[14px] mb-8 text-center max-w-sm" style={{ color: '#78716C' }}>
+        This service has been removed or is no longer offered. Browse our other vendors to find your perfect match.
+      </p>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[14px] font-semibold transition-all"
+          style={{ background: '#fff', border: '1.5px solid #E8E1D9', color: '#78716C' }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = '#8B1A3A'; e.currentTarget.style.color = '#8B1A3A'; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = '#E8E1D9'; e.currentTarget.style.color = '#78716C'; }}
+        >
+          <ArrowLeft size={15} /> Go Back
+        </button>
+        <Link
+          to="/services"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[14px] font-semibold text-white transition-all"
+          style={{ background: 'linear-gradient(135deg,#8B1A3A,#6B1230)', boxShadow: '0 4px 16px rgba(139,26,58,0.35)' }}
+        >
+          Browse Services
+        </Link>
+      </div>
+    </div>
+  );
+
   if (!service) return null;
 
   const images = service.images || [];
@@ -145,6 +206,20 @@ export default function ServiceDetail() {
           </div>
           <span className="font-bold" style={{ fontFamily: 'Playfair Display, serif', color: '#1C1917' }}>ShadiSeva</span>
         </div>
+        {user?.role === 'client' && (
+          <button
+            onClick={handleToggleWishlist}
+            disabled={wishlistLoading}
+            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+            style={{
+              background: wishlisted ? 'rgba(139,26,58,0.1)' : 'transparent',
+              color: wishlisted ? '#8B1A3A' : '#78716C',
+            }}
+            title={wishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+          >
+            <Heart size={18} className={wishlisted ? 'fill-current' : ''} />
+          </button>
+        )}
         <button
           onClick={handleShare}
           className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
@@ -172,7 +247,7 @@ export default function ServiceDetail() {
                 {images.length > 0 ? (
                   <>
                     <img
-                      src={`${import.meta.env.VITE_UPLOAD_URL}/${images[imgIdx]}`}
+                      src={imgUrl(images[imgIdx])}
                       alt={service.title}
                       className="w-full h-full object-cover hover:opacity-95 transition-opacity"
                       loading="lazy"
@@ -218,7 +293,7 @@ export default function ServiceDetail() {
                   {images.map((img, i) => (
                     <button key={i} onClick={() => setImgIdx(i)}
                       className={`w-16 h-16 rounded-lg overflow-hidden shrink-0 border-2 transition-colors ${i === imgIdx ? 'border-primary' : 'border-transparent hover:border-primary/40'}`}>
-                      <img src={`${import.meta.env.VITE_UPLOAD_URL}/${img}`} alt="" className="w-full h-full object-cover" loading="lazy" />
+                      <img src={imgUrl(img)} alt="" className="w-full h-full object-cover" loading="lazy" />
                     </button>
                   ))}
                 </div>
@@ -457,7 +532,7 @@ export default function ServiceDetail() {
             </>
           )}
           <img
-            src={`${import.meta.env.VITE_UPLOAD_URL}/${images[imgIdx]}`}
+            src={imgUrl(images[imgIdx])}
             alt={service.title}
             className="max-h-[85vh] max-w-[90vw] object-contain rounded-xl"
             onClick={e => e.stopPropagation()}

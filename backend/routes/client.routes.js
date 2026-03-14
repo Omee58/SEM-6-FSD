@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('../middleware/auth.middleware');
-const { getAllServices, bookService, getClientBookings, cancelBooking, getVendorPublicProfile } = require('../controllers/client.controller');
+const { getAllServices, bookService, getClientBookings, cancelBooking, getVendorPublicProfile, toggleWishlist, getWishlist } = require('../controllers/client.controller');
 
 const clientMiddleware = (req, res, next) => {
   if (req.user.role !== 'client')
@@ -17,5 +17,7 @@ router.get('/vendors/:vendorId', getVendorPublicProfile);
 router.post('/bookings', authMiddleware, clientMiddleware, bookService);
 router.get('/bookings', authMiddleware, clientMiddleware, getClientBookings);
 router.patch('/bookings/:bookingId/cancel', authMiddleware, clientMiddleware, cancelBooking);
+router.post('/wishlist/:serviceId', authMiddleware, clientMiddleware, toggleWishlist);
+router.get('/wishlist', authMiddleware, clientMiddleware, getWishlist);
 
 module.exports = router;

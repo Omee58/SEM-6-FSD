@@ -9,9 +9,7 @@ import { toast } from 'react-toastify';
 import { clientAPI } from '../../services/api';
 import { PageSpinner } from '../../components/ui/Spinner';
 import Footer from '../../components/layout/Footer';
-
-const API_BASE    = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001';
-const UPLOAD_BASE = import.meta.env.VITE_UPLOAD_URL || `${API_BASE}/uploads`;
+import { imgUrl } from '../../utils/imageUrl';
 
 const CATEGORY_META = {
   photography: { icon: Camera,         color: '#8B1A3A', bg: 'rgba(139,26,58,0.12)'   },
@@ -63,13 +61,13 @@ export default function VendorPublicProfile() {
   if (loading) return <PageSpinner />;
   if (!vendor) return null;
 
-  const photoUrl = vendor.profile_photo ? `${API_BASE}${vendor.profile_photo}` : '';
-  const coverUrl = vendor.cover_image   ? `${API_BASE}${vendor.cover_image}`   : '';
+  const photoUrl = imgUrl(vendor.profile_photo) || '';
+  const coverUrl = imgUrl(vendor.cover_image)   || '';
   const meta = CATEGORY_META[vendor.category_specialization] || CATEGORY_META.other;
   const initials = vendor.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <div style={{ background: '#FAFAF8', minHeight: '100vh' }}>
+    <div className="space-y-6">
 
       {/* ── Cover ── */}
       <div className="relative overflow-hidden" style={{ height: 320 }}>
@@ -122,74 +120,93 @@ export default function VendorPublicProfile() {
 
       {/* ── Profile Header ── */}
       <div className="max-w-5xl mx-auto px-6">
-        {/* Avatar — overlaps the cover */}
-        <div className="relative -mt-14 mb-4">
-          <div
-            className="w-28 h-28 rounded-2xl border-4 border-white shadow-xl overflow-hidden flex-shrink-0 flex items-center justify-center"
-            style={{ background: photoUrl ? 'transparent' : 'linear-gradient(135deg,#8B1A3A,#5A1428)' }}
-          >
-            {photoUrl
-              ? <img src={photoUrl} alt={vendor.full_name} className="w-full h-full object-cover" />
-              : <span className="text-white text-3xl font-bold">{initials}</span>}
-          </div>
-        </div>
-
-        {/* Name + badges + links — fully on white background */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h1 className="text-2xl font-bold" style={{ fontFamily: 'Playfair Display, serif', color: '#1C1917' }}>
-                {vendor.business_name || vendor.full_name}
-              </h1>
-              <span className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full"
-                style={{ background: '#D1FAE5', color: '#065F46' }}>
-                <CheckCircle size={10} /> Verified
-              </span>
+        {/* ── Profile identity card ── */}
+        <div
+          className="relative -mt-16 mb-6 rounded-3xl p-6"
+          style={{ background: '#fff', border: '1px solid #EDE8E3', boxShadow: '0 4px 28px rgba(28,9,16,0.09)' }}
+        >
+          <div className="flex flex-col sm:flex-row sm:items-start gap-5">
+            {/* Avatar */}
+            <div
+              className="w-28 h-28 rounded-2xl border-4 border-white shadow-xl overflow-hidden flex-shrink-0 flex items-center justify-center"
+              style={{ background: photoUrl ? 'transparent' : 'linear-gradient(135deg,#8B1A3A,#5A1428)', boxShadow: '0 8px 32px rgba(139,26,58,0.25)' }}
+            >
+              {photoUrl
+                ? <img src={photoUrl} alt={vendor.full_name} className="w-full h-full object-cover" />
+                : <span className="text-white text-3xl font-bold">{initials}</span>}
             </div>
-            {vendor.category_specialization && (
-              <div className="flex items-center gap-1.5 mb-2">
-                <meta.icon size={13} style={{ color: meta.color }} />
-                <span className="text-[13px] font-semibold capitalize" style={{ color: meta.color }}>
-                  {vendor.category_specialization}
+
+            {/* Name + info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h1 className="text-2xl font-bold" style={{ fontFamily: 'Playfair Display, serif', color: '#1C1917' }}>
+                  {vendor.business_name || vendor.full_name}
+                </h1>
+                <span className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full"
+                  style={{ background: '#D1FAE5', color: '#065F46' }}>
+                  <CheckCircle size={10} /> Verified
                 </span>
               </div>
-            )}
-            <div className="flex flex-wrap gap-3 text-[12px]" style={{ color: '#78716C' }}>
-              {vendor.years_experience > 0 && (
-                <span className="flex items-center gap-1"><Award size={12} /> {vendor.years_experience} yrs exp</span>
+              {vendor.category_specialization && (
+                <div className="flex items-center gap-1.5 mb-3">
+                  <meta.icon size={13} style={{ color: meta.color }} />
+                  <span className="text-[13px] font-semibold capitalize" style={{ color: meta.color }}>
+                    {vendor.category_specialization}
+                  </span>
+                </div>
               )}
-              {vendor.avg_response_time && (
-                <span className="flex items-center gap-1"><Clock size={12} /> Responds {vendor.avg_response_time}</span>
+
+              {/* Stat pills row */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {vendor.years_experience > 0 && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold"
+                    style={{ background: 'rgba(139,26,58,0.08)', color: '#8B1A3A', border: '1px solid rgba(139,26,58,0.15)' }}>
+                    <Award size={11} /> {vendor.years_experience} yrs exp
+                  </div>
+                )}
+                {vendor.avg_response_time && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold"
+                    style={{ background: 'rgba(5,150,105,0.08)', color: '#059669', border: '1px solid rgba(5,150,105,0.15)' }}>
+                    <Clock size={11} /> {vendor.avg_response_time}
+                  </div>
+                )}
+                {(vendor.min_price > 0 || vendor.max_price > 0) && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold"
+                    style={{ background: 'rgba(201,168,76,0.1)', color: '#A88B38', border: '1px solid rgba(201,168,76,0.2)' }}>
+                    ₹{vendor.min_price?.toLocaleString('en-IN')}
+                    {vendor.max_price > 0 ? ` – ₹${vendor.max_price?.toLocaleString('en-IN')}` : '+'}
+                  </div>
+                )}
+                {services.length > 0 && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold"
+                    style={{ background: 'rgba(37,99,235,0.08)', color: '#2563EB', border: '1px solid rgba(37,99,235,0.15)' }}>
+                    <Tag size={11} /> {services.length} service{services.length !== 1 ? 's' : ''}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Online presence buttons */}
+            <div className="flex gap-2 flex-shrink-0">
+              {vendor.instagram_url && (
+                <a href={vendor.instagram_url} target="_blank" rel="noreferrer"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-semibold transition-all"
+                  style={{ background: '#FDF0F4', color: '#8B1A3A', border: '1.5px solid rgba(139,26,58,0.2)' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#8B1A3A'; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#FDF0F4'; e.currentTarget.style.color = '#8B1A3A'; }}>
+                  <Link2 size={13} /> Instagram
+                </a>
               )}
-              {(vendor.min_price > 0 || vendor.max_price > 0) && (
-                <span className="flex items-center gap-1 font-semibold" style={{ color: '#C9A84C' }}>
-                  ₹{vendor.min_price?.toLocaleString('en-IN')}
-                  {vendor.max_price > 0 ? ` – ₹${vendor.max_price?.toLocaleString('en-IN')}` : '+'}
-                </span>
+              {vendor.portfolio_url && (
+                <a href={vendor.portfolio_url} target="_blank" rel="noreferrer"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-semibold transition-all"
+                  style={{ background: '#FDF6EE', color: '#C9A84C', border: '1.5px solid rgba(201,168,76,0.3)' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#C9A84C'; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#FDF6EE'; e.currentTarget.style.color = '#C9A84C'; }}>
+                  <Globe size={13} /> Portfolio
+                </a>
               )}
             </div>
-          </div>
-
-          {/* Online presence buttons */}
-          <div className="flex gap-2 flex-shrink-0">
-            {vendor.instagram_url && (
-              <a href={vendor.instagram_url} target="_blank" rel="noreferrer"
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-semibold transition-all"
-                style={{ background: '#FDF0F4', color: '#8B1A3A', border: '1.5px solid rgba(139,26,58,0.2)' }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#8B1A3A'; e.currentTarget.style.color = '#fff'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#FDF0F4'; e.currentTarget.style.color = '#8B1A3A'; }}>
-                <Link2 size={13} /> Instagram
-              </a>
-            )}
-            {vendor.portfolio_url && (
-              <a href={vendor.portfolio_url} target="_blank" rel="noreferrer"
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-semibold transition-all"
-                style={{ background: '#FDF6EE', color: '#C9A84C', border: '1.5px solid rgba(201,168,76,0.3)' }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#C9A84C'; e.currentTarget.style.color = '#fff'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#FDF6EE'; e.currentTarget.style.color = '#C9A84C'; }}>
-                <Globe size={13} /> Portfolio
-              </a>
-            )}
           </div>
         </div>
 
@@ -309,7 +326,7 @@ export default function VendorPublicProfile() {
                       <div className="relative overflow-hidden" style={{ height: 160, background: `linear-gradient(135deg,${sm.bg},rgba(253,246,238,0.5))` }}>
                         {svc.images?.[0] ? (
                           <img
-                            src={`${UPLOAD_BASE}/${svc.images[0]}`}
+                            src={imgUrl(svc.images[0])}
                             alt={svc.title}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />

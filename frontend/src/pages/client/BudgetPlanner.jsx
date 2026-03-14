@@ -96,11 +96,11 @@ export default function BudgetPlanner() {
   };
 
   return (
-    <div>
+    <div className="space-y-6">
 
       {/* ── Hero Banner ── */}
       <div
-        className="relative rounded-3xl overflow-hidden mb-8"
+        className="relative rounded-3xl overflow-hidden"
         style={{
           background: 'linear-gradient(135deg,#1A0409 0%,#3D0A1A 40%,#5A0E24 70%,#8B1A3A 100%)',
           backgroundSize: '300% 300%',
