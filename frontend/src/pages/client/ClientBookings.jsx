@@ -3,11 +3,12 @@ import {
   Calendar, X, Star, Search, CheckCircle2, Clock, XCircle,
   Sparkles, CircleCheck, Camera, Utensils, Building2, Flower2,
   Paintbrush, Music, Car, Gem, User, IndianRupee, Layers,
-  AlertTriangle, MessageSquare, ArrowRight, ChevronRight,
+  AlertTriangle, MessageSquare, ArrowRight, ChevronRight, Printer,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { clientAPI, reviewAPI } from '../../services/api';
+import { imgUrl } from '../../utils/imageUrl';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import { PageSpinner } from '../../components/ui/Spinner';
@@ -271,6 +272,147 @@ export default function ClientBookings() {
     return list;
   }, [bookings, activeStatus, searchQuery]);
 
+  /* ── Print Receipt ── */
+  const printReceipt = (b) => {
+    const win = window.open('', '_blank', 'width=660,height=980');
+    const formattedDate = new Date(b.booking_date).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const formattedAmount = `₹${(b.total_amount || 0).toLocaleString('en-IN')}`;
+    const receiptId = `SS-${b._id.slice(-8).toUpperCase()}`;
+    const printedOn = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    const bookedOn = b.createdAt ? new Date(b.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : printedOn;
+    const bars = b._id.split('').map(c => {
+      const h = 10 + (c.charCodeAt(0) % 20);
+      const w = c.charCodeAt(0) % 2 === 0 ? 2 : 3;
+      return `<div style="width:${w}px;height:${h}px;background:#1A0409;border-radius:1px;flex-shrink:0"></div>`;
+    }).join('');
+    const catLabel = (b.service?.category || 'other');
+    const catDisplay = catLabel.charAt(0).toUpperCase() + catLabel.slice(1);
+
+    win.document.write(`<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8"/>
+  <title>ShadiSeva Receipt · ${receiptId}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',Arial,sans-serif;background:#EDE8E0;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:36px 20px}
+    .page{width:580px;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,0.14)}
+
+    /* ── Header ── */
+    .hdr{background:linear-gradient(135deg,#1A0409 0%,#5A0E24 55%,#8B1A3A 100%);padding:32px 40px 26px;position:relative;overflow:hidden}
+    .hdr::before,.hdr::after{content:'';position:absolute;border-radius:50%;border:1.5px solid rgba(255,255,255,0.07)}
+    .hdr::before{width:220px;height:220px;top:-80px;right:-60px}
+    .hdr::after{width:160px;height:160px;top:-50px;right:-30px}
+    .brand{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .brand-icon{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+    .brand-name{font-family:'Cormorant Garamond',serif;font-size:28px;color:#fff;font-weight:600;letter-spacing:-0.5px;line-height:1}
+    .brand-sub{font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.14em;margin-top:3px}
+    .hdr-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:6px;background:rgba(255,255,255,0.11);border:1px solid rgba(255,255,255,0.18);font-size:10px;font-weight:600;color:rgba(255,255,255,0.8);text-transform:uppercase;letter-spacing:0.1em}
+
+    /* ── Amount notch ── */
+    .notch-wrap{position:relative;background:linear-gradient(180deg,#FDF8F5 0%,#fff 60%)}
+    .notch-wrap::before{content:'';position:absolute;left:-1px;top:50%;transform:translateY(-50%);width:22px;height:44px;background:#EDE8E0;border-radius:0 22px 22px 0}
+    .notch-wrap::after{content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%);width:22px;height:44px;background:#EDE8E0;border-radius:22px 0 0 22px}
+    .amt-inner{padding:30px 40px 22px;text-align:center;border-bottom:2px dashed #E5DDD5}
+    .amt-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.16em;font-weight:600;color:#B0A098;margin-bottom:10px}
+    .amt-val{font-family:'Cormorant Garamond',serif;font-size:3.4rem;font-weight:600;color:#1A0409;letter-spacing:-1px;line-height:1}
+    .amt-note{font-size:11px;color:#C0B8B0;margin-top:8px}
+    .status-chip{display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:5px 18px;border-radius:99px;background:linear-gradient(135deg,rgba(124,58,237,0.1),rgba(124,58,237,0.04));border:1px solid rgba(124,58,237,0.2);font-size:11px;font-weight:700;color:#6D28D9;text-transform:uppercase;letter-spacing:0.08em}
+
+    /* ── Receipt ID ── */
+    .rid-row{margin:22px 36px;padding:14px 20px;border-radius:12px;background:linear-gradient(135deg,#FDF8F5,#F5EFE8);border:1px solid #EAE0D6;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .rid-left{}
+    .rid-label{font-size:9px;text-transform:uppercase;letter-spacing:0.14em;font-weight:700;color:#B0A098;margin-bottom:4px}
+    .rid-val{font-size:16px;font-weight:700;color:#8B1A3A;letter-spacing:0.08em;font-family:'Inter',monospace}
+    .barcode{display:flex;align-items:flex-end;gap:2px;height:32px;opacity:0.85}
+
+    /* ── Details ── */
+    .details{padding:4px 36px 24px}
+    .sec-hd{font-size:9px;text-transform:uppercase;letter-spacing:0.18em;font-weight:700;color:#C9A84C;margin:22px 0 14px;display:flex;align-items:center;gap:10px}
+    .sec-hd::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,#E8DDD6,transparent)}
+    .row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid #F5EFE8}
+    .row:last-child{border-bottom:none}
+    .rk{font-size:11px;font-weight:600;color:#B0A098;text-transform:uppercase;letter-spacing:0.07em;width:110px;flex-shrink:0;padding-top:1px}
+    .rv{font-size:13px;color:#1A1A18;font-weight:500;text-align:right;flex:1}
+
+    /* ── Footer ── */
+    .ftr{padding:18px 36px;background:#FAFAF8;border-top:1px solid #EDE8E3;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .ftr-txt{font-size:10px;color:#C0B8B0;line-height:1.7}
+    .seal{width:54px;height:54px;border-radius:50%;border:2px solid #E8DDD6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0}
+    .seal-t{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#C9A84C}
+    .seal-s{font-size:16px;color:#C9A84C;line-height:1}
+
+    @media print{
+      body{background:#fff;padding:0;display:block}
+      .page{box-shadow:none;border-radius:0;width:100%}
+      .notch-wrap::before,.notch-wrap::after{background:#fff}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="hdr">
+      <div class="brand">
+        <div class="brand-icon">💍</div>
+        <div>
+          <div class="brand-name">ShadiSeva</div>
+          <div class="brand-sub">India's Wedding Marketplace</div>
+        </div>
+      </div>
+      <div class="hdr-pill">&#x1F4C4; Official Booking Receipt</div>
+    </div>
+
+    <div class="notch-wrap">
+      <div class="amt-inner">
+        <div class="amt-lbl">Total Amount Paid</div>
+        <div class="amt-val">${formattedAmount}</div>
+        <div class="amt-note">Inclusive of all applicable charges</div>
+        <div class="status-chip">&#10003; Service Completed</div>
+      </div>
+    </div>
+
+    <div class="rid-row">
+      <div class="rid-left">
+        <div class="rid-label">Receipt Number</div>
+        <div class="rid-val">${receiptId}</div>
+      </div>
+      <div class="barcode">${bars}</div>
+    </div>
+
+    <div class="details">
+      <div class="sec-hd">Booking Information</div>
+      <div class="row"><span class="rk">Service</span><span class="rv">${b.service?.title || '—'}</span></div>
+      <div class="row"><span class="rk">Category</span><span class="rv">${catDisplay}</span></div>
+      <div class="row"><span class="rk">Vendor</span><span class="rv">${b.vendor?.full_name || b.vendor?.business_name || '—'}</span></div>
+      <div class="row"><span class="rk">Event Date</span><span class="rv">${formattedDate}</span></div>
+      <div class="row"><span class="rk">Booked On</span><span class="rv">${bookedOn}</span></div>
+
+      <div class="sec-hd">Document Info</div>
+      <div class="row"><span class="rk">Status</span><span class="rv" style="color:#6D28D9;font-weight:700">Completed</span></div>
+      <div class="row"><span class="rk">Printed On</span><span class="rv">${printedOn}</span></div>
+      <div class="row"><span class="rk">Issued By</span><span class="rv">ShadiSeva Platform</span></div>
+    </div>
+
+    <div class="ftr">
+      <div class="ftr-txt">
+        © 2026 ShadiSeva Pvt. Ltd. All rights reserved.<br/>
+        System-generated receipt · No signature required.<br/>
+        Made with love in India &#x1F1EE;&#x1F1F3;
+      </div>
+      <div class="seal">
+        <div class="seal-t">Verified</div>
+        <div class="seal-s">&#9733;</div>
+        <div class="seal-t">ShadiSeva</div>
+      </div>
+    </div>
+
+  </div>
+  <script>window.onload = () => { window.print(); }<\/script>
+</body></html>`);
+    win.document.close();
+  };
+
   /* ── Actions ── */
   const handleCancelClick = b => { setCancelId(b._id); setCancelBooking(b); };
   const handleCancel = async () => {
@@ -504,9 +646,7 @@ export default function ClientBookings() {
             const catMeta  = CATEGORY_ICON[b.service?.category?.toLowerCase()] || CATEGORY_ICON.other;
             const CatIcon  = catMeta.icon;
             const StatusIcon = sm.icon;
-            const imageUrl = b.service?.images?.[0]
-              ? `${import.meta.env.VITE_UPLOAD_URL}/${b.service.images[0]}`
-              : null;
+            const imageUrl = imgUrl(b.service?.images?.[0]);
             const isHovered  = hoveredCard === b._id;
             const isCancelled = b.status === 'cancelled';
 
@@ -653,6 +793,18 @@ export default function ClientBookings() {
                           <CircleCheck size={12} /> Reviewed
                         </div>
                       )}
+                      {b.status === 'completed' && (
+                        <button
+                          onClick={() => printReceipt(b)}
+                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[12px] font-bold transition-all duration-200"
+                          style={{ background: 'rgba(109,40,217,0.08)', color: '#7C3AED', border: '1px solid rgba(109,40,217,0.18)' }}
+                          onMouseEnter={e => e.currentTarget.style.background = 'rgba(109,40,217,0.15)'}
+                          onMouseLeave={e => e.currentTarget.style.background = 'rgba(109,40,217,0.08)'}
+                          title="Download / Print Receipt"
+                        >
+                          <Printer size={12} /> Receipt
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -729,7 +881,7 @@ export default function ClientBookings() {
               <div className="flex items-center gap-4 p-4 rounded-2xl" style={{ background: '#FDF6EE', border: '1px solid #E8E1D9' }}>
                 <div className="w-16 h-16 rounded-2xl shrink-0 overflow-hidden relative" style={{ background: cat.bg }}>
                   {reviewBooking.service?.images?.[0] ? (
-                    <img src={`${import.meta.env.VITE_UPLOAD_URL}/${reviewBooking.service.images[0]}`}
+                    <img src={imgUrl(reviewBooking.service.images[0])}
                       alt="" className="w-full h-full object-cover absolute inset-0" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
