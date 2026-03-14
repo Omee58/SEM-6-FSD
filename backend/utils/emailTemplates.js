@@ -92,6 +92,14 @@ module.exports = {
     <p style="color:#6B6B65;font-size:13px;">You may re-apply after addressing the feedback. Contact us at hello@shadiseva.com for help.</p>
   `),
 
+  passwordResetEmail: (name, resetUrl) => wrap(`
+    <h2 style="color:#1A1A18;font-size:20px;margin:0 0 8px;">Reset Your Password 🔐</h2>
+    <p style="color:#6B6B65;margin:0 0 20px;">Hi <strong>${name}</strong>, we received a request to reset your ShadiSeva password.</p>
+    <p style="color:#6B6B65;font-size:13px;margin:0 0 20px;">Click the button below to set a new password. This link expires in <strong>1 hour</strong>.</p>
+    ${btn('Reset Password', resetUrl)}
+    <p style="color:#A8A8A2;font-size:12px;margin-top:24px;">If you didn't request this, you can safely ignore this email — your password won't change.</p>
+  `),
+
   reviewReminderEmail: (clientName, serviceName) => wrap(`
     <h2 style="color:#D97706;font-size:20px;margin:0 0 8px;">How was your experience? ⭐</h2>
     <p style="color:#6B6B65;margin:0 0 20px;">Hi <strong>${clientName}</strong>, your <strong>${serviceName}</strong> service has been completed!</p>

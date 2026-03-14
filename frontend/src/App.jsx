@@ -7,6 +7,8 @@ import SidebarLayout from './components/layout/SidebarLayout';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 import NotFound from './pages/NotFound';
 import ServiceDetail from './pages/ServiceDetail';
 
@@ -15,6 +17,7 @@ import ClientServices from './pages/client/ClientServices';
 import ClientBookings from './pages/client/ClientBookings';
 import ClientProfile from './pages/client/ClientProfile';
 import BudgetPlanner from './pages/client/BudgetPlanner';
+import ClientWishlist from './pages/client/ClientWishlist';
 import VendorPublicProfile from './pages/client/VendorPublicProfile';
 
 import VendorDashboard from './pages/vendor/VendorDashboard';
@@ -39,6 +42,7 @@ function ClientRoutes() {
           <Route path="dashboard" element={<ClientDashboard />} />
           <Route path="services" element={<ClientServices />} />
           <Route path="bookings" element={<ClientBookings />} />
+          <Route path="wishlist" element={<ClientWishlist />} />
           <Route path="planner" element={<BudgetPlanner />} />
           <Route path="profile" element={<ClientProfile />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
@@ -92,6 +96,8 @@ export default function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/services/:id" element={<ServiceDetail />} />
           <Route path="/vendors/:vendorId" element={<VendorPublicProfile />} />
           <Route path="/*" element={<ClientRoutes />} />

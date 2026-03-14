@@ -11,6 +11,21 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) { setLoading(false); return; }
+
+    // Check token expiry before making an API call
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.exp && payload.exp * 1000 < Date.now()) {
+        localStorage.removeItem('token');
+        setLoading(false);
+        return;
+      }
+    } catch {
+      localStorage.removeItem('token');
+      setLoading(false);
+      return;
+    }
+
     authAPI.getMe()
       .then(res => setUser(res.data.user))
       .catch(() => localStorage.removeItem('token'))

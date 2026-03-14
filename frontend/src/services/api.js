@@ -28,6 +28,8 @@ export const authAPI = {
   updatePassword: (data) => API.put('/auth/password', data),
   uploadProfilePhoto: (formData) => API.put('/auth/profile-photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
   uploadCoverImage: (formData) => API.put('/auth/cover-image', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  forgotPassword: (data) => API.post('/auth/forgot-password', data),
+  resetPassword: (token, data) => API.post(`/auth/reset-password/${token}`, data),
 };
 
 // Client
@@ -37,6 +39,8 @@ export const clientAPI = {
   bookService: (data) => API.post('/client/bookings', data),
   getBookings: () => API.get('/client/bookings'),
   cancelBooking: (id) => API.patch(`/client/bookings/${id}/cancel`),
+  toggleWishlist: (serviceId) => API.post(`/client/wishlist/${serviceId}`),
+  getWishlist: () => API.get('/client/wishlist'),
 };
 
 // Vendor

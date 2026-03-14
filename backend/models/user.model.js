@@ -37,8 +37,14 @@ const userSchema = new mongoose.Schema({
   blocked_dates: { type: [Date], default: [] },
   cover_image: { type: String, default: '' },
   service_cities: { type: [String], default: [] },
-  instagram_url: { type: String, default: '' },
-  portfolio_url: { type: String, default: '' },
+  instagram_url: {
+    type: String, default: '',
+    validate: { validator: v => !v || /^https?:\/\/.+/.test(v), message: 'instagram_url must be a valid URL' },
+  },
+  portfolio_url: {
+    type: String, default: '',
+    validate: { validator: v => !v || /^https?:\/\/.+/.test(v), message: 'portfolio_url must be a valid URL' },
+  },
   languages: { type: [String], default: [] },
   gst_number: { type: String, default: '' },
   min_price: { type: Number, default: 0 },
@@ -50,6 +56,13 @@ const userSchema = new mongoose.Schema({
   // Admin-specific fields
   admin_level: { type: String, enum: ['super_admin', 'moderator'], default: 'moderator' },
   last_login: { type: Date },
+
+  // Password reset
+  reset_token:         { type: String, default: null },
+  reset_token_expires: { type: Date,   default: null },
+
+  // Wishlist (client)
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
 }, { timestamps: true });
 
 userSchema.pre('save', async function () {

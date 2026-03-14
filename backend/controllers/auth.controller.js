@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const User = require('../models/user.model');
+const sendEmail = require('../utils/email.js');
+const emailTemplates = require('../utils/emailTemplates.js');
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
 
@@ -43,6 +46,8 @@ const safeUser = (user) => ({
   last_login: user.last_login,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
+  // Wishlist IDs
+  wishlist: (user.wishlist || []).map(id => id.toString()),
 });
 
 // ─── POST /auth/register ──────────────────────────────────────────────────────
@@ -334,7 +339,7 @@ const uploadProfilePhoto = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'No file uploaded.', data: {} });
     }
-    const photoPath = `/uploads/${req.file.filename}`;
+    const photoPath = req.file.path; // Cloudinary secure URL
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { $set: { profile_photo: photoPath } },
@@ -360,7 +365,7 @@ const uploadCoverImage = async (req, res) => {
     if (req.user.role !== 'vendor') {
       return res.status(403).json({ success: false, message: 'Only vendors can upload a cover image.', data: {} });
     }
-    const coverPath = `/uploads/${req.file.filename}`;
+    const coverPath = req.file.path; // Cloudinary secure URL
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { $set: { cover_image: coverPath } },
@@ -376,6 +381,63 @@ const uploadCoverImage = async (req, res) => {
   }
 };
 
+// ─── POST /auth/forgot-password ───────────────────────────────────────────────
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: 'Email is required.', data: {} });
+
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    // Always return success to avoid email enumeration
+    if (!user) {
+      return res.status(200).json({ success: true, message: 'If that email is registered, a reset link has been sent.', data: {} });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    user.reset_token = token;
+    user.reset_token_expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${token}`;
+    await sendEmail(user.email, 'Reset Your ShadiSeva Password', emailTemplates.passwordResetEmail(user.full_name, resetUrl));
+
+    return res.status(200).json({ success: true, message: 'If that email is registered, a reset link has been sent.', data: {} });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message || 'Server error.', data: {} });
+  }
+};
+
+// ─── POST /auth/reset-password/:token ─────────────────────────────────────────
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { new_password } = req.body;
+
+    if (!new_password) return res.status(400).json({ success: false, message: 'New password is required.', data: {} });
+    if (new_password.length < 6) return res.status(400).json({ success: false, message: 'Password must be at least 6 characters.', data: {} });
+
+    const user = await User.findOne({
+      reset_token: token,
+      reset_token_expires: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired reset link. Please request a new one.', data: {} });
+    }
+
+    user.password = new_password;
+    user.reset_token = null;
+    user.reset_token_expires = null;
+    await user.save();
+
+    return res.status(200).json({ success: true, message: 'Password reset successfully. You can now log in.', data: {} });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message || 'Server error.', data: {} });
+  }
+};
+
 // ─── Exports ──────────────────────────────────────────────────────────────────
 
 module.exports = {
@@ -386,4 +448,6 @@ module.exports = {
   updatePassword,
   uploadProfilePhoto,
   uploadCoverImage,
+  forgotPassword,
+  resetPassword,
 };
