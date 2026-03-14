@@ -103,12 +103,6 @@ const rejectVendorRequest = async (req, res) => {
       });
     }
 
-    await sendEmail(
-      vendor.email,
-      'Update on Your ShadiSeva Vendor Application',
-      emailTemplates.vendorRejectedEmail(vendor.full_name, reason || null)
-    );
-
     // Audit log
     console.log(`[ADMIN AUDIT] ${new Date().toISOString()} | Admin ${req.user._id} rejected vendor ${vendorId} (${vendor.email}) | Reason: ${reason || 'none'}`);
 
@@ -125,6 +119,13 @@ const rejectVendorRequest = async (req, res) => {
     } finally {
       session.endSession();
     }
+
+    // Send email only after successful deletion
+    await sendEmail(
+      vendor.email,
+      'Update on Your ShadiSeva Vendor Application',
+      emailTemplates.vendorRejectedEmail(vendor.full_name, reason || null)
+    );
 
     return res.status(200).json({
       success: true,

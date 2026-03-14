@@ -264,7 +264,9 @@ const cancelBooking = async (req, res) => {
   try {
     const { bookingId } = req.params;
 
-    const booking = await Booking.findById(bookingId);
+    const booking = await Booking.findById(bookingId)
+      .populate('vendor', 'full_name email business_name')
+      .populate('service', 'title');
 
     if (!booking) {
       return res.status(404).json({
@@ -294,6 +296,19 @@ const cancelBooking = async (req, res) => {
 
     booking.status = 'cancelled';
     await booking.save();
+
+    // Notify vendor
+    const dateStr = booking.booking_date ? booking.booking_date.toDateString() : 'N/A';
+    await sendEmail(
+      booking.vendor.email,
+      'Booking Cancelled by Client – ShadiSeva',
+      emailTemplates.bookingCancelledByClientEmail(
+        booking.vendor.business_name || booking.vendor.full_name,
+        req.user.full_name,
+        booking.service.title,
+        dateStr
+      )
+    );
 
     return res.status(200).json({
       success: true,

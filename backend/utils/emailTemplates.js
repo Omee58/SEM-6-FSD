@@ -100,6 +100,19 @@ module.exports = {
     <p style="color:#A8A8A2;font-size:12px;margin-top:24px;">If you didn't request this, you can safely ignore this email — your password won't change.</p>
   `),
 
+  bookingCancelledByClientEmail: (vendorName, clientName, serviceName, date) => wrap(`
+    <h2 style="color:#D97706;font-size:20px;margin:0 0 8px;">Booking Cancelled by Client 📋</h2>
+    <p style="color:#6B6B65;margin:0 0 20px;">Hi <strong>${vendorName}</strong>, a client has cancelled their booking request.</p>
+    <table style="width:100%;border-collapse:collapse;background:#FAFAF8;border-radius:8px;overflow:hidden;">
+      ${row('Client', clientName)}
+      ${row('Service', serviceName)}
+      ${row('Date', date)}
+      ${row('Status', '<span style="color:#D97706;font-weight:700;">Cancelled</span>')}
+    </table>
+    <p style="color:#6B6B65;font-size:13px;margin-top:20px;">This slot is now available for other bookings. View your dashboard for details.</p>
+    ${btn('View My Bookings', `${BASE_URL}/vendor/bookings`)}
+  `),
+
   reviewReminderEmail: (clientName, serviceName) => wrap(`
     <h2 style="color:#D97706;font-size:20px;margin:0 0 8px;">How was your experience? ⭐</h2>
     <p style="color:#6B6B65;margin:0 0 20px;">Hi <strong>${clientName}</strong>, your <strong>${serviceName}</strong> service has been completed!</p>
