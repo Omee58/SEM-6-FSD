@@ -183,7 +183,8 @@ export default function ClientProfile() {
   /* ── Photo upload state ── */
   const photoInputRef = useRef(null);
   const [photoLoading, setPhotoLoading] = useState(false);
-  const [photoPreview, setPhotoPreview] = useState(user?.profile_photo ? `${API_BASE}${user.profile_photo}` : '');
+  const resolveUrl = path => !path ? '' : path.startsWith('http') ? path : `${API_BASE}${path}`;
+  const [photoPreview, setPhotoPreview] = useState(resolveUrl(user?.profile_photo));
 
   /* ── Password form state ── */
   const [passwords, setPasswords]   = useState({ current_password: '', new_password: '', confirm_password: '' });
