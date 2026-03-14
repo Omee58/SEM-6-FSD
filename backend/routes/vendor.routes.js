@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('../middleware/auth.middleware');
 const upload = require('../middleware/upload.middleware');
+const { uploadRateLimit } = require('../middleware/upload.middleware');
 const {
   getVendorProfile, addService, getMyServices, updateService, deleteService,
   getServiceById, getBookingRequests, getAllVendorBookings, changeBookingStatus,
@@ -30,8 +31,8 @@ router.patch('/availability/block', ...vendorOnly, toggleBlockedDate);
 router.get('/bookings/requests', ...vendorOnly, getBookingRequests);
 router.get('/bookings', ...vendorOnly, getAllVendorBookings);
 router.patch('/bookings/:bookingId/status', ...vendorOnly, changeBookingStatus);
-router.post('/services', ...vendorOnly, upload.array('images', 5), addService);
-router.put('/services/:serviceId', ...vendorOnly, upload.array('images', 5), updateService);
+router.post('/services', ...vendorOnly, uploadRateLimit, upload.array('images', 5), addService);
+router.put('/services/:serviceId', ...vendorOnly, uploadRateLimit, upload.array('images', 5), updateService);
 router.delete('/services/:serviceId', ...vendorOnly, deleteService);
 
 module.exports = router;

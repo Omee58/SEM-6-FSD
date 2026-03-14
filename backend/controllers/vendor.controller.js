@@ -51,7 +51,7 @@ const addService = async (req, res) => {
     }
 
     const images = req.files && req.files.length > 0
-      ? req.files.map((f) => f.filename)
+      ? req.files.map((f) => f.path) // Cloudinary secure URLs
       : [];
 
     const service = await Service.create({
@@ -138,7 +138,7 @@ const updateService = async (req, res) => {
     if (status !== undefined) service.status = status;
 
     if (req.files && req.files.length > 0) {
-      service.images = req.files.map((f) => f.filename);
+      service.images = req.files.map((f) => f.path); // Cloudinary secure URLs
     }
 
     await service.save();
@@ -225,10 +225,10 @@ const getServiceById = async (req, res) => {
 
     const service = await Service.findById(serviceId).populate(
       'vendor',
-      'full_name email phone business_name years_experience'
+      'full_name email phone business_name years_experience verified'
     );
 
-    if (!service) {
+    if (!service || !service.vendor?.verified) {
       return res.status(404).json({
         success: false,
         message: 'Service not found.',
