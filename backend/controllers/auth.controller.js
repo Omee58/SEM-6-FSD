@@ -279,12 +279,12 @@ const updateProfile = async (req, res) => {
 
 const updatePassword = async (req, res) => {
   try {
-    const { old_password, new_password } = req.body;
+    const { current_password, new_password } = req.body;
 
-    if (!old_password || !new_password) {
+    if (!current_password || !new_password) {
       return res.status(400).json({
         success: false,
-        message: 'Both old_password and new_password are required.',
+        message: 'Both current_password and new_password are required.',
         data: {},
       });
     }
@@ -298,7 +298,7 @@ const updatePassword = async (req, res) => {
       });
     }
 
-    const isMatch = await user.comparePassword(old_password);
+    const isMatch = await user.comparePassword(current_password);
     if (!isMatch) {
       return res.status(401).json({
         success: false,

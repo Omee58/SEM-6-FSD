@@ -72,7 +72,7 @@ export default function LandingPage() {
             </span>
           </Link>
           <div className="flex items-center gap-3">
-            <Link to="/login" className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${scrolled ? 'text-muted hover:text-primary' : 'text-white/90 hover:text-white'}`}>
+            <Link to="/login" className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${scrolled ? 'text-[#1A1A18] hover:text-primary' : 'text-white hover:text-white'}`}>
               Sign In
             </Link>
             <Link to="/register" className="text-sm font-medium px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors shadow-sm">
@@ -119,7 +119,7 @@ export default function LandingPage() {
             Book with confidence, celebrate with joy.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/register" className="inline-flex items-center gap-2 bg-white text-primary font-semibold px-8 py-4 rounded-xl hover:bg-primary-light transition-colors shadow-lg text-base">
+            <Link to="/register" className="inline-flex items-center gap-2 bg-white font-semibold px-8 py-4 rounded-xl hover:bg-[#FDF0F4] transition-colors shadow-lg text-base" style={{ color: '#8B1A3A' }}>
               Start Planning Free
               <ArrowRight size={18} />
             </Link>

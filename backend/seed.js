@@ -59,6 +59,14 @@ async function seed() {
         business_description: 'Luxury floral and theme decorations for grand weddings. Specializing in mandap, stage, and entrance décor.',
         years_experience: 6,
       },
+      {
+        full_name: 'Simran Events',
+        email: 'vendor@ss.com',
+        phone: '9180155555',
+        business_name: 'Simran Events & Entertainment',
+        business_description: 'Full-service wedding entertainment and event management. DJ, live bands, anchor, and choreography for all wedding functions.',
+        years_experience: 7,
+      },
     ];
 
     const vendors = await User.create(
@@ -87,6 +95,7 @@ async function seed() {
       { full_name: 'Aarav Sharma', email: 'aarav@client.com', phone: '9180211111' },
       { full_name: 'Kavya Patel', email: 'kavya@client.com', phone: '9180222222' },
       { full_name: 'Rohan Gupta', email: 'rohan@client.com', phone: '9180233333' },
+      { full_name: 'Sneha Singh', email: 'client@ss.com', phone: '9180244444' },
     ];
     const clients = await User.create(
       clientData.map(c => ({
@@ -165,6 +174,28 @@ async function seed() {
         avg_rating: 0,
         review_count: 0,
       },
+      {
+        title: 'DJ & Live Band Package for Wedding',
+        description: 'Professional DJ setup with LED dance floor, live dhol, and 4-hour live band performance. Covers sangeet, cocktail, and reception events. Includes anchor/emcee for the evening.',
+        price: 65000,
+        category: 'music',
+        status: 'active',
+        vendor: vendors[3]._id,
+        location: 'Mumbai, Maharashtra',
+        avg_rating: 4.8,
+        review_count: 1,
+      },
+      {
+        title: 'Complete Wedding Event Management',
+        description: 'End-to-end wedding event management including mehendi, haldi, sangeet, and reception coordination. Dedicated event manager assigned. Vendor coordination, timeline management, and on-site support included.',
+        price: 150000,
+        category: 'music',
+        status: 'active',
+        vendor: vendors[3]._id,
+        location: 'Delhi, NCR',
+        avg_rating: 0,
+        review_count: 0,
+      },
     ]);
 
     // Completed past bookings (use native driver to bypass future-date validator)
@@ -198,6 +229,12 @@ async function seed() {
         booking_date: pastDate4, status: 'completed', total_amount: 75000, notes: '',
         createdAt: new Date(), updatedAt: new Date(),
       },
+      {
+        _id: new mongoose.Types.ObjectId(),
+        client: clients[3]._id, vendor: vendors[3]._id, service: services[6]._id,
+        booking_date: new Date('2025-02-20'), status: 'completed', total_amount: 65000, notes: 'Please include dhol for baraat',
+        createdAt: new Date(), updatedAt: new Date(),
+      },
     ]);
 
     const bookingIds = completedBookings.insertedIds;
@@ -216,6 +253,10 @@ async function seed() {
       {
         client: clients[2]._id, vendor: vendors[2]._id, service: services[5]._id,
         booking_date: futureDate2, status: 'pending', total_amount: 45000, notes: 'Garden theme wedding',
+      },
+      {
+        client: clients[3]._id, vendor: vendors[3]._id, service: services[7]._id,
+        booking_date: futureDate1, status: 'confirmed', total_amount: 150000, notes: 'Full 3-day wedding event management needed',
       },
     ]);
 
@@ -245,15 +286,21 @@ async function seed() {
         client: clients[2]._id, service: services[3]._id, vendor: vendors[0]._id,
         rating: 5, comment: 'The cinematic video was like a Bollywood film! Every relative is asking for the videographer contact. Worth every rupee!'
       },
+      {
+        client: clients[3]._id, service: services[6]._id, vendor: vendors[3]._id,
+        booking: Object.values(bookingIds)[4] || new mongoose.Types.ObjectId(),
+        rating: 5, comment: 'Simran Events made our sangeet unforgettable! The DJ was amazing and the live dhol for baraat was a huge hit. Everyone is still talking about it!'
+      },
     ];
 
-    await Review.insertMany(reviews.slice(0, 4));
+    await Review.insertMany([reviews[0], reviews[1], reviews[2], reviews[3], reviews[5]]);
 
     // Update ratings
     await Service.findByIdAndUpdate(services[0]._id, { avg_rating: 4.8, review_count: 2 });
     await Service.findByIdAndUpdate(services[1]._id, { avg_rating: 4.9, review_count: 2 });
     await Service.findByIdAndUpdate(services[2]._id, { avg_rating: 4.7, review_count: 1 });
     await Service.findByIdAndUpdate(services[3]._id, { avg_rating: 4.6, review_count: 1 });
+    await Service.findByIdAndUpdate(services[6]._id, { avg_rating: 4.8, review_count: 1 });
 
     console.log('\n✅ Seed completed successfully!\n');
     console.log('='.repeat(50));
@@ -266,6 +313,8 @@ async function seed() {
     console.log('Client:  aarav@client.com       / Client@123');
     console.log('Client:  kavya@client.com       / Client@123');
     console.log('Client:  rohan@client.com       / Client@123');
+    console.log('Vendor:  vendor@ss.com          / Vendor@123');
+    console.log('Client:  client@ss.com          / Client@123');
     console.log('='.repeat(50));
   } catch (err) {
     console.error('Seed error:', err.message);

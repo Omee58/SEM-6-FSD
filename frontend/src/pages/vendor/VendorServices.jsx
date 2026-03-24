@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import {
   Plus, Edit2, Trash2, Image, Package, X, Star, MapPin,
   Sparkles, Camera, Utensils, Building2, Flower2, Music2,
-  Palette, Car, Wand2, IndianRupee, Tag, Upload,
+  Palette, Car, Wand2, IndianRupee, Tag, Upload, Clock,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { vendorAPI } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import { imgUrl } from '../../utils/imageUrl';
 import { SERVICE_CATEGORIES } from '../../constants/categories';
 import Button from '../../components/ui/Button';
@@ -37,6 +38,8 @@ function FloatOrb({ size, color, style: s }) {
 }
 
 export default function VendorServices() {
+  const { user } = useAuth();
+  const isVerified = user?.verified;
   const [services,   setServices]   = useState([]);
   const [loading,    setLoading]    = useState(true);
   const [modalOpen,  setModalOpen]  = useState(false);
@@ -147,16 +150,31 @@ export default function VendorServices() {
               </p>
             </div>
             <button
-              onClick={openAdd}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[13px] font-bold text-white shrink-0 transition-all"
+              onClick={isVerified ? openAdd : undefined}
+              disabled={!isVerified}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[13px] font-bold text-white shrink-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 6px 20px rgba(201,168,76,0.35)' }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(201,168,76,0.45)'; }}
+              onMouseEnter={e => { if (isVerified) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(201,168,76,0.45)'; } }}
               onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 6px 20px rgba(201,168,76,0.35)'; }}
             >
               <Plus size={16} /> Add Service
             </button>
           </div>
         </div>
+
+        {/* ══ PENDING APPROVAL BANNER ══ */}
+        {!isVerified && (
+          <div className="flex items-center gap-3 px-5 py-4 rounded-2xl mb-2"
+            style={{ background: '#FEF3C7', border: '1px solid #FCD34D' }}>
+            <Clock size={18} style={{ color: '#D97706', flexShrink: 0 }} />
+            <div>
+              <p className="text-sm font-semibold" style={{ color: '#92400E' }}>Account Pending Approval</p>
+              <p className="text-xs mt-0.5" style={{ color: '#B45309' }}>
+                Your vendor account is awaiting admin verification. You can add and manage services once approved.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* ══ SERVICE GRID ══ */}
         {services.length === 0 ? (
@@ -172,8 +190,9 @@ export default function VendorServices() {
             <p className="text-[14px] mb-6 text-center max-w-sm" style={{ color: '#78716C' }}>
               Add your first service with photos, pricing, and description to start attracting clients.
             </p>
-            <button onClick={openAdd}
-              className="flex items-center gap-2 px-6 py-3 text-white font-bold rounded-xl transition-all"
+            <button onClick={isVerified ? openAdd : undefined}
+              disabled={!isVerified}
+              className="flex items-center gap-2 px-6 py-3 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ background: 'linear-gradient(135deg,#C9A84C,#A88B38)', boxShadow: '0 6px 20px rgba(201,168,76,0.35)', fontSize: 13 }}>
               <Plus size={16} /> Add First Service
             </button>

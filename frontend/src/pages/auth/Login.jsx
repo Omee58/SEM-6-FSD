@@ -156,16 +156,6 @@ export default function Login() {
                 Create one free
               </Link>
             </div>
-
-            {/* Demo credentials */}
-            <div className="mt-6 p-4 bg-primary-light rounded-xl">
-              <p className="text-xs font-semibold text-primary mb-2">Demo Credentials</p>
-              <div className="space-y-1 text-xs text-[#6B6B65]">
-                <div><span className="font-medium text-[#1A1A18]">Admin:</span> admin@shadiseva.com / Admin@123</div>
-                <div><span className="font-medium text-[#1A1A18]">Vendor:</span> rajesh@vendor.com / Vendor@123</div>
-                <div><span className="font-medium text-[#1A1A18]">Client:</span> aarav@client.com / Client@123</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

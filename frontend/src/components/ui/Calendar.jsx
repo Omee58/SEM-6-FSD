@@ -138,28 +138,26 @@ export default function Calendar({
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-[#E8E8E4]">
-        {!vendorMode && (
+      {!vendorMode && (
+        <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-[#E8E8E4]">
           <div className="flex items-center gap-1.5 text-xs text-[#6B6B65]">
             <div className="w-3 h-3 rounded bg-primary" />
             Selected
           </div>
-        )}
-        <div className="flex items-center gap-1.5 text-xs text-[#6B6B65]">
-          <div className="w-3 h-3 rounded bg-[#F3F4F6]" />
-          Booked
-        </div>
-        <div className="flex items-center gap-1.5 text-xs text-[#6B6B65]">
-          <div className="w-3 h-3 rounded bg-[#FFEDD5]" />
-          Blocked
-        </div>
-        {!vendorMode && (
+          <div className="flex items-center gap-1.5 text-xs text-[#6B6B65]">
+            <div className="w-3 h-3 rounded bg-[#F3F4F6]" />
+            Booked
+          </div>
+          <div className="flex items-center gap-1.5 text-xs text-[#6B6B65]">
+            <div className="w-3 h-3 rounded bg-[#FFEDD5]" />
+            Blocked
+          </div>
           <div className="flex items-center gap-1.5 text-xs text-[#6B6B65]">
             <div className="w-3 h-3 rounded border border-primary" />
             Available
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
