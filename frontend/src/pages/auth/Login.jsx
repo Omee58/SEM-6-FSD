@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Heart, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
@@ -16,6 +16,7 @@ function validate(form) {
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState({ email: '', password: '' });
   const [touched, setTouched] = useState({});
   const [showPass, setShowPass] = useState(false);
@@ -37,7 +38,17 @@ export default function Login() {
     setLoading(true);
     const result = await login(form.email, form.password);
     setLoading(false);
-    if (result.success) navigate(result.redirectTo);
+    if (result.success) {
+      const from = location.state?.from;
+      const intended = from ? `${from.pathname}${from.search || ''}${from.hash || ''}` : null;
+      // Only honor intended path if the user's role can access it (client routes for clients, etc.)
+      const useIntended = intended && (
+        (result.redirectTo === '/dashboard' && !intended.startsWith('/vendor') && !intended.startsWith('/admin')) ||
+        (result.redirectTo === '/vendor/dashboard' && intended.startsWith('/vendor')) ||
+        (result.redirectTo === '/admin/dashboard' && intended.startsWith('/admin'))
+      );
+      navigate(useIntended ? intended : result.redirectTo, { replace: true });
+    }
   };
 
   const fieldError = (name) => touched[name] && errors[name];

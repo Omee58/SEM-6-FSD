@@ -45,13 +45,14 @@ export default function VendorServices() {
   const [modalOpen,  setModalOpen]  = useState(false);
   const [editing,    setEditing]    = useState(null);
   const [form,       setForm]       = useState(EMPTY);
-  const [images,     setImages]     = useState([]);
-  const [previews,   setPreviews]   = useState([]);
+  // Unified photo list: each entry is { kind: 'existing', url } or { kind: 'new', file, preview }
+  const [photos,     setPhotos]     = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [deleteId,   setDeleteId]   = useState(null);
   const [mounted,    setMounted]    = useState(false);
   const [dragOver,   setDragOver]   = useState(false);
   const fileRef = useRef();
+  const MAX_PHOTOS = 5;
 
   const fetchServices = () => {
     vendorAPI.getMyServices()
@@ -61,19 +62,40 @@ export default function VendorServices() {
   };
   useEffect(() => { fetchServices(); }, []);
 
-  const openAdd = () => { setEditing(null); setForm(EMPTY); setImages([]); setPreviews([]); setModalOpen(true); };
+  const openAdd = () => { setEditing(null); setForm(EMPTY); setPhotos([]); setModalOpen(true); };
   const openEdit = svc => {
     setEditing(svc);
     setForm({ title: svc.title, description: svc.description, price: svc.price, category: svc.category, location: svc.location, status: svc.status });
-    setPreviews(svc.images?.map(img => imgUrl(img)).filter(Boolean) || []);
-    setImages([]);
+    const existing = (svc.images || [])
+      .map(img => ({ kind: 'existing', url: img, preview: imgUrl(img) }))
+      .filter(p => p.preview);
+    setPhotos(existing);
     setModalOpen(true);
   };
 
   const handleFiles = files => {
-    const arr = Array.from(files);
-    setImages(arr);
-    setPreviews(arr.map(f => URL.createObjectURL(f)));
+    const incoming = Array.from(files);
+    if (incoming.length === 0) return;
+    setPhotos(prev => {
+      const existingSigs = new Set(prev.filter(p => p.kind === 'new').map(p => `${p.file.name}:${p.file.size}`));
+      const deduped = incoming.filter(f => !existingSigs.has(`${f.name}:${f.size}`));
+      const added = deduped.map(f => ({ kind: 'new', file: f, preview: URL.createObjectURL(f) }));
+      const merged = [...prev, ...added].slice(0, MAX_PHOTOS);
+      if (prev.length + added.length > MAX_PHOTOS) {
+        toast.info(`Maximum ${MAX_PHOTOS} photos per service — extras ignored.`);
+      }
+      return merged;
+    });
+    // Reset input value so re-picking the same file re-fires onChange
+    if (fileRef.current) fileRef.current.value = '';
+  };
+
+  const removePhoto = idx => {
+    setPhotos(prev => {
+      const removed = prev[idx];
+      if (removed?.kind === 'new') URL.revokeObjectURL(removed.preview);
+      return prev.filter((_, i) => i !== idx);
+    });
   };
 
   const handleSubmit = async () => {
@@ -82,7 +104,10 @@ export default function VendorServices() {
     try {
       const fd = new FormData();
       Object.entries(form).forEach(([k, v]) => fd.append(k, v));
-      images.forEach(img => fd.append('images', img));
+      photos.forEach(p => {
+        if (p.kind === 'new') fd.append('images', p.file);
+        else fd.append('keep_images', p.url);
+      });
       if (editing) {
         await vendorAPI.updateService(editing._id, fd);
         toast.success('Service updated!');
@@ -365,18 +390,28 @@ export default function VendorServices() {
                 <Upload size={20} style={{ color: '#C9A84C' }} />
               </div>
               <p className="text-[13px] font-semibold" style={{ color: '#1C1917' }}>Drop photos here or click to upload</p>
-              <p className="text-[11px] mt-1" style={{ color: '#A8A29E' }}>JPEG, PNG, WebP — max 5MB each</p>
+              <p className="text-[11px] mt-1" style={{ color: '#A8A29E' }}>
+                JPEG, PNG, WebP — max 5MB each · {photos.length}/{MAX_PHOTOS} used
+              </p>
               <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple className="hidden"
                 onChange={e => handleFiles(e.target.files)} />
             </div>
-            {previews.length > 0 && (
+            {photos.length > 0 && (
               <div className="flex gap-2 mt-3 flex-wrap">
-                {previews.map((p, i) => (
-                  <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden group"
+                {photos.map((p, i) => (
+                  <div key={p.kind === 'existing' ? p.url : p.preview}
+                    className="relative w-20 h-20 rounded-xl overflow-hidden group"
                     style={{ border: '1px solid #E8E1D9' }}>
-                    <img src={p} alt="" className="w-full h-full object-cover" />
+                    <img src={p.preview} alt="" className="w-full h-full object-cover" />
+                    {p.kind === 'new' && (
+                      <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-bold text-white"
+                        style={{ background: 'rgba(5,150,105,0.9)', letterSpacing: '0.03em' }}>
+                        NEW
+                      </span>
+                    )}
                     <button
-                      onClick={() => { const n = [...previews]; n.splice(i, 1); setPreviews(n); const ni = [...images]; ni.splice(i, 1); setImages(ni); }}
+                      type="button"
+                      onClick={e => { e.stopPropagation(); removePhoto(i); }}
                       className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                       style={{ background: 'rgba(0,0,0,0.5)' }}>
                       <X size={16} className="text-white" />

@@ -10,14 +10,14 @@ import { imgUrl } from '../utils/imageUrl';
 import Footer from '../components/layout/Footer';
 
 const CATEGORIES = [
-  { icon: Camera, label: 'Photography', color: '#8B1A3A', bg: '#FDF0F4' },
-  { icon: UtensilsCrossed, label: 'Catering', color: '#D97706', bg: '#FEF3C7' },
-  { icon: Building2, label: 'Venue', color: '#7C3AED', bg: '#EDE9FE' },
-  { icon: Sparkles, label: 'Decoration', color: '#059669', bg: '#D1FAE5' },
-  { icon: Palette, label: 'Mehendi', color: '#DC2626', bg: '#FEE2E2' },
-  { icon: Music, label: 'Music & DJ', color: '#2563EB', bg: '#DBEAFE' },
-  { icon: Star, label: 'Makeup', color: '#0891B2', bg: '#CFFAFE' },
-  { icon: Car, label: 'Transport', color: '#0891B2', bg: '#CFFAFE' },
+  { icon: Camera, label: 'Photography', slug: 'photography', color: '#8B1A3A', bg: '#FDF0F4' },
+  { icon: UtensilsCrossed, label: 'Catering', slug: 'catering', color: '#D97706', bg: '#FEF3C7' },
+  { icon: Building2, label: 'Venue', slug: 'venue', color: '#7C3AED', bg: '#EDE9FE' },
+  { icon: Sparkles, label: 'Decoration', slug: 'decoration', color: '#059669', bg: '#D1FAE5' },
+  { icon: Palette, label: 'Mehendi', slug: 'mehendi', color: '#DC2626', bg: '#FEE2E2' },
+  { icon: Music, label: 'Music & DJ', slug: 'music', color: '#2563EB', bg: '#DBEAFE' },
+  { icon: Star, label: 'Makeup', slug: 'makeup', color: '#0891B2', bg: '#CFFAFE' },
+  { icon: Car, label: 'Transport', slug: 'transport', color: '#0891B2', bg: '#CFFAFE' },
 ];
 
 const TESTIMONIALS = [
@@ -149,8 +149,8 @@ export default function LandingPage() {
             <p className="text-[#6B6B65] text-lg">From photography to transportation — we have it all.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {CATEGORIES.map(({ icon: Icon, label, color, bg }) => (
-              <Link to="/register" key={label}
+            {CATEGORIES.map(({ icon: Icon, label, slug, color, bg }) => (
+              <Link to={`/services?category=${slug}`} key={label}
                 className="group flex flex-col items-center gap-3 p-6 rounded-2xl border border-border bg-white hover:border-primary hover:shadow-[0_8px_30px_rgba(13,107,82,0.12)] hover:-translate-y-1 transition-all duration-200">
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all" style={{ background: bg }}>
                   <Icon size={24} style={{ color }} />
@@ -163,7 +163,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── HOW IT WORKS ────────────────────────────────────── */}
-      <section className="py-24 px-6 bg-white">
+      <section id="how-it-works" className="py-24 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 bg-primary-light text-primary rounded-full px-4 py-1.5 text-sm font-medium mb-4">
@@ -255,7 +255,7 @@ export default function LandingPage() {
               ))}
             </div>
             <div className="text-center mt-10">
-              <Link to="/register" className="inline-flex items-center gap-2 bg-primary text-white font-semibold px-8 py-3 rounded-xl hover:bg-primary-dark transition-colors shadow-sm">
+              <Link to="/services" className="inline-flex items-center gap-2 bg-primary text-white font-semibold px-8 py-3 rounded-xl hover:bg-primary-dark transition-colors shadow-sm">
                 View All Services <ArrowRight size={16} />
               </Link>
             </div>

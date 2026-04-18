@@ -537,9 +537,13 @@ export default function AdminBookings() {
                 onMouseLeave={e => { e.currentTarget.style.borderColor='#E2E8F0'; e.currentTarget.style.color=page===1?'#CBD5E1':'#475569'; }}>
                 <ChevronLeft size={14} />
               </button>
-              {[...Array(Math.min(totalPages,7))].map((_,i) => {
-                const p = i+1;
-                return (
+              {(() => {
+                const MAX = 7;
+                const half = Math.floor(MAX / 2);
+                let start = Math.max(1, page - half);
+                const end = Math.min(totalPages, start + MAX - 1);
+                start = Math.max(1, end - MAX + 1);
+                return Array.from({ length: end - start + 1 }, (_, i) => start + i).map(p => (
                   <button key={p} onClick={() => setPage(p)}
                     className="w-8 h-8 rounded-lg text-[12px] font-bold transition-all"
                     style={page===p ? { background:'linear-gradient(135deg,#0F172A,#1E293B)', color:'#fff', boxShadow:'0 4px 12px rgba(15,23,42,0.3)' } : { border:'1.5px solid #E2E8F0', color:'#475569' }}
@@ -547,8 +551,8 @@ export default function AdminBookings() {
                     onMouseLeave={e => { if (page!==p) { e.currentTarget.style.borderColor='#E2E8F0'; e.currentTarget.style.color='#475569'; } }}>
                     {p}
                   </button>
-                );
-              })}
+                ));
+              })()}
               <button onClick={() => setPage(p => Math.min(totalPages, p+1))} disabled={page===totalPages}
                 className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
                 style={{ border: '1.5px solid #E2E8F0', color: page===totalPages ? '#CBD5E1' : '#475569' }}

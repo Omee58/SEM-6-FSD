@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, User, Phone, Heart, Building2, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
@@ -47,7 +47,9 @@ function validate(form) {
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ full_name: '', email: '', phone: '', password: '', role: 'client' });
+  const [searchParams] = useSearchParams();
+  const initialRole = searchParams.get('role') === 'vendor' ? 'vendor' : 'client';
+  const [form, setForm] = useState({ full_name: '', email: '', phone: '', password: '', role: initialRole });
   const [touched, setTouched] = useState({});
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);

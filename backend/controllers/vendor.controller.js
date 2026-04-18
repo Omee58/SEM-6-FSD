@@ -137,8 +137,18 @@ const updateService = async (req, res) => {
     if (location !== undefined) service.location = location;
     if (status !== undefined) service.status = status;
 
-    if (req.files && req.files.length > 0) {
-      service.images = req.files.map((f) => f.path); // Cloudinary secure URLs
+    // Images: merge kept existing URLs (from client) with newly uploaded files.
+    // If the request carries images fields at all (either keep_images or new files), rebuild the list;
+    // otherwise leave the existing images untouched.
+    const keepRaw = req.body.keep_images;
+    const hasNewFiles = req.files && req.files.length > 0;
+    const hasKeepField = keepRaw !== undefined;
+
+    if (hasKeepField || hasNewFiles) {
+      const keepArr = Array.isArray(keepRaw) ? keepRaw : (keepRaw ? [keepRaw] : []);
+      const keepValid = keepArr.filter(u => typeof u === 'string' && u && service.images.includes(u));
+      const newUrls = hasNewFiles ? req.files.map((f) => f.path) : [];
+      service.images = [...keepValid, ...newUrls].slice(0, 5);
     }
 
     await service.save();

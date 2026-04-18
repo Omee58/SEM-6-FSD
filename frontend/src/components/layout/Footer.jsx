@@ -30,9 +30,16 @@ export default function Footer() {
           <div>
             <div className="text-white font-semibold mb-4">Services</div>
             <ul className="space-y-2 text-sm">
-              {['Photography', 'Catering', 'Venue', 'Decoration', 'Mehendi', 'Music & DJ'].map(s => (
-                <li key={s}>
-                  <Link to="/services" className="hover:text-white transition-colors">{s}</Link>
+              {[
+                { label: 'Photography', slug: 'photography' },
+                { label: 'Catering',    slug: 'catering'    },
+                { label: 'Venue',       slug: 'venue'       },
+                { label: 'Decoration',  slug: 'decoration'  },
+                { label: 'Mehendi',     slug: 'mehendi'     },
+                { label: 'Music & DJ',  slug: 'music'       },
+              ].map(({ label, slug }) => (
+                <li key={slug}>
+                  <Link to={`/services?category=${slug}`} className="hover:text-white transition-colors">{label}</Link>
                 </li>
               ))}
             </ul>
@@ -42,11 +49,18 @@ export default function Footer() {
           <div>
             <div className="text-white font-semibold mb-4">Company</div>
             <ul className="space-y-2 text-sm">
-              {['About Us', 'How It Works', 'Vendor Registration', 'Blog', 'Careers', 'Press'].map(s => (
-                <li key={s}>
-                  <span className="hover:text-white transition-colors cursor-pointer">{s}</span>
-                </li>
-              ))}
+              <li>
+                <Link to="/#how-it-works" className="hover:text-white transition-colors">How It Works</Link>
+              </li>
+              <li>
+                <Link to="/register?role=vendor" className="hover:text-white transition-colors">Vendor Registration</Link>
+              </li>
+              <li>
+                <Link to="/register" className="hover:text-white transition-colors">Get Started</Link>
+              </li>
+              <li>
+                <Link to="/login" className="hover:text-white transition-colors">Sign In</Link>
+              </li>
             </ul>
           </div>
 

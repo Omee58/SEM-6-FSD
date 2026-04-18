@@ -1,8 +1,9 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -12,7 +13,7 @@ export default function ProtectedRoute({ children, role }) {
     );
   }
 
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace state={{ from: location }} />;
   if (role && user.role !== role) {
     const redirectMap = { admin: '/admin/dashboard', vendor: '/vendor/dashboard', client: '/dashboard' };
     return <Navigate to={redirectMap[user.role] || '/dashboard'} replace />;

@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   User, Mail, Phone, Lock, Save, Shield, Clock,
-  ShieldCheck, Star, Activity, Key, CheckCircle,
+  ShieldCheck, Activity, Key, CheckCircle,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
@@ -24,7 +24,9 @@ export default function AdminProfile() {
   const [passwords, setPasswords] = useState({ current_password: '', new_password: '', confirm_password: '' });
   const [profileLoading, setProfileLoading] = useState(false);
   const [passLoading,    setPassLoading]    = useState(false);
-  const [mounted,        setMounted]        = useState(true);
+  const [mounted,        setMounted]        = useState(false);
+
+  useEffect(() => { const id = setTimeout(() => setMounted(true), 60); return () => clearTimeout(id); }, []);
 
   const handleProfileSubmit = async e => {
     e.preventDefault();

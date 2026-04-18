@@ -5,7 +5,7 @@ import {
   Paintbrush, Music, Car, Gem, User, IndianRupee, Layers,
   AlertTriangle, MessageSquare, ArrowRight, ChevronRight, Printer,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { clientAPI, reviewAPI } from '../../services/api';
 import { imgUrl } from '../../utils/imageUrl';
@@ -216,11 +216,15 @@ function BookingTimeline({ status }) {
 }
 
 /* ══════════════════════════════════════════════════════ */
+const VALID_TABS = ['all', 'pending', 'confirmed', 'completed', 'cancelled'];
+
 export default function ClientBookings() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = VALID_TABS.includes(searchParams.get('tab')) ? searchParams.get('tab') : 'all';
   const [bookings, setBookings]           = useState([]);
   const [loading, setLoading]             = useState(true);
   const [mounted, setMounted]             = useState(false);
-  const [activeStatus, setActiveStatus]   = useState('all');
+  const [activeStatus, setActiveStatus]   = useState(initialTab);
   const [searchQuery, setSearchQuery]     = useState('');
   const [cancelId, setCancelId]           = useState(null);
   const [cancelBooking, setCancelBooking] = useState(null);
@@ -554,7 +558,10 @@ export default function ClientBookings() {
               return (
                 <button
                   key={pill.key}
-                  onClick={() => setActiveStatus(pill.key)}
+                  onClick={() => {
+                    setActiveStatus(pill.key);
+                    setSearchParams(pill.key === 'all' ? {} : { tab: pill.key }, { replace: true });
+                  }}
                   className="relative flex flex-col items-center px-5 py-3 rounded-2xl transition-all duration-250"
                   style={{
                     background: isActive ? pill.grad : 'rgba(255,255,255,0.08)',
