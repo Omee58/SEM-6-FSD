@@ -1,9 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Heart, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+
+const ROLE_HOME = { admin: '/admin/dashboard', vendor: '/vendor/dashboard', client: '/dashboard' };
 
 function validate(form) {
   const errors = {};
@@ -14,13 +16,19 @@ function validate(form) {
 }
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [form, setForm] = useState({ email: '', password: '' });
   const [touched, setTouched] = useState({});
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate(ROLE_HOME[user.role] || '/dashboard', { replace: true });
+    }
+  }, [authLoading, user, navigate]);
 
   const errors = useMemo(() => validate(form), [form]);
 

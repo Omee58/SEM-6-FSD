@@ -1,9 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, User, Phone, Heart, Building2, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
+
+const ROLE_HOME = { admin: '/admin/dashboard', vendor: '/vendor/dashboard', client: '/dashboard' };
 
 const ROLES = [
   { value: 'client', icon: Heart, label: 'Client', desc: 'Find & book wedding services' },
@@ -45,7 +47,7 @@ function validate(form) {
 }
 
 export default function Register() {
-  const { register } = useAuth();
+  const { register, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialRole = searchParams.get('role') === 'vendor' ? 'vendor' : 'client';
@@ -53,6 +55,12 @@ export default function Register() {
   const [touched, setTouched] = useState({});
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate(ROLE_HOME[user.role] || '/dashboard', { replace: true });
+    }
+  }, [authLoading, user, navigate]);
 
   const errors = useMemo(() => validate(form), [form]);
   const passwordStrength = useMemo(() => getPasswordStrength(form.password), [form.password]);

@@ -453,14 +453,34 @@ export default function AdminDashboard() {
                   <ResponsiveContainer width="100%" height={165}>
                     <PieChart>
                       <Pie data={statusBreakdown} cx="50%" cy="50%" innerRadius={48} outerRadius={72}
-                        dataKey="value" paddingAngle={3} startAngle={90} endAngle={-270}>
+                        dataKey="value" nameKey="name" paddingAngle={3} startAngle={90} endAngle={-270}>
                         {statusBreakdown.map((e, i) => (
                           <Cell key={i} fill={STATUS_COLORS[e.name] || '#6B7280'} />
                         ))}
                       </Pie>
                       <Tooltip
-                        contentStyle={{ background: '#0D1627', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 12, color: '#fff', fontSize: 12 }}
-                        formatter={(v, n) => [v, n]}
+                        cursor={{ fill: 'rgba(99,102,241,0.05)' }}
+                        content={({ active, payload }) => {
+                          if (!active || !payload?.length) return null;
+                          const { name, value } = payload[0].payload;
+                          const total = statusBreakdown.reduce((s, x) => s + x.value, 0);
+                          const pct = total > 0 ? Math.round((value / total) * 100) : 0;
+                          const color = STATUS_COLORS[name] || '#6B7280';
+                          return (
+                            <div className="rounded-xl p-3"
+                              style={{ background: '#0D1627', border: `1px solid ${color}55`, boxShadow: '0 8px 24px rgba(0,0,0,0.5)', minWidth: 130 }}>
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <span className="w-2 h-2 rounded-full" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
+                                <span className="text-[10px] font-bold uppercase tracking-widest capitalize" style={{ color: 'rgba(255,255,255,0.55)' }}>{name}</span>
+                              </div>
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="font-bold" style={{ color: '#fff', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.3rem', lineHeight: 1 }}>{value}</span>
+                                <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.45)' }}>bookings</span>
+                              </div>
+                              <div className="text-[11px] font-semibold mt-1" style={{ color }}>{pct}% of total</div>
+                            </div>
+                          );
+                        }}
                       />
                     </PieChart>
                   </ResponsiveContainer>
