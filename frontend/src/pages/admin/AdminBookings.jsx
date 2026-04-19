@@ -313,12 +313,13 @@ export default function AdminBookings() {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [mounted,      setMounted]      = useState(false);
   const [selected,     setSelected]     = useState(null);
-  const LIMIT = 10;
+  const [limit,        setLimit]        = useState(5);
+  const LIMIT_OPTIONS = [5, 10, 20, 50];
 
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const r = await adminAPI.getAllBookings({ status, page, limit: LIMIT });
+      const r = await adminAPI.getAllBookings({ status, page, limit });
       setBookings(r.data.bookings || []);
       setTotal(r.data.pagination?.total || 0);
       setTotalRevenue(r.data.total_revenue || 0);
@@ -327,7 +328,7 @@ export default function AdminBookings() {
     setTimeout(() => setMounted(true), 60);
   };
 
-  useEffect(() => { fetchBookings(); }, [status, page]);
+  useEffect(() => { fetchBookings(); }, [status, page, limit]);
 
   const filtered = search
     ? bookings.filter(b =>
@@ -336,7 +337,7 @@ export default function AdminBookings() {
         b.vendor?.full_name?.toLowerCase().includes(search.toLowerCase()))
     : bookings;
 
-  const totalPages = Math.ceil(total / LIMIT);
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="space-y-6" style={{ opacity: mounted ? 1 : 0, transition: 'opacity 0.4s ease' }}>
@@ -402,14 +403,26 @@ export default function AdminBookings() {
             );
           })}
         </div>
-        <div className="relative">
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#94A3B8' }} />
-          <input value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="Search service, client, vendor…"
-            className="pl-9 pr-4 py-2.5 rounded-xl text-[13px] focus:outline-none"
-            style={{ border: '1.5px solid #E2E8F0', color: '#0F172A', width: 260, background: '#fff' }}
+        <div className="flex items-center gap-2">
+          <select value={limit} onChange={e => { setLimit(Number(e.target.value)); setPage(1); }}
+            className="py-2.5 pl-3 pr-7 rounded-xl text-[13px] font-semibold focus:outline-none cursor-pointer"
+            style={{ border: '1.5px solid #E2E8F0', color: '#475569', background: '#fff' }}
             onFocus={e => { e.currentTarget.style.borderColor = '#6366F1'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.1)'; }}
-            onBlur={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = 'none'; }} />
+            onBlur={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = 'none'; }}
+            title="Rows per page">
+            {LIMIT_OPTIONS.map(n => (
+              <option key={n} value={n}>{n} / page</option>
+            ))}
+          </select>
+          <div className="relative">
+            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: '#94A3B8' }} />
+            <input value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Search service, client, vendor…"
+              className="pl-9 pr-4 py-2.5 rounded-xl text-[13px] focus:outline-none"
+              style={{ border: '1.5px solid #E2E8F0', color: '#0F172A', width: 260, background: '#fff' }}
+              onFocus={e => { e.currentTarget.style.borderColor = '#6366F1'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.1)'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = 'none'; }} />
+          </div>
         </div>
       </div>
 
@@ -468,10 +481,10 @@ export default function AdminBookings() {
 
                 {/* Service */}
                 <div className="flex items-center gap-3 min-w-0 mb-2 sm:mb-0">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-[18px] shrink-0"
+                  {/* <div className="w-10 h-10 rounded-xl flex items-center justify-center text-[18px] shrink-0"
                     style={{ background: `${catColor}12`, border: `1px solid ${catColor}25` }}>
                     {CAT_ICONS[b.service?.category] || '✨'}
-                  </div>
+                  </div> */}
                   <div className="min-w-0">
                     <p className="font-bold text-[13px] truncate" style={{ color: '#0F172A' }}>{b.service?.title || '—'}</p>
                     <span className="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold capitalize"
@@ -527,7 +540,7 @@ export default function AdminBookings() {
           <div className="flex items-center justify-between px-5 py-3"
             style={{ borderTop: '1px solid #F1F5F9', background: '#FAFBFF' }}>
             <p className="text-[12px]" style={{ color: '#94A3B8' }}>
-              Showing {((page-1)*LIMIT)+1}–{Math.min(page*LIMIT, total)} of {total}
+              Showing {((page-1)*limit)+1}–{Math.min(page*limit, total)} of {total}
             </p>
             <div className="flex items-center gap-1.5">
               <button onClick={() => setPage(p => Math.max(1, p-1))} disabled={page===1}
