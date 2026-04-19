@@ -33,12 +33,13 @@ export default function AdminUsers() {
   const [total,      setTotal]      = useState(0);
   const [roleCounts, setRoleCounts] = useState({ client: 0, vendor: 0, admin: 0 });
   const [mounted,    setMounted]    = useState(false);
-  const LIMIT = 10;
+  const [limit,      setLimit]      = useState(9);
+  const LIMIT_OPTIONS = [9, 18, 30, 60];
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const r = await adminAPI.getAllUsers({ search, role, page, limit: LIMIT });
+      const r = await adminAPI.getAllUsers({ search, role, page, limit });
       setUsers(r.data.users || []);
       setTotal(r.data.pagination?.total || 0);
     } catch {}
@@ -56,9 +57,9 @@ export default function AdminUsers() {
       .catch(() => {});
   }, []);
 
-  useEffect(() => { fetchUsers(); }, [search, role, page]);
+  useEffect(() => { fetchUsers(); }, [search, role, page, limit]);
 
-  const totalPages = Math.ceil(total / LIMIT);
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="space-y-6" style={{ opacity: mounted ? 1 : 0, transition: 'opacity 0.35s ease' }}>
@@ -121,14 +122,26 @@ export default function AdminUsers() {
             );
           })}
         </div>
-        <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#94A3B8' }} />
-          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-            placeholder="Search by name or email…"
-            className="pl-9 pr-4 py-2 rounded-xl text-[13px] focus:outline-none"
-            style={{ border: '1.5px solid #E2E8F0', color: '#0F172A', width: 240 }}
+        <div className="flex items-center gap-2">
+          <select value={limit} onChange={e => { setLimit(Number(e.target.value)); setPage(1); }}
+            className="py-2 pl-3 pr-7 rounded-xl text-[13px] font-semibold focus:outline-none cursor-pointer"
+            style={{ border: '1.5px solid #E2E8F0', color: '#475569', background: '#fff' }}
             onFocus={e => { e.currentTarget.style.borderColor = '#6366F1'; }}
-            onBlur={e => { e.currentTarget.style.borderColor = '#E2E8F0'; }} />
+            onBlur={e => { e.currentTarget.style.borderColor = '#E2E8F0'; }}
+            title="Rows per page">
+            {LIMIT_OPTIONS.map(n => (
+              <option key={n} value={n}>{n} / page</option>
+            ))}
+          </select>
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#94A3B8' }} />
+            <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search by name or email…"
+              className="pl-9 pr-4 py-2 rounded-xl text-[13px] focus:outline-none"
+              style={{ border: '1.5px solid #E2E8F0', color: '#0F172A', width: 240 }}
+              onFocus={e => { e.currentTarget.style.borderColor = '#6366F1'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = '#E2E8F0'; }} />
+          </div>
         </div>
       </div>
 
