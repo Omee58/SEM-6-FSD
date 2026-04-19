@@ -25,14 +25,19 @@ function Orb({ size, color, style: s }) {
 function DarkTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl p-3 text-[12px]"
-      style={{ background: '#0D1627', border: '1px solid rgba(99,102,241,0.3)', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
-      <p className="font-bold uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>{label}</p>
-      {payload.map((p, i) => (
-        <p key={i} className="font-semibold" style={{ color: p.color }}>
-          {p.name === 'revenue' ? `₹${(p.value || 0).toLocaleString('en-IN')}` : p.value}
-        </p>
-      ))}
+    <div className="rounded-xl px-3.5 py-2.5"
+      style={{ background: '#0D1627', border: '1px solid rgba(99,102,241,0.35)', boxShadow: '0 8px 24px rgba(0,0,0,0.5)', minWidth: 120 }}>
+      <p className="font-bold uppercase tracking-widest mb-1.5" style={{ color: 'rgba(255,255,255,0.45)', fontSize: 10, lineHeight: 1 }}>{label}</p>
+      {payload.map((p, i) => {
+        const isRevenue = p.name === 'revenue';
+        const formatted = isRevenue ? `₹${(p.value || 0).toLocaleString('en-IN')}` : p.value;
+        return (
+          <div key={i} className="flex items-baseline gap-1.5" style={{ marginTop: i === 0 ? 0 : 4 }}>
+            <span className="font-bold" style={{ color: p.color || '#fff', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.15rem', lineHeight: 1 }}>{formatted}</span>
+            <span className="font-semibold capitalize" style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>{p.name}</span>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -70,8 +75,10 @@ export default function AdminAnalytics() {
   const completedBk = statusBD.find(s => s.name === 'completed')?.value || 0;
   const convRate    = totalBk > 0 ? Math.round((completedBk / totalBk) * 100) : 0;
 
-  // Backend already returns the correct number of months for the selected period
-  const displayMonthly = monthly;
+  // Backend returns the correct number of months, but if the period spans >12 months
+  // there can be duplicate month labels (e.g. two "Dec"s). Give each point a unique
+  // key so Recharts tooltip can distinguish them.
+  const displayMonthly = monthly.map((m, i) => ({ ...m, key: `${m.month}-${i}` }));
 
   // peak month
   const peakMonth = [...monthly].sort((a, b) => (b.revenue || 0) - (a.revenue || 0))[0];
@@ -166,9 +173,10 @@ export default function AdminAnalytics() {
                   <stop offset="100%" stopColor="#6366F1" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="key" tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false}
+                tickFormatter={k => k?.split('-')[0] || ''} />
               <YAxis tickFormatter={v => `₹${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} width={52} />
-              <Tooltip content={<DarkTooltip />} />
+              <Tooltip content={<DarkTooltip />} labelFormatter={k => k?.split('-')[0] || ''} />
               <Area type="monotone" dataKey="revenue" name="revenue" stroke="#6366F1" strokeWidth={2.5}
                 fill="url(#aRevGrad)" dot={false} activeDot={{ r: 5, fill: '#6366F1', strokeWidth: 0 }} />
             </AreaChart>
